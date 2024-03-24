@@ -1,24 +1,23 @@
 import * as console from 'console';
 import { copyFile, mkdir, unlink } from 'node:fs/promises';
 import { join, parse as parsePath, sep } from 'node:path';
-import { parseArtifactsFile } from './files/artifacts';
-import { parseMetadata } from './files/metadata';
+import { parseArtifactsFile, parseMetadata } from './files';
+import { writePackage } from './files/package';
+import { Context } from './gorealiser/context';
 import { transformPackage } from './package/transform';
 
 const projectPath = '/Users/evg4b/Desktop/go-package';
 const buildName = 'go-package';
 
 (async () => {
-    const artifactsPath = join(projectPath, 'dist', 'artifacts.json');
-    const metadataPath = join(projectPath, 'dist', 'metadata.json');
-    const npmProjectPath = join(projectPath, 'dist', 'npm');
+    const context = new Context(projectPath);
 
-    const artifactsData = await parseArtifactsFile(artifactsPath);
-    const metadata = await parseMetadata(metadataPath);
+    const artifactsData = await parseArtifactsFile(context.artifactsPath);
+    const metadata = await parseMetadata(context.metadataPath);
 
 
-    await unlink(npmProjectPath).catch(() => {});
-    await mkdir(npmProjectPath, { recursive: true });
+    await unlink(context.distPath).catch(() => {});
+    await mkdir(context.distPath, { recursive: true });
 
     const artifacts = artifactsData.filter(({ extra, type }) => {
         return extra.ID === buildName && type === 'Binary';
@@ -29,14 +28,16 @@ const buildName = 'go-package';
         const { path } = artifact;
         const sourceArtifactPath = join(projectPath, path);
         const { base } = parsePath(path);
-        const npmArtifactPath = join(npmProjectPath, pathItems[1]);
+        const npmArtifactPath = context.pathToDist(pathItems[1]);
+        await mkdir(npmArtifactPath, { recursive: true });
         const npmArtifact = join(npmArtifactPath, base);
         const packageDefinition = transformPackage(artifact, metadata);
 
         console.log('Package:', packageDefinition);
 
-        await mkdir(npmArtifactPath, { recursive: true });
+
         await copyFile(sourceArtifactPath, npmArtifact);
+        await writePackage(context.packageJson(pathItems[1]), packageDefinition);
     }
 
     // console.log('Project name:', project_name);
