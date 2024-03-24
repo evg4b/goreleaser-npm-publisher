@@ -1,4 +1,13 @@
 {
   "name": "goreleaser-npm-publisher",
-  "packageManager": "yarn@4.1.1"
+  "version": "0.0.1",
+  "packageManager": "yarn@4.1.1",
+  "bin": "dist/index.js",
+  "devDependencies": {
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "@types/node": "20"
+  }
 }
