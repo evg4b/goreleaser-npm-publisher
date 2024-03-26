@@ -1,5 +1,4 @@
 {
-
   "compilerOptions": {
     "baseUrl": "./",
     "module": "es2020",
@@ -27,7 +26,9 @@
       "node_modules/@types",
       "./src/types.d.ts"
     ],
-    "lib": ["esNext"],
+    "lib": [
+      "esNext"
+    ],
     "sourceMap": true
   },
   "include": [

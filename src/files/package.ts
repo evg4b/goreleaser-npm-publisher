@@ -1,9 +1,9 @@
 import { writeFile } from 'node:fs/promises';
 
 interface PackageJson {
-  name: string;
-  version: string;
-  bin: string;
+    name: string;
+    version: string;
+    bin: string;
 }
 
 export const writePackage = async (path: string, config: PackageJson) => {

@@ -1,5 +1,5 @@
 import console from 'console';
-import { copyFile, mkdir, unlink } from 'node:fs/promises';
+import { copyFile, mkdir } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
 import { ArgumentsCamelCase, Argv, BuilderCallback } from 'yargs';
@@ -28,9 +28,6 @@ const handler: ((args: ArgumentsCamelCase<{ path: string }>) => (void | Promise<
     const artifactsData = await parseArtifactsFile(context.artifactsPath);
     const metadata = await parseMetadata(context.metadataPath);
 
-
-    await unlink(context.distPath).catch(() => {});
-    await mkdir(context.distPath, { recursive: true });
 
     const artifacts = artifactsData.filter(({ extra, type }) => {
         return extra.ID === buildName && type === 'Binary';
