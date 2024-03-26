@@ -1,7 +1,8 @@
 module.exports = {
     'env': {
         'es2021': true,
-        'node': true
+        'node': true,
+        'jest/globals': true
     },
     'extends': [
         'eslint:recommended',
@@ -27,6 +28,7 @@ module.exports = {
         'sourceType': 'module'
     },
     'plugins': [
+        'jest',
         '@typescript-eslint'
     ],
     'rules': {

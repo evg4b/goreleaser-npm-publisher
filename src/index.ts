@@ -28,7 +28,7 @@ const buildName = 'go-package';
         const { path } = artifact;
         const sourceArtifactPath = join(projectPath, path);
         const { base } = parsePath(path);
-        const npmArtifactPath = context.pathToDist(pathItems[1]);
+        const npmArtifactPath = context.packageFolder(pathItems[1]);
         await mkdir(npmArtifactPath, { recursive: true });
         const npmArtifact = join(npmArtifactPath, base);
         const packageDefinition = transformPackage(artifact, metadata);

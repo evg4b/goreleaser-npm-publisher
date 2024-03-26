@@ -7,5 +7,5 @@ interface PackageJson {
 }
 
 export const writePackage = async (path: string, config: PackageJson) => {
-  await writeFile(path, JSON.stringify(config, null, 2));
-}
+    await writeFile(path, JSON.stringify(config, null, 2));
+};
