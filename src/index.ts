@@ -1,8 +1,10 @@
-import yargs from 'yargs';
-import { buildCommand } from './commands';
+import { scriptName } from 'yargs';
+import { buildCommand, listCommand } from './commands';
 
-yargs.scriptName('goreleaser-npm-publisher')
+scriptName('goreleaser-npm-publisher')
     .usage('$0 <cmd> [args]')
+    .command('list', 'List the project', listCommand.builder, listCommand.handler)
     .command('build', 'Build the project', buildCommand.builder, buildCommand.handler)
+    .demandCommand(1, 'You need at least one command before moving on')
     .help()
     .argv;

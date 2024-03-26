@@ -8,6 +8,9 @@ import { writePackage } from '../files/package';
 import { Context } from '../gorealiser/context';
 import { transformPackage } from '../package/transform';
 
+const projectPath = '/Users/evg4b/Desktop/go-package';
+const buildName = 'go-package';
+
 const builder: BuilderCallback<unknown, unknown> = (yargs): Argv<{ path: string }> => {
     return yargs.positional('path', {
         type: 'string',
@@ -17,8 +20,6 @@ const builder: BuilderCallback<unknown, unknown> = (yargs): Argv<{ path: string 
     });
 };
 
-const projectPath = '/Users/evg4b/Desktop/go-package';
-const buildName = 'go-package';
 
 const handler: ((args: ArgumentsCamelCase<{ path: string }>) => (void | Promise<void>)) = async (args) => {
     console.log('Building the project...', args.path);
@@ -60,7 +61,7 @@ const handler: ((args: ArgumentsCamelCase<{ path: string }>) => (void | Promise<
     // console.log(project_name, targetBuild, artifacts);
 };
 
-export const buildCommand = {
+export const listCommand = {
     builder,
     handler,
 };
