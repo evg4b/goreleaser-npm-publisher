@@ -3,10 +3,10 @@ import { MiddlewareFunction } from 'yargs';
 import { Context } from '../gorealiser/context';
 
 export const createDistFolder: MiddlewareFunction<DefaultParams> = async (args): Promise<void> => {
-    const context = new Context(args.project);
-    if (args.clear) {
-        await rm(context.distPath, { recursive: true, force: true });
-    }
+  const context = new Context(args.project);
+  if (args.clear) {
+    await rm(context.distPath, { recursive: true, force: true });
+  }
 
-    await mkdir(context.distPath, { recursive: true });
+  await mkdir(context.distPath, { recursive: true });
 };

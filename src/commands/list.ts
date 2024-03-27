@@ -8,34 +8,34 @@ const projectPath = '/Users/evg4b/Desktop/go-package';
 const buildName = 'go-package';
 
 const builder: BuilderCallback<DefaultParams, DefaultParams> = (yargs): Argv => {
-    return yargs;
+  return yargs;
 };
 
 
 const handler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
-    console.log('Building the project...', args.path);
+  console.log('Building the project...', args.path);
 
-    const context = new Context(projectPath);
+  const context = new Context(projectPath);
 
-    const metadata = await parseMetadata(context.metadataPath);
+  const metadata = await parseMetadata(context.metadataPath);
 
-    const artifacts = (await parseArtifactsFile(context.artifactsPath))
-        .filter(({ extra, type }) => extra.ID === buildName && type === 'Binary')
-        .map((artifact) => transformPackage(artifact, metadata));
+  const artifacts = (await parseArtifactsFile(context.artifactsPath))
+    .filter(({ extra, type }) => extra.ID === buildName && type === 'Binary')
+    .map((artifact) => transformPackage(artifact, metadata));
 
-    artifacts.forEach((pkg) => {
-        console.log(`${ pkg.name }@${ pkg.version } [${ pkg.os[0] }, ${ pkg.cpu[0] }, ${ pkg.sourceBinary }]`);
-    });
+  artifacts.forEach((pkg) => {
+    console.log(`${ pkg.name }@${ pkg.version } [${ pkg.os[0] }, ${ pkg.cpu[0] }, ${ pkg.sourceBinary }]`);
+  });
 
 
-    // console.log('Project name:', project_name);
-    // console.log('Target build:', targetBuild);
-    // console.log('Artifacts:', artifacts);
+  // console.log('Project name:', project_name);
+  // console.log('Target build:', targetBuild);
+  // console.log('Artifacts:', artifacts);
 
-    // console.log(project_name, targetBuild, artifacts);
+  // console.log(project_name, targetBuild, artifacts);
 };
 
 export const listCommand = {
-    builder,
-    handler,
+  builder,
+  handler,
 };
