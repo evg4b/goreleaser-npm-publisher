@@ -8,19 +8,14 @@ import { writePackage } from '../files/package';
 import { Context } from '../gorealiser/context';
 import { transformPackage } from '../package/transform';
 
-const builder: BuilderCallback<unknown, unknown> = (yargs): Argv<{ path: string }> => {
-    return yargs.positional('path', {
-        type: 'string',
-        describe: 'Build the project',
-        default: '.',
-        conflicts: 'version',
-    });
+const builder: BuilderCallback<DefaultParams, DefaultParams> = (yargs): Argv => {
+    return yargs;
 };
 
 const projectPath = '/Users/evg4b/Desktop/go-package';
 const buildName = 'go-package';
 
-const handler: ((args: ArgumentsCamelCase<{ path: string }>) => (void | Promise<void>)) = async (args) => {
+const handler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
     console.log('Building the project...', args.path);
 
     const context = new Context(projectPath);

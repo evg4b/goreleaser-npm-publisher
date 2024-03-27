@@ -15,7 +15,6 @@ scriptName('goreleaser-npm-publisher')
         alias: 'b',
         type: 'string',
         describe: 'Name of the builder',
-        demandOption: false,
     })
     .option('clear', {
         alias: 'c',
@@ -23,25 +22,28 @@ scriptName('goreleaser-npm-publisher')
         describe: 'Clear the dist/npm folder before building the project',
         default: false,
     })
-    .check(isDistEmptyCheck)
     .command(
         'list',
         'List the project',
         listCommand.builder,
         listCommand.handler,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        [createDistFolder as any],
+        [createDistFolder],
     )
+    .check(isDistEmptyCheck)
     .command(
         'build',
         'Build the project',
         buildCommand.builder,
         buildCommand.handler,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        [createDistFolder as any],
+        [createDistFolder],
     )
     .demandCommand(1, 'You need at least one command before moving on to the next step')
     .showHelpOnFail(false, 'Specify --help for available options')
-    .wrap(Math.min(100, terminalWidth() ?? 100))
+    .wrap(Math.min(100, terminalWidth()))
+    .global('project')
+    .global('builder')
+    .hide('version')
+    .hide('help')
     .help()
     .argv;
+
