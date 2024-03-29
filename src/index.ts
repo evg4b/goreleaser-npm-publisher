@@ -9,11 +9,13 @@ scriptName('goreleaser-npm-publisher')
     alias: 'p',
     type: 'string',
     describe: 'Path to the project with was built by GoReleaser',
+    default: '/Users/evg4b/Desktop/go-package', // TODO: remove before release
     demandOption: true,
   })
   .option('builder', {
     alias: 'b',
     type: 'string',
+    default: 'go-package', // TODO: remove before release
     describe: 'Name of the builder',
   })
   .option('clear', {
@@ -21,6 +23,10 @@ scriptName('goreleaser-npm-publisher')
     type: 'boolean',
     describe: 'Clear the dist/npm folder before building the project',
     default: false,
+  })
+  .option('prefix', {
+    type: 'string',
+    describe: 'Prefix for the npm package',
   })
   .command(
     'list',
