@@ -24,7 +24,7 @@ describe('js transformer', () => {
       { name: 'negative Infinity', value: -Infinity, expected: 'const value = -Infinity;' },
       {
         name: 'Date',
-        value: new Date('2024-03-30T22:06:29.027Z'),
+        value: new Date(2024, 2, 30, 19, 6, 29, 27),
         expected: 'const value = new Date(2024, 2, 30, 19, 6, 29, 27);',
       },
       { name: 'Symbol', value: Symbol('test-symbol'), expected: 'const value = Symbol(\'test-symbol\');' },
@@ -60,7 +60,7 @@ describe('js transformer', () => {
       },
       {
         name: 'object with Date property',
-        value: { key: new Date('2024-03-30T22:06:29.027Z') },
+        value: { key: new Date(2024, 2, 30, 19, 6, 29, 27) },
         expected: 'const value = { key: new Date(2024, 2, 30, 19, 6, 29, 27) };',
       },
       {
@@ -106,7 +106,7 @@ describe('js transformer', () => {
       },
       {
         name: 'array with Date element',
-        value: [new Date('2024-03-30T22:06:29.027Z')],
+        value: [new Date(2024, 2, 30, 19, 6, 29, 27)],
         expected: 'const value = [ new Date(2024, 2, 30, 19, 6, 29, 27) ];',
       },
       {
