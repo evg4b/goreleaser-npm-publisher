@@ -1,3 +1,6 @@
+type CPU = typeof process.arch;
+type OS = typeof process.platform;
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface PackageDefinition {
   name: string;
@@ -5,9 +8,10 @@ interface PackageDefinition {
   sourceBinary: string;
   bin: string;
   destinationBinary: string;
-  os: string;
-  cpu: string;
+  os: OS;
+  cpu: CPU;
 }
+
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface PackageJson {
@@ -16,6 +20,6 @@ interface PackageJson {
   version: string;
   optionalDependencies?: Record<string, string>;
   bin: string;
-  os: string[],
-  cpu: string[];
+  os: OS[],
+  cpu: CPU[];
 }

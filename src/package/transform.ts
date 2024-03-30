@@ -1,14 +1,59 @@
-import { isEmpty } from 'lodash';
+import { isEmpty, uniq } from 'lodash';
 
-export const transformPackage = (artifact: Artifact, metadata: Metadata): PackageDefinition => ({
-  name: `${ metadata.project_name }_${ artifact.goos }_${ artifact.goarch }`,
-  version: `v${ metadata.version }`,
-  os: artifact.goos ?? '',
-  cpu: artifact.goarch ?? '',
-  bin: `${ artifact.extra.Binary ?? '' }${ artifact.extra.Ext ?? '' }`,
-  sourceBinary: artifact.path,
-  destinationBinary: artifact.path,
-});
+const platformMapping: Partial<Record<GOOS, OS>> = {
+  'darwin': 'darwin',
+  'linux': 'linux',
+  'windows': 'win32',
+  'android': 'android',
+  'aix': 'aix',
+  'freebsd': 'freebsd',
+  'openbsd': 'openbsd',
+  'solaris': 'sunos',
+  'netbsd': 'netbsd',
+};
+
+const normalizeOS = (goos: GOOS): OS => {
+  const normalized = platformMapping[goos];
+  if (!normalized) {
+    throw new Error(`${ goos } is not supported`);
+  }
+
+  return normalized;
+};
+
+const archMapping: Partial<Record<GOARCH, CPU>> = {
+  'amd64': 'x64',
+  '386': 'ia32',
+  'arm': 'arm',
+  'arm64': 'arm64',
+  's390x': 's390x',
+  's390': 's390',
+  'riscv64': 'riscv64',
+  'ppc64': 'ppc64',
+  'ppc': 'ppc',
+  'mips': 'mips',
+};
+
+const normalizeCPU = (goarch: GOARCH): CPU => {
+  const normalized = archMapping[goarch];
+  if (!normalized) {
+    throw new Error(`${ goarch } is not supported`);
+  }
+
+  return normalized;
+};
+
+export const transformPackage = (artifact: Artifact, metadata: Metadata): PackageDefinition => {
+  return ({
+    name: `${ metadata.project_name }_${ artifact.goos }_${ artifact.goarch }`,
+    version: `v${ metadata.version }`,
+    os: normalizeOS(artifact.goos!), // TODO: Handle undefined
+    cpu: normalizeCPU(artifact.goarch!), // TODO: Handle undefined
+    bin: `${ artifact.extra.Binary ?? '' }${ artifact.extra.Ext ?? '' }`,
+    sourceBinary: artifact.path,
+    destinationBinary: artifact.path,
+  });
+};
 
 export const formatPackageJson = (pkg: PackageDefinition, prefix: string | undefined): PackageJson => ({
   name: formatPackageName(pkg, prefix),
@@ -37,7 +82,7 @@ export const formatMainPackageJson = (
       ...acc,
       [formatPackageName(pkg, prefix)]: `${ metadata.version }`,
     }), {}),
-    os: packages.map((pkg) => pkg.os),
-    cpu: packages.map((pkg) => pkg.cpu),
+    os: uniq(packages.map((pkg) => pkg.os)),
+    cpu: uniq(packages.map((pkg) => pkg.cpu)),
   };
 };
