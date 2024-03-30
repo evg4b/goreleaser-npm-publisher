@@ -1,19 +1,12 @@
-import console from 'console';
 import { copyFile, mkdir } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
-import { ArgumentsCamelCase, Argv, BuilderCallback } from 'yargs';
-import { parseArtifactsFile, parseMetadata } from '../files';
-import { writePackage } from '../files/package';
-import { Context } from '../gorealiser/context';
-import { formatPackageJson, transformPackage } from '../package/transform';
+import { ArgumentsCamelCase } from 'yargs';
+import { parseArtifactsFile, parseMetadata, writePackage } from '../files';
+import { Context } from '../gorealiser';
+import { formatPackageJson, transformPackage } from '../package';
 
-const builder: BuilderCallback<DefaultParams, DefaultParams> = (yargs): Argv => {
-  return yargs;
-};
-
-
-const handler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
+export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
   const context = new Context(args.project);
   const artifactsData = await parseArtifactsFile(context.artifactsPath);
   const metadata = await parseMetadata(context.metadataPath);
@@ -32,15 +25,8 @@ const handler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<voi
     const npmArtifact = join(npmArtifactPath, base);
     const packageDefinition = transformPackage(artifact, metadata);
 
-    console.log('Package:', packageDefinition);
-
     await copyFile(sourceArtifactPath, npmArtifact);
     const packageJsonObject = formatPackageJson(packageDefinition, args.prefix);
     await writePackage(context.packageJson(pathItems[1]), packageJsonObject);
   }
-};
-
-export const buildCommand = {
-  builder,
-  handler,
 };

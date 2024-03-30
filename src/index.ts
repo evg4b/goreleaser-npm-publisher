@@ -1,7 +1,7 @@
+import { identity } from 'lodash';
 import { scriptName, terminalWidth } from 'yargs';
-import { buildCommand, listCommand } from './commands';
-import { createDistFolder } from './helpers/clear-dist';
-import { isDistEmptyCheck } from './helpers/is-dist-empty';
+import { buildHandler, listHandler, publishHandler } from './commands';
+import { createDistFolder, isDistEmptyCheck } from './helpers';
 
 scriptName('goreleaser-npm-publisher')
   .usage('$0 <cmd> [args]')
@@ -27,20 +27,28 @@ scriptName('goreleaser-npm-publisher')
   .option('prefix', {
     type: 'string',
     describe: 'Prefix for the npm package',
+    default: '@wserdtryftvubhijnokmpl',
   })
   .command(
     'list',
     'List the project',
-    listCommand.builder,
-    listCommand.handler,
+    identity,
+    listHandler,
     [createDistFolder],
   )
   .check(isDistEmptyCheck)
   .command(
     'build',
     'Build the project',
-    buildCommand.builder,
-    buildCommand.handler,
+    identity,
+    buildHandler,
+    [createDistFolder],
+  )
+  .command(
+    'publish',
+    'Publish the project to npm registry',
+    identity,
+    publishHandler,
     [createDistFolder],
   )
   .demandCommand(1, 'You need at least one command before moving on to the next step')

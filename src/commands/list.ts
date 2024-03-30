@@ -1,14 +1,9 @@
-import console from 'console';
-import { ArgumentsCamelCase, Argv, BuilderCallback } from 'yargs';
+import { ArgumentsCamelCase } from 'yargs';
 import { parseArtifactsFile, parseMetadata } from '../files';
-import { Context } from '../gorealiser/context';
-import { formatPackageName, transformPackage } from '../package/transform';
+import { Context } from '../gorealiser';
+import { formatPackageName, transformPackage } from '../package';
 
-const builder: BuilderCallback<DefaultParams, DefaultParams> = (yargs): Argv => {
-  return yargs;
-};
-
-const handler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
+export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
   const context = new Context(args.project);
   const metadata = await parseMetadata(context.metadataPath);
   const artifacts = (await parseArtifactsFile(context.artifactsPath))
@@ -21,7 +16,3 @@ const handler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<voi
   });
 };
 
-export const listCommand = {
-  builder,
-  handler,
-};
