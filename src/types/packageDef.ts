@@ -14,6 +14,7 @@ interface PackageJson {
   name: string;
   description: string;
   version: string;
+  optionalDependencies?: Record<string, string>;
   bin: string;
   os: string[],
   cpu: string[];
