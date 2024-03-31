@@ -1,8 +1,35 @@
 {
   "name": "goreleaser-npm-publisher",
-  "version": "0.0.1",
-  "packageManager": "yarn@4.1.1",
+  "version": "0.0.1-alpha.0",
+  "description": "Build and publish npm packages based on goreleaser output folder",
   "bin": "dist/index.js",
+  "type": "module",
+  "author": {
+    "email": "evg.abramovitch@gmail.com",
+    "name": "Evgeny Abramovich",
+    "url": "https://github.com/evg4b"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/evg4b/goreleaser-npm-publisher",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:evg4b/goreleaser-npm-publisher.git"
+  },
+  "keywords": [
+    "goreleaser",
+    "npm",
+    "binary",
+    "cli",
+    "publish",
+    "release",
+    "github",
+    "action"
+  ],
+  "bugs": {
+    "url": "https://github.com/evg4b/goreleaser-npm-publisher/issues"
+  },
+  "readme": "README.md",
+  "packageManager": "yarn@4.1.1",
   "scripts": {
     "build": "tsup",
     "start": "node dist/index.js",
