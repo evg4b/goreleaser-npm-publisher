@@ -1,6 +1,6 @@
 {
   "name": "goreleaser-npm-publisher",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2",
   "description": "Build and publish npm packages based on goreleaser output folder",
   "bin": "dist/index.js",
   "author": {
