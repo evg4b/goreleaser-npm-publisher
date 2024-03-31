@@ -1,6 +1,7 @@
 .idea/
 .github/
 .yarn/
+.scannerwork/
 coverage/
 node_modules/
 src/
