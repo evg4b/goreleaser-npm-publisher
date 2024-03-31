@@ -1,8 +1,9 @@
-.github/**/*
-.yarn/**/*
-coverage/**/*
-node_modules/**/*
-src/**/*
+.idea/
+.github/
+.yarn/
+coverage/
+node_modules/
+src/
 .editorconfig
 .eslintrc.js
 .gitattributes

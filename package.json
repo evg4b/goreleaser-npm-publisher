@@ -3,7 +3,6 @@
   "version": "0.0.1-alpha.0",
   "description": "Build and publish npm packages based on goreleaser output folder",
   "bin": "dist/index.js",
-  "type": "module",
   "author": {
     "email": "evg.abramovitch@gmail.com",
     "name": "Evgeny Abramovich",
@@ -18,12 +17,11 @@
   "keywords": [
     "goreleaser",
     "npm",
+    "npm-publish",
     "binary",
     "cli",
     "publish",
-    "release",
-    "github",
-    "action"
+    "release"
   ],
   "bugs": {
     "url": "https://github.com/evg4b/goreleaser-npm-publisher/issues"
