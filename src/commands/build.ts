@@ -12,8 +12,8 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
   const artifactsData = await parseArtifactsFile(context.artifactsPath);
   const metadata = await parseMetadata(context.metadataPath);
 
-  const artifacts = artifactsData.filter(({ extra, type }) => {
-    return extra.ID === args.builder && type === 'Binary';
+  const artifacts = artifactsData.filter((artifact): artifact is BinaryArtifact => {
+    return artifact.type === 'Binary' && artifact.extra.ID === args.builder;
   });
 
   const packages: PackageDefinition[] = [];
@@ -45,10 +45,10 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
 };
 
 const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined) => {
-  const mapping = packages.reduce((acc, pkg) => {
-    const data = isEmpty(prefix) ? [pkg.name] : [prefix!, pkg.name];
+  const mapping = packages.reduce<Record<string, string[]>>((acc, pkg) => {
+    const data = isEmpty(prefix) ? [pkg.name] : [String(prefix), pkg.name];
     return { ...acc, [`${ pkg.os }_${ pkg.cpu }`]: [...data, pkg.bin] };
-  }, {} as Record<string, string[]>);
+  }, {});
 
   const directory = isEmpty(prefix)
     ? js`path.dirname(__dirname)`
@@ -61,43 +61,43 @@ const modulesDirectory = ${ directory };
 const definition = mapping[process.platform + '_' + process.arch];
 const packagePath = path.join(modulesDirectory, ...definition);
 child_process.spawn(packagePath, process.argv.splice(2), {
-    stdio: 'inherit',
-    env: process.env,
+  stdio: 'inherit',
+  env: process.env,
 });`;
 };
 
 
-const transform = (datum: unknown): string => {
+const transform = (node: unknown): string => {
   switch (true) {
-  case Code.isCode(datum):
-    return datum.toString();
-  case typeof datum === 'string':
-    return `'${ datum }'`;
-  case typeof datum === 'number':
-    return datum.toString();
-  case typeof datum === 'boolean':
-    return datum ? 'true' : 'false';
-  case datum === null:
+  case Code.isCode(node):
+    return node.toString();
+  case typeof node === 'string':
+    return `'${ node }'`;
+  case typeof node === 'number':
+    return node.toString();
+  case typeof node === 'boolean':
+    return node ? 'true' : 'false';
+  case node === null:
     return 'null';
-  case datum === undefined:
+  case node === undefined:
     return 'undefined';
-  case datum instanceof Date:
-    return `new Date(${ datum.getFullYear() }, ${ datum.getMonth() }, ${ datum.getDate() }, ${ datum.getHours() }, ${ datum.getMinutes() }, ${ datum.getSeconds() }, ${ datum.getMilliseconds() })`;
-  case typeof datum === 'symbol':
-    return `Symbol('${ datum.description }')`;
-  case Array.isArray(datum):
-    return !isEmpty(datum)
-      ? `[ ${ datum.map(transform).join(', ') } ]`
+  case node instanceof Date:
+    return `new Date(${ node.getFullYear() }, ${ node.getMonth() }, ${ node.getDate() }, ${ node.getHours() }, ${ node.getMinutes() }, ${ node.getSeconds() }, ${ node.getMilliseconds() })`;
+  case typeof node === 'symbol':
+    return `Symbol('${ node.description }')`;
+  case Array.isArray(node):
+    return !isEmpty(node)
+      ? `[ ${ node.map(transform).join(', ') } ]`
       : '[]';
-  case typeof datum === 'object':
-    return !isEmpty(datum)
-      ? `{ ${ Object.entries(datum)
+  case typeof node === 'object':
+    return !isEmpty(node)
+      ? `{ ${ Object.entries(node)
         .map(([key, value]) => `${ key }: ${ transform(value) }`)
         .join(', ') } }`
       : '{}';
   }
 
-  throw new Error(`Unsupported type: ${ typeof datum }`);
+  throw new Error(`Unsupported type: ${ typeof node }`);
 };
 
 export const js = (templates: TemplateStringsArray, ...data: unknown[]): Code => {

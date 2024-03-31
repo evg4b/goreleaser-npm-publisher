@@ -5,31 +5,38 @@ module.exports = {
     'jest/globals': true
   },
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/strict-type-checked',
     'plugin:import/recommended',
+    'plugin:import/typescript',
   ],
-  overrides: [{
-    env: {
-      node: true
-    },
-    files: ['.eslintrc.{js,cjs}'],
-    parserOptions: {
-      sourceType: 'script'
+  overrides: [
+    {
+      env: {
+        node: true
+      },
+      files: ['*.js'],
+      extends: ['plugin:@typescript-eslint/disable-type-checked'],
     }
-  }],
-  ignorePatterns: ['dist/', 'node_modules/'],
+  ],
+  ignorePatterns: [
+    'dist/',
+    'coverage/',
+    'node_modules/',
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
-    sourceType: 'module'
+    sourceType: 'module',
+    project: './tsconfig.eslint.json',
+    tsconfigRootDir: __dirname,
   },
   plugins: ['jest', '@typescript-eslint', 'import'],
   rules: {
     indent: ['error', 2],
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single'],
-    semi: ['error', 'always']
+    semi: ['error', 'always'],
+    '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true, allowBoolean: true }]
   },
   settings: {
     'import/parsers': {
@@ -41,7 +48,7 @@ module.exports = {
       },
       typescript: {
         alwaysTryTypes: true,
-        project: ['./tsconfig.json']
+        project: ['./tsconfig.eslint.json']
       }
     }
   }

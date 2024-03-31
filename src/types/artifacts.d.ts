@@ -41,26 +41,45 @@ type GOARCH = '386'
   | 'sparc64'
   | 'wasm'
 
-interface Artifact {
+interface BinaryArtifact {
   name: string;
   path: string;
-  goos?: GOOS;
-  goarch?: GOARCH;
+  goos: GOOS;
+  goarch: GOARCH;
   goamd64?: string;
-  internal_type: number;
-  type: 'Binary' | 'Archive' | 'Checksum';
-  extra: Extra;
+  internal_type: 4,
+  type: 'Binary',
+  extra: {
+    Binary: string;
+    Ext: string;
+    ID: string;
+  }
 }
 
-interface Extra {
-  Binary?: string;
-  Ext?: string;
-  ID?: string;
-  Binaries?: string[];
-  Checksum?: string;
-  Format?: string;
-  Replaces?: null;
-  WrappedIn?: string;
+interface ArchiveArtifact {
+  name: string;
+  path: string;
+  goos: GOOS;
+  goarch: GOARCH;
+  goamd64?: string;
+  internal_type: 1,
+  type: 'Archive',
+  extra: {
+    Binaries: string[],
+    Checksum: string;
+    Format: string;
+    ID: string;
+    Replaces: string | null,
+    WrappedIn: string
+  }
 }
 
+interface ChecksumArtifact {
+  name: string,
+  path: string,
+  internal_type: 12,
+  type: 'Checksum',
+  extra: NonNullable<unknown>,
+}
 
+type Artifact = BinaryArtifact | ArchiveArtifact | ChecksumArtifact;

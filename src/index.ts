@@ -3,7 +3,7 @@ import { scriptName, terminalWidth } from 'yargs';
 import { buildHandler, listHandler, publishHandler } from './commands';
 import { createDistFolder, isDistEmptyCheck } from './helpers';
 
-scriptName('goreleaser-npm-publisher')
+void scriptName('goreleaser-npm-publisher')
   .usage('$0 <cmd> [args]')
   .option('project', {
     alias: 'p',

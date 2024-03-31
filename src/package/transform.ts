@@ -43,13 +43,13 @@ const normalizeCPU = (goarch: GOARCH): CPU => {
   return normalized;
 };
 
-export const transformPackage = (artifact: Artifact, metadata: Metadata): PackageDefinition => {
+export const transformPackage = (artifact: BinaryArtifact, metadata: Metadata): PackageDefinition => {
   return ({
     name: `${ metadata.project_name }_${ artifact.goos }_${ artifact.goarch }`,
     version: `v${ metadata.version }`,
-    os: normalizeOS(artifact.goos!), // TODO: Handle undefined
-    cpu: normalizeCPU(artifact.goarch!), // TODO: Handle undefined
-    bin: `${ artifact.extra.Binary ?? '' }${ artifact.extra.Ext ?? '' }`,
+    os: normalizeOS(artifact.goos),
+    cpu: normalizeCPU(artifact.goarch),
+    bin: `${ artifact.extra.Binary }${ artifact.extra.Ext }`,
     sourceBinary: artifact.path,
     destinationBinary: artifact.path,
   });
@@ -80,7 +80,7 @@ export const formatMainPackageJson = (
     bin: 'index.js',
     optionalDependencies: packages.reduce<Record<string, string>>((acc, pkg) => ({
       ...acc,
-      [formatPackageName(pkg, prefix)]: `${ metadata.version }`,
+      [formatPackageName(pkg, prefix)]: metadata.version,
     }), {}),
     os: uniq(packages.map((pkg) => pkg.os)),
     cpu: uniq(packages.map((pkg) => pkg.cpu)),
