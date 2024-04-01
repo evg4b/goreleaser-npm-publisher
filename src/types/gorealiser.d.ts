@@ -229,7 +229,7 @@ type ArchiveFormat = 'tar' | 'tgz' | 'tar.gz' | 'zip' | 'gz' | 'tar.xz' | 'txz' 
 
 interface FormatOverrideElement {
   format?: ArchiveFormat;
-  goos?: string;
+  goos?: GOOS;
 }
 
 interface ArtifactoryElement {

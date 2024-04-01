@@ -5,6 +5,7 @@ import { parse as parsePath } from 'path';
 import { ArgumentsCamelCase } from 'yargs';
 import { parseArtifactsFile, parseMetadata, writePackage } from '../files';
 import { Context } from '../gorealiser';
+import { binArtifactPredicate } from '../helpers';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '../package';
 
 export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
@@ -12,9 +13,7 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
   const artifactsData = await parseArtifactsFile(context.artifactsPath);
   const metadata = await parseMetadata(context.metadataPath);
 
-  const artifacts = artifactsData.filter((artifact): artifact is BinaryArtifact => {
-    return artifact.type === 'Binary' && artifact.extra.ID === args.builder;
-  });
+  const artifacts = artifactsData.filter(binArtifactPredicate(args.builder));
 
   const packages: PackageDefinition[] = [];
 
@@ -44,7 +43,7 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
   );
 };
 
-const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined) => {
+const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
   const mapping = packages.reduce<Record<string, string[]>>((acc, pkg) => {
     const data = isEmpty(prefix) ? [pkg.name] : [String(prefix), pkg.name];
     return { ...acc, [`${ pkg.os }_${ pkg.cpu }`]: [...data, pkg.bin] };
@@ -54,7 +53,7 @@ const buildExecScript = (packages: PackageDefinition[], prefix: string | undefin
     ? js`path.dirname(__dirname)`
     : js`path.dirname(path.dirname(__dirname))`;
 
-  return js`const path = require('path');
+  const code = js`const path = require('path');
 const child_process = require('child_process');
 const mapping = ${ mapping };
 const modulesDirectory = ${ directory };
@@ -64,6 +63,8 @@ child_process.spawn(packagePath, process.argv.splice(2), {
   stdio: 'inherit',
   env: process.env,
 });`;
+
+  return code.toString();
 };
 
 

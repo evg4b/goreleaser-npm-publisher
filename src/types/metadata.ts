@@ -10,6 +10,6 @@ interface Metadata {
 }
 
 interface Runtime {
-  goos: string;
-  goarch: string;
+  goos: GOOS;
+  goarch: GOARCH;
 }
