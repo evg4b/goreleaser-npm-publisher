@@ -1,4 +1,4 @@
-import { js } from './template';
+import js from './index';
 
 describe('js transformer', () => {
   it('should render code without interpolation', () => {
