@@ -3,6 +3,7 @@ import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
 import { ArgumentsCamelCase } from 'yargs';
+import js from '../core/js';
 import { parseArtifactsFile, parseMetadata, writePackage } from '../files';
 import { Context } from '../gorealiser';
 import { binArtifactPredicate } from '../helpers';
@@ -44,9 +45,9 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
 };
 
 const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
-  const mapping = packages.reduce<Record<string, string[]>>((acc, pkg) => {
+  const mapping = packages.reduce<Record<string, string[]>>((mappings, pkg) => {
     const data = isEmpty(prefix) ? [pkg.name] : [String(prefix), pkg.name];
-    return { ...acc, [`${ pkg.os }_${ pkg.cpu }`]: [...data, pkg.bin] };
+    return { ...mappings, [`${ pkg.os }_${ pkg.cpu }`]: [...data, pkg.bin] };
   }, {});
 
   const directory = isEmpty(prefix)
@@ -67,53 +68,3 @@ child_process.spawn(packagePath, process.argv.splice(2), {
   return code.toString();
 };
 
-
-const transform = (node: unknown): string => {
-  switch (true) {
-  case Code.isCode(node):
-    return node.toString();
-  case typeof node === 'string':
-    return `'${ node }'`;
-  case typeof node === 'number':
-    return node.toString();
-  case typeof node === 'boolean':
-    return node ? 'true' : 'false';
-  case node === null:
-    return 'null';
-  case node === undefined:
-    return 'undefined';
-  case node instanceof Date:
-    return `new Date(${ node.getFullYear() }, ${ node.getMonth() }, ${ node.getDate() }, ${ node.getHours() }, ${ node.getMinutes() }, ${ node.getSeconds() }, ${ node.getMilliseconds() })`;
-  case typeof node === 'symbol':
-    return `Symbol('${ node.description }')`;
-  case Array.isArray(node):
-    return !isEmpty(node)
-      ? `[ ${ node.map(transform).join(', ') } ]`
-      : '[]';
-  case typeof node === 'object':
-    return !isEmpty(node)
-      ? `{ ${ Object.entries(node)
-        .map(([key, value]) => `${ key }: ${ transform(value) }`)
-        .join(', ') } }`
-      : '{}';
-  }
-
-  throw new Error(`Unsupported type: ${ typeof node }`);
-};
-
-export const js = (templates: TemplateStringsArray, ...data: unknown[]): Code => {
-  let index = 0;
-  const jsCode = templates.reduce((code, codePart) => {
-    return code + transform(data[index++]) + codePart;
-  });
-
-  return new Code(jsCode);
-};
-
-class Code extends String {
-  private __code = true;
-
-  public static isCode(value: unknown): value is Code {
-    return value instanceof Code && value.__code;
-  }
-}

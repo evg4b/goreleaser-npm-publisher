@@ -1,4 +1,4 @@
-import { js } from './build';
+import { js } from './template';
 
 describe('js transformer', () => {
   it('should render code without interpolation', () => {
@@ -73,7 +73,11 @@ describe('js transformer', () => {
         value: { key: { nested: 'value' } },
         expected: 'const value = { key: { nested: \'value\' } };',
       },
-
+      {
+        name: 'object with code',
+        value: js`(() => 123)()`,
+        expected: 'const value = (() => 123)();',
+      }
     ];
 
     cases.forEach(({ name, value, expected }) => {
@@ -127,6 +131,12 @@ describe('js transformer', () => {
 
         expect(actual).toEqual(expected);
       });
+    });
+  });
+
+  describe('throw error', () => {
+    it('for unsupported type', () => {
+      expect(() => js`const value = ${ new Map() };`).toThrow('Unsupported type: object');
     });
   });
 });
