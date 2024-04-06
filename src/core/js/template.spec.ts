@@ -77,7 +77,7 @@ describe('js transformer', () => {
         name: 'object with code',
         value: js`(() => 123)()`,
         expected: 'const value = (() => 123)();',
-      }
+      },
     ];
 
     cases.forEach(({ name, value, expected }) => {

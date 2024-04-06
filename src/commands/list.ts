@@ -1,8 +1,8 @@
-import { ArgumentsCamelCase } from 'yargs';
+import type { ArgumentsCamelCase } from 'yargs';
 import { parseArtifactsFile, parseMetadata } from '../core/files';
 import { Context } from '../core/gorealiser';
-import { binArtifactPredicate } from '../helpers';
 import { formatPackageName, transformPackage } from '../core/package';
+import { binArtifactPredicate } from '../helpers';
 
 export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
   const context = new Context(args.project);

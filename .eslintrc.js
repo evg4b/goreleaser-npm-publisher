@@ -36,7 +36,14 @@ module.exports = {
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single'],
     semi: ['error', 'always'],
-    '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true, allowBoolean: true }]
+    '@typescript-eslint/restrict-template-expressions': ['error', {
+      allowNumber: true,
+      allowBoolean: true,
+    }],
+    '@typescript-eslint/consistent-type-imports': ['error', {
+      prefer: 'type-imports',
+      fixStyle: 'inline-type-imports',
+    }],
   },
   settings: {
     'import/parsers': {

@@ -2,7 +2,7 @@ import { exec as execOrignial } from 'child_process';
 import { readdir } from 'fs/promises';
 import { sortBy } from 'lodash';
 import { promisify } from 'util';
-import { ArgumentsCamelCase } from 'yargs';
+import type { ArgumentsCamelCase } from 'yargs';
 import { Context } from '../core/gorealiser';
 import { buildHandler } from './build';
 

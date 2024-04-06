@@ -2,12 +2,12 @@ import { isEmpty } from 'lodash';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
-import { ArgumentsCamelCase } from 'yargs';
-import js from '../core/js';
+import type { ArgumentsCamelCase } from 'yargs';
 import { parseArtifactsFile, parseMetadata, writePackage } from '../core/files';
 import { Context } from '../core/gorealiser';
-import { binArtifactPredicate } from '../helpers';
+import js from '../core/js';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
+import { binArtifactPredicate } from '../helpers';
 
 export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
   const context = new Context(args.project);
