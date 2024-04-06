@@ -34,7 +34,6 @@ void scriptName('goreleaser-npm-publisher')
     'List the project',
     identity,
     listHandler,
-    [createDistFolder],
   )
   .check(isDistEmptyCheck)
   .command(
