@@ -8,7 +8,7 @@ import { buildHandler } from './build';
 
 const exec = promisify(execOrignial);
 
-export const publishHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
+export const publishHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async args => {
   await buildHandler(args);
   const context = new Context(args.project);
 

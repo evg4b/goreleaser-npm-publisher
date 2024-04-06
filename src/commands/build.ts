@@ -9,16 +9,16 @@ import js from '../core/js';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
 import { binArtifactPredicate } from '../helpers';
 
-export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
+export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async args => {
   const context = new Context(args.project);
-  const artifactsData = await parseArtifactsFile(context.artifactsPath);
+  const artifacts = await parseArtifactsFile(context.artifactsPath);
   const metadata = await parseMetadata(context.metadataPath);
 
-  const artifacts = artifactsData.filter(binArtifactPredicate(args.builder));
+  const binaryArtifacts = artifacts.filter(binArtifactPredicate(args.builder));
 
   const packages: PackageDefinition[] = [];
 
-  for (const artifact of artifacts) {
+  for (const artifact of binaryArtifacts) {
     const pathItems = artifact.path.split(sep);
     const { path } = artifact;
     const sourceArtifactPath = join(args.project, path);

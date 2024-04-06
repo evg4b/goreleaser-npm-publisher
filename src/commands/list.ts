@@ -20,12 +20,12 @@ const header = (text: string) => {
   return bgWhite(black(`${ text }${ space }`.slice(0, terminalWidth())));
 };
 
-export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
+export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async args => {
   const context = new Context(args.project);
   const metadata = await parseMetadata(context.metadataPath);
   const artifacts = await parseArtifactsFile(context.artifactsPath);
   const descriptions = artifacts.filter(binArtifactPredicate(args.builder))
-    .map((artifact) => {
+    .map(artifact => {
       const definition = transformPackage(artifact, metadata);
 
       return {
@@ -36,7 +36,6 @@ export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | 
 
   const definitions = descriptions.map(({ definition }) => definition);
   const mainPackage = formatMainPackageJson(definitions, metadata, args.prefix);
-
 
   console.log(header('   Main package:'));
   console.log('');

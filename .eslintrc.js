@@ -50,7 +50,10 @@ module.exports = {
     '@typescript-eslint/no-unnecessary-type-arguments': 'error',
     '@typescript-eslint/no-unnecessary-condition': 'error',
     '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
+    '@typescript-eslint/no-empty-function': 'error',
     'quote-props': ['error', 'as-needed'],
+    'no-multiple-empty-lines': ['error', { max: 1, }],
+    'arrow-parens': ['error', 'as-needed'],
   },
   settings: {
     'import/parsers': {

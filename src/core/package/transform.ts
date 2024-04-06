@@ -45,7 +45,7 @@ export const formatMainPackageJson = (
       ...dependencies,
       [formatPackageName(pkg, prefix)]: metadata.version,
     }), {}),
-    os: uniq(packages.map((pkg) => pkg.os)),
-    cpu: uniq(packages.map((pkg) => pkg.cpu)),
+    os: uniq(packages.map(pkg => pkg.os)),
+    cpu: uniq(packages.map(pkg => pkg.cpu)),
   };
 };

@@ -22,7 +22,6 @@ const formatObject = (node: object): string => {
     : '{}';
 };
 
-
 const formatArray = (node: unknown[]): string => !isEmpty(node)
   ? `[ ${ node.map(transform).join(', ') } ]`
   : '[]';
