@@ -1,13 +1,13 @@
 const platformMapping: Partial<Record<GOOS, OS>> = {
-  'darwin': 'darwin',
-  'linux': 'linux',
-  'windows': 'win32',
-  'android': 'android',
-  'aix': 'aix',
-  'freebsd': 'freebsd',
-  'openbsd': 'openbsd',
-  'solaris': 'sunos',
-  'netbsd': 'netbsd',
+  darwin: 'darwin',
+  linux: 'linux',
+  windows: 'win32',
+  android: 'android',
+  aix: 'aix',
+  freebsd: 'freebsd',
+  openbsd: 'openbsd',
+  solaris: 'sunos',
+  netbsd: 'netbsd',
 };
 
 export const normalizeOS = (goos: GOOS): OS => {
