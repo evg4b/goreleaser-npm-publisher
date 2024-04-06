@@ -33,8 +33,80 @@
   <a href="https://sonarcloud.io/project/activity?custom_metrics=ncloc&graph=custom&id=evg4b_goreleaser-npm-publisher">
     <img alt="Lines of code" src="https://sonarcloud.io/api/project_badges/measure?project=evg4b_goreleaser-npm-publisher&metric=ncloc">
   </a>
-  
+
 </p>
 <p align="center">
   Publish Go binaries to npm registry, automated tool for build and publish Go binaries to npm registry.
 </p>
+
+# Overview
+
+`goreleaser-npm-publisher` is a zero-configuration tool for build and publish Go binaries to npm registry.
+Tool should be used after `goreleaser` build.
+
+It will create npm package with Go binary and publish it to npm registry.
+
+The main idea is to use npm as a distribution platform for Go binaries.
+It allows using npm as a package manager for Go binaries.
+
+## Structure of npm package:
+
+The output will have a main package and platform packages.
+The main package will contain the executable script
+which will detect the platform and architecture and run the corresponding platform package.
+Platform packages will contain the Go binary for the specific platform and architecture.
+
+For example, for the package `go-package` with version `0.0.17`, and goreleaser build for `linux`, `windows`, `darwin`
+and `ia32`, `x64`, `arm64` architectures:
+
+Main package:
+
+```
+go-package@0.0.17
+  os: linux, win32, darwin
+  cpu: ia32, x64, arm64
+```
+
+Platform packages:
+
+```
+go-package_linux_386@0.0.17
+  os: linux
+  cpu: ia32
+  bin: /Users/<user>/go-package/dist/npm/dist-go-package-linux-386-go-package
+
+go-package_windows_386@0.0.17
+  os: win32
+  cpu: ia32
+  bin: /Users/<user>/go-package/dist/npm/dist-go-package-windows-386-go-package-exe
+
+go-package_linux_amd64@0.0.17
+  os: linux
+  cpu: x64
+  bin: /Users/<user>/go-package/dist/npm/dist-go-package-linux-amd-64-v-1-go-package
+
+go-package_linux_arm64@0.0.17
+  os: linux
+  cpu: arm64
+  bin: /Users/<user>/go-package/dist/npm/dist-go-package-linux-arm-64-go-package
+
+go-package_windows_arm64@0.0.17
+  os: win32
+  cpu: arm64
+  bin: /Users/<user>/go-package/dist/npm/dist-go-package-windows-arm-64-go-package-exe
+
+go-package_windows_amd64@0.0.17
+  os: win32
+  cpu: x64
+  bin: /Users/<user>/go-package/dist/npm/dist-go-package-windows-amd-64-v-1-go-package-exe
+
+go-package_darwin_amd64@0.0.17
+  os: darwin
+  cpu: x64
+  bin: /Users/<user>/go-package/dist/npm/dist-go-package-darwin-amd-64-v-1-go-package
+  
+go-package_darwin_arm64@0.0.17
+  os: darwin
+  cpu: arm64
+  bin: /Users/<user>/go-package/dist/npm/dist-go-package-darwin-arm-64-go-package
+```
