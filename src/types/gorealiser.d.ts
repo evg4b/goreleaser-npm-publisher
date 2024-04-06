@@ -9,9 +9,6 @@ interface GoReleaserConfiguration {
   before?: Before;
   blobs?: BlobElement[];
   brews?: BrewElement[];
-  /**
-   * use builds instead
-   */
   build?: Build;
   builds?: Build[];
   changelog?: Changelog;
@@ -40,9 +37,6 @@ interface GoReleaserConfiguration {
   release?: Release;
   report_sizes?: boolean;
   sboms?: SbomElement[];
-  /**
-   * use scoops instead
-   */
   scoop?: Scoop;
   scoops?: Scoop[];
   signs?: DockerSignElement[];
@@ -194,9 +188,6 @@ interface ArchiveElement {
   id?: string;
   meta?: boolean;
   name_template?: string;
-  /**
-   * you can now remove this
-   */
   rlcp?: Skip;
   strip_parent_binary_folder?: boolean;
   wrap_in_directory?: Skip;
@@ -292,18 +283,12 @@ interface BlobElement {
   content_disposition?: string;
   disable?: Skip;
   disable_ssl?: boolean;
-  /**
-   * use disable_ssl instead
-   */
   disableSSL?: boolean;
   endpoint?: string;
   extra_files?: BlobExtraFile[];
   folder?: string;
   ids?: string[];
   kms_key?: string;
-  /**
-   * use kms_key instead
-   */
   kmskey?: string;
   provider?: string;
   region?: string;
@@ -334,17 +319,11 @@ interface BrewElement {
   install?: string;
   license?: string;
   name?: string;
-  /**
-   * use service instead
-   */
   plist?: string;
   post_install?: string;
   repository?: Repository;
   service?: string;
   skip_upload?: Skip;
-  /**
-   * use repository instead
-   */
   tap?: Repository;
   test?: string;
   url_template?: string;
@@ -361,9 +340,6 @@ interface PurpleCoordinat {
 
 type PurpleOS = 'mac' | 'linux';
 
-/**
- * use repository instead
- */
 interface Repository {
   branch?: string;
   git?: BucketGit;
@@ -393,9 +369,6 @@ interface BaseClass {
   owner?: string;
 }
 
-/**
- * use builds instead
- */
 interface Build {
   asmflags?: Asmflags;
   binary?: string;
@@ -474,9 +447,6 @@ interface Changelog {
   disable?: Skip;
   filters?: Filters;
   groups?: GroupElement[];
-  /**
-   * use disable instead
-   */
   skip?: Skip;
   sort?: Sort;
   use?: ChangelogUse;
@@ -664,9 +634,6 @@ interface KrewElement {
   goarm?: ChatID;
   homepage?: string;
   ids?: string[];
-  /**
-   * use repository instead
-   */
   index?: Repository;
   name?: string;
   repository?: Repository;
@@ -927,13 +894,7 @@ interface SbomElement {
 
 type SbomArtifacts = 'source' | 'package' | 'archive' | 'binary' | 'any';
 
-/**
- * use scoops instead
- */
 interface Scoop {
-  /**
-   * use repository instead
-   */
   bucket?: Repository;
   commit_author?: CommitAuthor;
   commit_msg_template?: string;
@@ -1035,9 +996,6 @@ interface Source {
   format?: SourceFormat;
   name_template?: string;
   prefix_template?: string;
-  /**
-   * you can now remove this
-   */
   rlcp?: Skip;
 }
 
