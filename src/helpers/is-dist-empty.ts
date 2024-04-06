@@ -1,6 +1,6 @@
 import { readdir, stat } from 'fs/promises';
 import { Arguments } from 'yargs';
-import { Context } from '../gorealiser';
+import { Context } from '../core/gorealiser';
 
 export const isDistEmptyCheck = async (argv: Arguments<DefaultParams>) => {
   if (argv.clear) {

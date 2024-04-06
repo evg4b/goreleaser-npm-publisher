@@ -3,7 +3,7 @@ import { readdir } from 'fs/promises';
 import { sortBy } from 'lodash';
 import { promisify } from 'util';
 import { ArgumentsCamelCase } from 'yargs';
-import { Context } from '../gorealiser';
+import { Context } from '../core/gorealiser';
 import { buildHandler } from './build';
 
 const exec = promisify(execOrignial);

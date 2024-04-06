@@ -4,10 +4,10 @@ import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
 import { ArgumentsCamelCase } from 'yargs';
 import js from '../core/js';
-import { parseArtifactsFile, parseMetadata, writePackage } from '../files';
-import { Context } from '../gorealiser';
+import { parseArtifactsFile, parseMetadata, writePackage } from '../core/files';
+import { Context } from '../core/gorealiser';
 import { binArtifactPredicate } from '../helpers';
-import { formatMainPackageJson, formatPackageJson, transformPackage } from '../package';
+import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
 
 export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async (args) => {
   const context = new Context(args.project);

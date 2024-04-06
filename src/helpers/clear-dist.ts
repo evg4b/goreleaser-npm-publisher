@@ -1,6 +1,6 @@
 import { mkdir, rm } from 'node:fs/promises';
 import { MiddlewareFunction } from 'yargs';
-import { Context } from '../gorealiser';
+import { Context } from '../core/gorealiser';
 
 export const createDistFolder: MiddlewareFunction<DefaultParams> = async (args): Promise<void> => {
   const context = new Context(args.project);
