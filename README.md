@@ -18,7 +18,7 @@
     <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/goreleaser-npm-publisher?logo=npm">
   </a>
   <a href="https://www.npmjs.com/package/goreleaser-npm-publisher" title="NPM Unpacked Size">
-    <img alt="NPM Unpacked Size" src="https://img.shields.io/npm/unpacked-size/goreleaser-npm-publisher">
+    <img alt="NPM Unpacked Size" src="https://img.shields.io/npm/unpacked-size/goreleaser-npm-publisher?logo=npm">
   </a>
   <br/>
   <a href="https://github.com/evg4b/goreleaser-npm-publisher/actions?query=branch%3Amain">
