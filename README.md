@@ -110,3 +110,34 @@ go-package_darwin_arm64@0.0.17
   cpu: arm64
   bin: /Users/<user>/go-package/dist/npm/dist-go-package-darwin-arm-64-go-package
 ```
+
+## Supported platforms and architectures:
+
+### Platforms:
+
+| GOOS    | Node.js Platform |
+|---------|------------------|
+| darwin  | darwin           |
+| linux   | linux            |
+| windows | win32            |
+| android | android          |
+| aix     | aix              |
+| freebsd | freebsd          |
+| openbsd | openbsd          |
+| solaris | sunos            |
+| netbsd  | netbsd           |
+
+### Architectures:
+
+| GOARCH  | Node.js Platform |
+|---------|------------------|
+| amd64   | x64              | 
+| 386     | ia32             | 
+| arm     | arm              | 
+| arm64   | arm64            | 
+| s390x   | s390x            | 
+| s390    | s390             | 
+| riscv64 | riscv64          | 
+| ppc64   | ppc64            | 
+| ppc     | ppc              | 
+| mips    | mips             | 
