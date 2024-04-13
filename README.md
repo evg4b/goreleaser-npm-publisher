@@ -111,6 +111,44 @@ go-package_darwin_arm64@0.0.17
   bin: /Users/<user>/go-package/dist/npm/dist-go-package-darwin-arm-64-go-package
 ```
 
+## Use as a CLI tool
+
+Goreleaser-npm-publisher can be used as general npm cli tool.
+
+Via npx:
+
+```bash
+npx -y goreleaser-npm-publisher publish --clear --project <path-to-goreleaser-project>
+```
+
+or install globally:
+
+```bash
+npm install -g goreleaser-npm-publisher
+goreleaser-npm-publisher publish --clear --project <path-to-goreleaser-project>
+```
+
+### Commands and options:
+
+TBD
+
+## Use as a GitHub Action
+
+You can use `goreleaser-npm-publisher` as a GitHub Action.
+
+```yaml
+- name: Publish to npm
+  uses: evg4b/goreleaser-npm-publisher@main
+  with:
+    project: .
+    clear: true
+    prefix: "evg4b"
+  env:
+    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+for more details see [GitHub Action documentation](https://github.com/evg4b/goreleaser-npm-publisher-action)
+
 ## Supported platforms and architectures:
 
 ### Platforms:
