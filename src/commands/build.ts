@@ -32,6 +32,7 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
     await copyFile(sourceArtifactPath, npmArtifact);
     const packageJsonObject = formatPackageJson(packageDefinition, args.description, args.prefix);
     await writePackage(context.packageJson(pathItems[1]), packageJsonObject);
+    await copyFile(context.readme, context.readmeForPackage(pathItems[1]));
   }
 
   const packageJsonObject = formatMainPackageJson(packages, metadata, args.description, args.prefix);
@@ -42,6 +43,7 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
     buildExecScript(packages, args.prefix),
     'utf-8',
   );
+  await copyFile(context.readme, context.readmeForPackage(metadata.project_name));
 };
 
 const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {

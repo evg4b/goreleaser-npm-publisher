@@ -16,11 +16,19 @@ export class Context {
     return join(this.projectPath, 'dist', 'npm');
   }
 
+  public get readme(): string {
+    return join(this.projectPath, 'README.md');
+  }
+
   public packageFolder(...[packageName, ...other]: string[]): string {
     return join(this.distPath, kebabCase(packageName), ...other);
   }
 
   public packageJson(packageName: string): string {
     return join(this.projectPath, 'dist', 'npm', kebabCase(packageName), 'package.json');
+  }
+
+  public readmeForPackage(packageName: string): string {
+    return join(this.projectPath, 'dist', 'npm', kebabCase(packageName), 'README.md');
   }
 }
