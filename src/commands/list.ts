@@ -7,11 +7,19 @@ import { formatMainPackageJson, formatPackageJson, transformPackage } from '../c
 import { binArtifactPredicate } from '../helpers';
 
 const formatPackage = (context: Context, json: PackageJson, pkg?: PackageDefinition) => {
-  console.log(`${ green(json.name) }${ gray(`@${ json.version.replaceAll('v', '') }`) }`);
+  console.log(green(json.name));
+  console.log(gray(`  version: ${ json.version }`));
+  console.log(gray(`  description: ${ json.description }`));
   console.log(gray(`  os: ${ json.os.join(', ') }`));
   console.log(gray(`  cpu: ${ json.cpu.join(', ') }`));
   if (pkg) {
     console.log(gray(`  bin: ${ context.packageFolder(pkg.sourceBinary) }`));
+  }
+  if (json.optionalDependencies) {
+    console.log(gray('  optionalDependencies:'));
+    for (const [name, version] of Object.entries(json.optionalDependencies)) {
+      console.log(gray(`    ${ name }@${ version }`));
+    }
   }
 };
 
@@ -34,16 +42,19 @@ export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | 
       };
     });
 
-  const definitions = descriptions.map(({ definition }) => definition);
-  const mainPackage = formatMainPackageJson(definitions, metadata, args.prefix);
+  const mainPackage = formatMainPackageJson(
+    descriptions.map(({ definition }) => definition),
+    metadata,
+    args.prefix,
+  );
 
   console.log(header('   Main package:'));
   console.log('');
   formatPackage(context, mainPackage);
   console.log('');
   console.log(header('   Platform packages:'));
-  console.log('');
   for (const { definition, json } of descriptions) {
+    console.log('');
     formatPackage(context, json, definition);
   }
 };
