@@ -2,7 +2,8 @@
   "name": "goreleaser-npm-publisher",
   "version": "0.0.1-alpha.2",
   "description": "Build and publish npm packages based on goreleaser output folder",
-  "bin": "dist/index.js",
+  "bin": "dist/cli.js",
+  "main": "dist/index.js",
   "author": {
     "email": "evg.abramovitch@gmail.com",
     "name": "Evgeny Abramovich",

@@ -3394,7 +3394,7 @@ __metadata:
     yaml: "npm:^2.4.1"
     yargs: "npm:^17.7.2"
   bin:
-    goreleaser-npm-publisher: dist/index.js
+    goreleaser-npm-publisher: dist/cli.js
   languageName: unknown
   linkType: soft
 
