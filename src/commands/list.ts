@@ -9,7 +9,9 @@ import { binArtifactPredicate } from '../helpers';
 const formatPackage = (context: Context, json: PackageJson, pkg?: PackageDefinition) => {
   console.log(green(json.name));
   console.log(gray(`  version: ${ json.version }`));
-  console.log(gray(`  description: ${ json.description }`));
+  if (json.description) {
+    console.log(gray(`  description: ${ json.description }`));
+  }
   console.log(gray(`  os: ${ json.os.join(', ') }`));
   console.log(gray(`  cpu: ${ json.cpu.join(', ') }`));
   if (pkg) {
@@ -38,13 +40,14 @@ export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | 
 
       return {
         definition,
-        json: formatPackageJson(definition, args.prefix),
+        json: formatPackageJson(definition, args.description, args.prefix),
       };
     });
 
   const mainPackage = formatMainPackageJson(
     descriptions.map(({ definition }) => definition),
     metadata,
+    args.description,
     args.prefix,
   );
 

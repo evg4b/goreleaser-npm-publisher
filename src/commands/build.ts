@@ -30,11 +30,11 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
     packages.push(packageDefinition);
 
     await copyFile(sourceArtifactPath, npmArtifact);
-    const packageJsonObject = formatPackageJson(packageDefinition, args.prefix);
+    const packageJsonObject = formatPackageJson(packageDefinition, args.description, args.prefix);
     await writePackage(context.packageJson(pathItems[1]), packageJsonObject);
   }
 
-  const packageJsonObject = formatMainPackageJson(packages, metadata, args.prefix);
+  const packageJsonObject = formatMainPackageJson(packages, metadata, args.description, args.prefix);
   await mkdir(context.packageFolder(metadata.project_name), { recursive: true });
   await writePackage(context.packageJson(metadata.project_name), packageJsonObject);
   await writeFile(

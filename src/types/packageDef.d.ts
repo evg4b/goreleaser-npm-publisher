@@ -15,7 +15,7 @@ interface PackageDefinition {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface PackageJson {
   name: string;
-  description: string;
+  description?: string;
   version: string;
   optionalDependencies?: Record<string, string>;
   bin: string;

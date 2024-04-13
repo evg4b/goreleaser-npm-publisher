@@ -29,6 +29,10 @@ void scriptName('goreleaser-npm-publisher')
     describe: 'Prefix for the npm package',
     default: '@wserdtryftvubhijnokmpl',
   })
+  .option('description', {
+    type: 'string',
+    describe: 'Description for the npm package',
+  })
   .command(
     'list',
     'List the project',
