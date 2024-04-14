@@ -22,7 +22,7 @@ export const formatPackageJson = (
   name: formatPackageName(pkg, prefix),
   description,
   version: pkg.version,
-  bin: pkg.bin,
+  bin: { [pkg.name]: pkg.bin },
   os: [pkg.os],
   cpu: [pkg.cpu],
 });
@@ -44,7 +44,7 @@ export const formatMainPackageJson = (
   name: formatPackageName(metadata, prefix),
   description,
   version: metadata.version,
-  bin: 'index.js',
+  bin: { [metadata.project_name]: 'index.js' },
   optionalDependencies: packages.reduce<Record<string, string>>((dependencies, pkg) => ({
     ...dependencies,
     [formatPackageName(pkg, prefix)]: metadata.version,

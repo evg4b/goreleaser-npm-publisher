@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash';
+import * as console from 'node:console';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
@@ -33,6 +34,7 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
     const packageJsonObject = formatPackageJson(packageDefinition, args.description, args.prefix);
     await writePackage(context.packageJson(pathItems[1]), packageJsonObject);
     await copyFile(context.readme, context.readmeForPackage(pathItems[1]));
+    console.log(`Built package ${ pathItems[1] }`);
   }
 
   const packageJsonObject = formatMainPackageJson(packages, metadata, args.description, args.prefix);
@@ -56,7 +58,8 @@ const buildExecScript = (packages: PackageDefinition[], prefix: string | undefin
     ? js`path.dirname(__dirname)`
     : js`path.dirname(path.dirname(__dirname))`;
 
-  const code = js`const path = require('path');
+  const code = js`#!/usr/bin/env node
+const path = require('path');
 const child_process = require('child_process');
 const mapping = ${ mapping };
 const modulesDirectory = ${ directory };
