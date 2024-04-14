@@ -1,6 +1,6 @@
 {
   "name": "goreleaser-npm-publisher",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.4",
   "description": "Build and publish npm packages based on goreleaser output folder",
   "bin": "dist/cli.js",
   "main": "dist/index.js",
@@ -60,6 +60,6 @@
     "yargs": "^17.7.2"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   }
 }

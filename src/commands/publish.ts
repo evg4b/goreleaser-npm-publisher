@@ -1,4 +1,4 @@
-import { exec as execOrignial } from 'child_process';
+import { exec as execOrignial, type ExecOptions } from 'child_process';
 import { readdir } from 'fs/promises';
 import { sortBy } from 'lodash';
 import { promisify } from 'util';
@@ -15,10 +15,15 @@ export const publishHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void
   const packageFolders = sortBy(await readdir(context.distPath), p => -p.length);
   for (const packageFolder of packageFolders) {
     console.log(context.packageFolder(packageFolder));
-    const { stdout } = await exec('npm publish --access public', {
+    const options: ExecOptions = {
       env: process.env,
       cwd: context.packageFolder(packageFolder),
-    });
+    };
+    const { stdout: fixes } = await exec('npm pkg fix', options);
+    if (fixes.trim()) {
+      console.log(fixes);
+    }
+    const { stdout } = await exec('npm publish --access public', options);
     console.log(stdout);
   }
 };

@@ -16,6 +16,7 @@ void scriptName('goreleaser-npm-publisher')
     alias: 'b',
     type: 'string',
     describe: 'Name of the builder',
+    demandOption: true,
   })
   .option('clear', {
     alias: 'c',
