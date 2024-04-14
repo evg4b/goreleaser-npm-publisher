@@ -5,7 +5,7 @@ import { normalizeOS } from './os';
 export const transformPackage = (artifact: BinaryArtifact, metadata: Metadata): PackageDefinition => {
   return ({
     name: `${ metadata.project_name }_${ artifact.goos }_${ artifact.goarch }`,
-    version: `v${ metadata.version }`,
+    version: metadata.version,
     os: normalizeOS(artifact.goos),
     cpu: normalizeArch(artifact.goarch),
     bin: `${ artifact.extra.Binary }${ artifact.extra.Ext }`,
@@ -43,7 +43,7 @@ export const formatMainPackageJson = (
 ): PackageJson => normalize({
   name: formatPackageName(metadata, prefix),
   description,
-  version: `v${ metadata.version }`,
+  version: metadata.version,
   bin: 'index.js',
   optionalDependencies: packages.reduce<Record<string, string>>((dependencies, pkg) => ({
     ...dependencies,
