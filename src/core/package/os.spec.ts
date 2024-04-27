@@ -2,7 +2,7 @@ import { normalizeOS } from './os';
 
 describe('os', () => {
   describe('should normalize os', () => {
-    const testCases = [
+    const testCases: { input: GOOS, expected: OS }[] = [
       { input: 'darwin', expected: 'darwin' },
       { input: 'linux', expected: 'linux' },
       { input: 'windows', expected: 'win32' },
@@ -22,7 +22,7 @@ describe('os', () => {
   });
 
   describe('should throw error', () => {
-    const testCases = [
+    const testCases: GOOS[] = [
       'dragonfly',
       'hurd',
       'illumos',
@@ -41,7 +41,7 @@ describe('os', () => {
     });
 
     it('should throw error when os is unknown', () => {
-      expect(() => normalizeOS('unknown'))
+      expect(() => normalizeOS('unknown' as unknown as GOOS))
         .toThrow('unknown is not supported');
     });
   });

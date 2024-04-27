@@ -1,10 +1,9 @@
-/**
- * For a detailed explanation regarding each configuration property, visit:
- * https://jestjs.io/docs/configuration
- */
-
-const config = {
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+module.exports = {
   clearMocks: true,
+  cache: true,
+  preset: 'ts-jest',
+  testEnvironment: 'node',
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coveragePathIgnorePatterns: [
@@ -18,10 +17,10 @@ const config = {
     '!src/**/*.spec.ts',
     '!src/**/*.d.ts',
   ],
-  transform: {
-    '^.+\\.tsx?$': 'jest-esbuild',
-  },
   verbose: true,
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', {
+      tsconfig: 'tsconfig.spec.json',
+    }],
+  },
 };
-
-module.exports = config;

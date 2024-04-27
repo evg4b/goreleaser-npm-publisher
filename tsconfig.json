@@ -23,8 +23,7 @@
     "noImplicitOverride": true,
     "noUnusedParameters": true,
     "typeRoots": [
-      "node_modules/@types",
-      "./src/types.d.ts"
+      "node_modules/@types"
     ],
     "lib": [
       "esNext"

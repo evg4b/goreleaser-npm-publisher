@@ -2,7 +2,7 @@ import { normalizeArch } from './arch';
 
 describe('arch', () => {
   describe('should normalize arch', () => {
-    const testCases = [
+    const testCases: { input: GOARCH; expected: CPU; }[] = [
       { input: 'amd64', expected: 'x64' },
       { input: '386', expected: 'ia32' },
       { input: 'arm', expected: 'arm' },
@@ -22,7 +22,7 @@ describe('arch', () => {
   });
 
   describe('should throw error', () => {
-    const testCases = [
+    const testCases: GOARCH[] = [
       'amd64p32',
       'arm64be',
       'armbe',
@@ -47,7 +47,7 @@ describe('arch', () => {
     });
 
     it('should throw error when arch is unknown', () => {
-      expect(() => normalizeArch('unknown'))
+      expect(() => normalizeArch('unknown' as unknown as GOARCH))
         .toThrow('unknown is not supported');
     });
   });
