@@ -1,3 +1,4 @@
+import { glob } from 'glob';
 import { isEmpty } from 'lodash';
 import * as console from 'node:console';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
@@ -19,6 +20,11 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
 
   const packages: PackageDefinition[] = [];
 
+  const files = await glob(args.files, {
+    ignore: 'node_modules/**',
+    cwd: args.project,
+  });
+
   for (const artifact of binaryArtifacts) {
     const pathItems = artifact.path.split(sep);
     const { path } = artifact;
@@ -33,7 +39,12 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
     await copyFile(sourceArtifactPath, npmArtifact);
     const packageJsonObject = formatPackageJson(packageDefinition, args.description, args.prefix);
     await writePackage(context.packageJson(pathItems[1]), packageJsonObject);
-    await copyFile(context.readme, context.readmeForPackage(pathItems[1]));
+    for (const file of files) {
+      const sourceFile = context.project(file);
+      const destFile = context.packageFolder(pathItems[1], file);
+      console.log(`Copied file ${ sourceFile }, to ${ destFile }`);
+      await copyFile(sourceFile, destFile);
+    }
     console.log(`Built package ${ pathItems[1] }`);
   }
 
@@ -45,7 +56,12 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
     buildExecScript(packages, args.prefix),
     'utf-8',
   );
-  await copyFile(context.readme, context.readmeForPackage(metadata.project_name));
+  for (const file of files) {
+    const sourceFile = context.project(file);
+    const destFile = context.packageFolder(metadata.project_name, file);
+    console.log(`Copied file ${ sourceFile }, to ${ destFile }`);
+    await copyFile(sourceFile, destFile);
+  }
 };
 
 const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {

@@ -16,8 +16,8 @@ export class Context {
     return join(this.projectPath, 'dist', 'npm');
   }
 
-  public get readme(): string {
-    return join(this.projectPath, 'README.md');
+  public project(...parts: string[]): string {
+    return join(this.projectPath, ...parts);
   }
 
   public packageFolder(...[packageName, ...other]: string[]): string {

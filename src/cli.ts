@@ -32,6 +32,11 @@ void scriptName('goreleaser-npm-publisher')
     type: 'string',
     describe: 'Description for the npm package',
   })
+  .option('files', {
+    type: 'array',
+    describe: 'File globs to include in the npm package',
+    default: ['readme.md', 'license'],
+  })
   .command(
     'list',
     'List the project',
