@@ -19,7 +19,7 @@ export default defineConfig(async options => {
     minify: isProd,
     outDir: 'dist',
     format: 'cjs',
-    dts: false,
+    dts: true,
     platform: 'node',
     treeshake: true,
     bundle: true,
