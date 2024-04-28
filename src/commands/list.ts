@@ -3,6 +3,7 @@ import { bgWhite, black, gray, green } from 'picocolors';
 import { type ArgumentsCamelCase, terminalWidth } from 'yargs';
 import { findFiles, parseArtifactsFile, parseMetadata } from '../core/files';
 import { Context } from '../core/gorealiser';
+import { type ExecContext } from '../core/logger';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
 import { binArtifactPredicate } from '../helpers';
 
@@ -30,7 +31,9 @@ const header = (text: string) => {
   return bgWhite(black(`${ text }${ space }`.slice(0, terminalWidth())));
 };
 
-export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async args => {
+type ActionType = ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>));
+
+export const listHandler = (ctx: ExecContext): ActionType => (async args => {
   const context = new Context(args.project);
   const metadata = await parseMetadata(context.metadataPath);
   const artifacts = await parseArtifactsFile(context.artifactsPath);
@@ -53,14 +56,14 @@ export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | 
     files,
   );
 
-  console.log(header('   Main package:'));
-  console.log('');
+  ctx.info(header('   Main package:'));
+  ctx.info('');
   formatPackage(context, mainPackage);
-  console.log('');
-  console.log(header('   Platform packages:'));
+  ctx.info('');
+  ctx.info(header('   Platform packages:'));
   for (const { definition, json } of descriptions) {
-    console.log('');
+    ctx.info('');
     formatPackage(context, json, definition);
   }
-};
+});
 

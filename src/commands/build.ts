@@ -1,5 +1,4 @@
 import { isEmpty } from 'lodash';
-import * as console from 'node:console';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
@@ -7,58 +6,57 @@ import type { ArgumentsCamelCase } from 'yargs';
 import { findFiles, parseArtifactsFile, parseMetadata, writePackage } from '../core/files';
 import { Context } from '../core/gorealiser';
 import js from '../core/js';
+import { type ExecContext } from '../core/logger';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
 import { binArtifactPredicate } from '../helpers';
 
-export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>)) = async args => {
+type ActionType = ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>));
+
+const copyPackageFiles = async (ctx: ExecContext, context: Context, name: string, files: string[]) => {
+  for (const file of files) {
+    const sourceFile = context.project(file);
+    const destFile = context.packageFolder(name, file);
+    ctx.info(`Copied file ${ sourceFile }, to ${ destFile }`);
+    await copyFile(sourceFile, destFile);
+  }
+};
+
+export const buildHandler = (ctx: ExecContext): ActionType => (async args => {
   const context = new Context(args.project);
   const artifacts = await parseArtifactsFile(context.artifactsPath);
   const metadata = await parseMetadata(context.metadataPath);
 
-  const binaryArtifacts = artifacts.filter(binArtifactPredicate(args.builder));
-
   const packages: PackageDefinition[] = [];
-
+  const binaryArtifacts = artifacts.filter(binArtifactPredicate(args.builder));
   const files = await findFiles(args.project, args.files);
 
   for (const artifact of binaryArtifacts) {
     const pathItems = artifact.path.split(sep);
-    const { path } = artifact;
-    const sourceArtifactPath = join(args.project, path);
-    const { base } = parsePath(path);
-    const npmArtifactPath = context.packageFolder(pathItems[1]);
-    await mkdir(npmArtifactPath, { recursive: true });
-    const npmArtifact = join(npmArtifactPath, base);
-    const packageDefinition = transformPackage(artifact, metadata, files);
-    packages.push(packageDefinition);
+    await ctx.group(`Built package ${ pathItems[1] }`, async () => {
+      const sourceArtifactPath = join(args.project, artifact.path);
+      const { base } = parsePath(artifact.path);
+      const npmArtifactPath = context.packageFolder(pathItems[1]);
+      await mkdir(npmArtifactPath, { recursive: true });
+      const npmArtifact = join(npmArtifactPath, base);
+      const packageDefinition = transformPackage(artifact, metadata, files);
 
-    await copyFile(sourceArtifactPath, npmArtifact);
-    const packageJsonObject = formatPackageJson(packageDefinition, args.description, args.prefix, files);
-    await writePackage(context.packageJson(pathItems[1]), packageJsonObject);
-    for (const file of files) {
-      const sourceFile = context.project(file);
-      const destFile = context.packageFolder(pathItems[1], file);
-      console.log(`Copied file ${ sourceFile }, to ${ destFile }`);
-      await copyFile(sourceFile, destFile);
-    }
-    console.log(`Built package ${ pathItems[1] }`);
+      packages.push(packageDefinition);
+
+      await copyFile(sourceArtifactPath, npmArtifact);
+      const packageJsonObject = formatPackageJson(packageDefinition, args.description, args.prefix, files);
+      await writePackage(context.packageJson(pathItems[1]), packageJsonObject);
+
+      await copyPackageFiles(ctx, context, pathItems[1], files);
+    });
   }
 
   const packageJsonObject = formatMainPackageJson(packages, metadata, args.description, args.prefix, files);
   await mkdir(context.packageFolder(metadata.project_name), { recursive: true });
   await writePackage(context.packageJson(metadata.project_name), packageJsonObject);
-  await writeFile(
-    join(context.packageFolder(metadata.project_name), 'index.js'),
-    buildExecScript(packages, args.prefix),
-    'utf-8',
-  );
-  for (const file of files) {
-    const sourceFile = context.project(file);
-    const destFile = context.packageFolder(metadata.project_name, file);
-    console.log(`Copied file ${ sourceFile }, to ${ destFile }`);
-    await copyFile(sourceFile, destFile);
-  }
-};
+  const indexJsFile = join(context.packageFolder(metadata.project_name), 'index.js');
+  await writeFile(indexJsFile, buildExecScript(packages, args.prefix), 'utf-8');
+  await copyPackageFiles(ctx, context, metadata.project_name, files);
+});
 
 const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
   const mapping = packages.reduce<Record<string, string[]>>((mappings, pkg) => {
