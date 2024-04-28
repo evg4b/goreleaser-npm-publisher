@@ -1,10 +1,16 @@
 #!/usr/bin/env node
 import { identity } from 'lodash';
+import * as console from 'node:console';
 import { scriptName, terminalWidth } from 'yargs';
 import { buildHandler, listHandler, publishHandler } from './commands';
 import { createDistFolder, isDistEmptyCheck } from './helpers';
 
+console.log();
+console.log(`goreleaser-npm-publisher v${ __VERSION__ }`);
+console.log();
+
 void scriptName('goreleaser-npm-publisher')
+  .version(__VERSION__)
   .usage('$0 <cmd> [args]')
   .option('project', {
     alias: 'p',

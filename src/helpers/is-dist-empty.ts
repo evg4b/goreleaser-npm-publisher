@@ -2,7 +2,9 @@ import { readdir, stat } from 'fs/promises';
 import type { Arguments } from 'yargs';
 import { Context } from '../core/gorealiser';
 
-export const isDistEmptyCheck = async (argv: Arguments<DefaultParams>) => {
+type IsDistEmptyParams = Pick<DefaultParams, 'project' | 'clear'>;
+
+export const isDistEmptyCheck = async (argv: Arguments<IsDistEmptyParams>) => {
   if (argv.clear) {
     return true;
   }
