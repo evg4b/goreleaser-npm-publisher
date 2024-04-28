@@ -1,8 +1,7 @@
-import { glob } from 'glob';
 import * as console from 'node:console';
 import { bgWhite, black, gray, green } from 'picocolors';
 import { type ArgumentsCamelCase, terminalWidth } from 'yargs';
-import { parseArtifactsFile, parseMetadata } from '../core/files';
+import { findFiles, parseArtifactsFile, parseMetadata } from '../core/files';
 import { Context } from '../core/gorealiser';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
 import { binArtifactPredicate } from '../helpers';
@@ -35,10 +34,7 @@ export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | 
   const context = new Context(args.project);
   const metadata = await parseMetadata(context.metadataPath);
   const artifacts = await parseArtifactsFile(context.artifactsPath);
-  const files = await glob(args.files, {
-    ignore: 'node_modules/**',
-    cwd: args.project,
-  });
+  const files = await findFiles(args.project, args.files);
   const descriptions = artifacts.filter(binArtifactPredicate(args.builder))
     .map(artifact => {
       const definition = transformPackage(artifact, metadata, files);

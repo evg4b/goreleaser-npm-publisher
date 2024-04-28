@@ -1,11 +1,10 @@
-import { glob } from 'glob';
 import { isEmpty } from 'lodash';
 import * as console from 'node:console';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
 import type { ArgumentsCamelCase } from 'yargs';
-import { parseArtifactsFile, parseMetadata, writePackage } from '../core/files';
+import { findFiles, parseArtifactsFile, parseMetadata, writePackage } from '../core/files';
 import { Context } from '../core/gorealiser';
 import js from '../core/js';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
@@ -20,10 +19,7 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
 
   const packages: PackageDefinition[] = [];
 
-  const files = await glob(args.files, {
-    ignore: 'node_modules/**',
-    cwd: args.project,
-  });
+  const files = await findFiles(args.project, args.files);
 
   for (const artifact of binaryArtifacts) {
     const pathItems = artifact.path.split(sep);
