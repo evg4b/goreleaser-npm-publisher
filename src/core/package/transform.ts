@@ -2,7 +2,7 @@ import { isEmpty, uniq } from 'lodash';
 import { normalizeArch } from './arch';
 import { normalizeOS } from './os';
 
-export const transformPackage = (artifact: BinaryArtifact, metadata: Metadata): PackageDefinition => {
+export const transformPackage = (artifact: BinaryArtifact, metadata: Metadata, files: string[]): PackageDefinition => {
   return ({
     name: `${ metadata.project_name }_${ artifact.goos }_${ artifact.goarch }`,
     version: metadata.version,
@@ -11,6 +11,7 @@ export const transformPackage = (artifact: BinaryArtifact, metadata: Metadata): 
     bin: `${ artifact.extra.Binary }${ artifact.extra.Ext }`,
     sourceBinary: artifact.path,
     destinationBinary: artifact.path,
+    files,
   });
 };
 
@@ -18,6 +19,7 @@ export const formatPackageJson = (
   pkg: PackageDefinition,
   description: string | undefined,
   prefix: string | undefined,
+  files: string[],
 ): PackageJson => normalize({
   name: formatPackageName(pkg, prefix),
   description,
@@ -25,6 +27,7 @@ export const formatPackageJson = (
   bin: { [pkg.name]: pkg.bin },
   os: [pkg.os],
   cpu: [pkg.cpu],
+  files,
 });
 
 export const formatPackageName = (pkg: PackageDefinition | Metadata, prefix: string | undefined): string => {
@@ -40,6 +43,7 @@ export const formatMainPackageJson = (
   metadata: Metadata,
   description: string | undefined,
   prefix: string | undefined,
+  files: string[],
 ): PackageJson => normalize({
   name: formatPackageName(metadata, prefix),
   description,
@@ -51,6 +55,7 @@ export const formatMainPackageJson = (
   }), {}),
   os: uniq(packages.map(pkg => pkg.os)),
   cpu: uniq(packages.map(pkg => pkg.cpu)),
+  files,
 });
 
 const normalize = ({ description, ...other }: PackageJson): PackageJson => {

@@ -10,6 +10,7 @@ interface PackageDefinition {
   destinationBinary: string;
   os: OS;
   cpu: CPU;
+  files: string[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -21,4 +22,5 @@ interface PackageJson {
   bin: Record<string, string>;
   os: OS[],
   cpu: CPU[];
+  files: string[];
 }

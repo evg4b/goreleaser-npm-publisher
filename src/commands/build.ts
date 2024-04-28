@@ -33,11 +33,11 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
     const npmArtifactPath = context.packageFolder(pathItems[1]);
     await mkdir(npmArtifactPath, { recursive: true });
     const npmArtifact = join(npmArtifactPath, base);
-    const packageDefinition = transformPackage(artifact, metadata);
+    const packageDefinition = transformPackage(artifact, metadata, files);
     packages.push(packageDefinition);
 
     await copyFile(sourceArtifactPath, npmArtifact);
-    const packageJsonObject = formatPackageJson(packageDefinition, args.description, args.prefix);
+    const packageJsonObject = formatPackageJson(packageDefinition, args.description, args.prefix, files);
     await writePackage(context.packageJson(pathItems[1]), packageJsonObject);
     for (const file of files) {
       const sourceFile = context.project(file);
@@ -48,7 +48,7 @@ export const buildHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void |
     console.log(`Built package ${ pathItems[1] }`);
   }
 
-  const packageJsonObject = formatMainPackageJson(packages, metadata, args.description, args.prefix);
+  const packageJsonObject = formatMainPackageJson(packages, metadata, args.description, args.prefix, files);
   await mkdir(context.packageFolder(metadata.project_name), { recursive: true });
   await writePackage(context.packageJson(metadata.project_name), packageJsonObject);
   await writeFile(

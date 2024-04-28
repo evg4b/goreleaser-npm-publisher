@@ -1,3 +1,4 @@
+import { glob } from 'glob';
 import * as console from 'node:console';
 import { bgWhite, black, gray, green } from 'picocolors';
 import { type ArgumentsCamelCase, terminalWidth } from 'yargs';
@@ -34,13 +35,17 @@ export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | 
   const context = new Context(args.project);
   const metadata = await parseMetadata(context.metadataPath);
   const artifacts = await parseArtifactsFile(context.artifactsPath);
+  const files = await glob(args.files, {
+    ignore: 'node_modules/**',
+    cwd: args.project,
+  });
   const descriptions = artifacts.filter(binArtifactPredicate(args.builder))
     .map(artifact => {
-      const definition = transformPackage(artifact, metadata);
+      const definition = transformPackage(artifact, metadata, files);
 
       return {
         definition,
-        json: formatPackageJson(definition, args.description, args.prefix),
+        json: formatPackageJson(definition, args.description, args.prefix, files),
       };
     });
 
@@ -49,6 +54,7 @@ export const listHandler: ((args: ArgumentsCamelCase<DefaultParams>) => (void | 
     metadata,
     args.description,
     args.prefix,
+    files,
   );
 
   console.log(header('   Main package:'));
