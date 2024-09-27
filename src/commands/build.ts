@@ -27,7 +27,8 @@ export const buildHandler = (ctx: ExecContext): ActionType => (async args => {
   const metadata = await parseMetadata(context.metadataPath);
 
   const packages: PackageDefinition[] = [];
-  const binaryArtifacts = artifacts.filter(binArtifactPredicate(args.builder));
+  const builder = args.builder ?? metadata.project_name;
+  const binaryArtifacts = artifacts.filter(binArtifactPredicate(builder));
   const files = await findFiles(args.project, args.files);
 
   for (const artifact of binaryArtifacts) {

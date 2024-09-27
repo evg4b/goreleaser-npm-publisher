@@ -38,7 +38,8 @@ export const listHandler = (ctx: ExecContext): ActionType => (async args => {
   const metadata = await parseMetadata(context.metadataPath);
   const artifacts = await parseArtifactsFile(context.artifactsPath);
   const files = await findFiles(args.project, args.files);
-  const descriptions = artifacts.filter(binArtifactPredicate(args.builder))
+  const builder = args.builder ?? metadata.project_name;
+  const descriptions = artifacts.filter(binArtifactPredicate(builder))
     .map(artifact => {
       const definition = transformPackage(artifact, metadata, files);
 

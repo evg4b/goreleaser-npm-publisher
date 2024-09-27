@@ -17,7 +17,6 @@ const builderOption = <T>(builder: Argv<T>) => builder.option('builder', {
   alias: 'b',
   type: 'string',
   describe: 'Name of the builder',
-  demandOption: true,
 });
 
 const clearOption = <T>(builder: Argv<T>) => builder.option('clear', {
