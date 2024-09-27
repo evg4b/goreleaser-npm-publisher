@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import { type Argv, scriptName, terminalWidth } from 'yargs';
 import { buildHandler, listHandler, publishHandler } from './commands';
-import { ConsoleExecContext } from './core/logger';
+import { ConsoleLogger } from './core/logger';
 import { createDistFolder, isDistEmptyCheck } from './helpers';
 
-const context = new ConsoleExecContext(console);
+const context = new ConsoleLogger(console);
 
 const projectOption = <T>(builder: Argv<T>) =>
   builder.option('project', {

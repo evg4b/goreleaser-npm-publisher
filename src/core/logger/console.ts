@@ -1,6 +1,6 @@
-import { type ExecContext } from './exec-context';
+import { type Logger } from './logger';
 
-export class ConsoleExecContext implements ExecContext {
+export class ConsoleLogger implements Logger {
   constructor(private readonly output: typeof console) {}
 
   async group<T>(name: string, fn: () => Promise<T>): Promise<T> {
