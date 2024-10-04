@@ -2,7 +2,6 @@ import { isEmpty } from 'lodash';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
-import type { ArgumentsCamelCase } from 'yargs';
 import { findFiles, parseArtifactsFile, parseMetadata, writePackage } from '../core/files';
 import { Context } from '../core/gorealiser';
 import js from '../core/js';
@@ -10,13 +9,11 @@ import { type Logger } from '../core/logger';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
 import { binArtifactPredicate } from '../helpers';
 
-type ActionType = ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>));
-
 const copyPackageFiles = async (logger: Logger, context: Context, name: string, files: string[]) => {
   for (const file of files) {
     const sourceFile = context.project(file);
     const destFile = context.packageFolder(name, file);
-    logger.info(`Copied file ${ sourceFile }, to ${ destFile }`);
+    logger.debug(`Copied file ${ sourceFile } to ${ destFile }`);
     await copyFile(sourceFile, destFile);
   }
 };

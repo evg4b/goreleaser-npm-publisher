@@ -1,4 +1,3 @@
-import { type ArgumentsCamelCase } from 'yargs';
 import { findFiles, parseArtifactsFile, parseMetadata } from '../core/files';
 import { Context } from '../core/gorealiser';
 import { type Logger } from '../core/logger';
@@ -8,12 +7,12 @@ import { binArtifactPredicate } from '../helpers';
 const formatPackage = async (logger: Logger, context: Context, json: PackageJson, pkg?: PackageDefinition) => {
   await logger.group(`${ json.name }@${ json.version }`, () => {
     if (json.description) {
-      logger.debug(`description: ${ json.description }`);
+      logger.info(`description: ${ json.description }`);
     }
-    logger.debug(`os: ${ json.os.join(', ') }`);
-    logger.debug(`cpu: ${ json.cpu.join(', ') }`);
+    logger.info(`os: ${ json.os.join(', ') }`);
+    logger.info(`cpu: ${ json.cpu.join(', ') }`);
     if (pkg) {
-      logger.debug(`bin: ${ context.packageFolder(pkg.sourceBinary) }`);
+      logger.info(`bin: ${ context.packageFolder(pkg.sourceBinary) }`);
     }
     if (json.optionalDependencies) {
       logger.debug('  optionalDependencies:');
@@ -24,8 +23,6 @@ const formatPackage = async (logger: Logger, context: Context, json: PackageJson
     return Promise.resolve();
   });
 };
-
-type ActionType = ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>));
 
 export const listHandler = (logger: Logger): ActionType =>
   async args => {
@@ -61,4 +58,3 @@ export const listHandler = (logger: Logger): ActionType =>
       }
     });
   };
-

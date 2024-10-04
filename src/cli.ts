@@ -9,7 +9,7 @@ const projectOption = <T>(builder: Argv<T>) => builder.option('project', {
   alias: 'p',
   type: 'string',
   describe: 'Path to the project with was built by GoReleaser',
-  demandOption: true,
+  default: '.',
 });
 
 const builderOption = <T>(builder: Argv<T>) => builder.option('builder', {
@@ -42,7 +42,7 @@ const filesOption = <T>(builder: Argv<T>) => builder.option('files', {
   default: ['readme.md', 'license'],
 });
 
-const verboseOption = <T>(builder: Argv<T>) => builder.option('files', {
+const verboseOption = <T>(builder: Argv<T>) => builder.option('verbose', {
   type: 'boolean',
   describe: 'Show verbose output',
   default: false,
@@ -61,10 +61,7 @@ void scriptName('goreleaser-npm-publisher')
       .then(descriptionOption)
       .then(filesOption)
       .then(verboseOption),
-    ({ verbose, ...options }) =>
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error test
-      listHandler(new ConsoleLogger(console, !!verbose))(options),
+    ({ verbose, ...options }) => listHandler(new ConsoleLogger(console, verbose))({ ...options, clear: false }),
   )
   .command(
     'build',

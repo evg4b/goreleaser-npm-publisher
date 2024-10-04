@@ -2,10 +2,6 @@ import type { Arguments } from 'yargs';
 import { isDistEmptyCheck } from './is-dist-empty';
 
 describe('isDistEmpty', () => {
-  beforeEach(() => {
-    jest.mock('fs/promises');
-  });
-
   describe('dist folder is empty', () => {
     it('should return true', async () => {
       const argv = { project: '/project' } as Arguments<DefaultParams>;

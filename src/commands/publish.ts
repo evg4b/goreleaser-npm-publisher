@@ -1,15 +1,12 @@
-import { exec as execOrignial } from 'child_process';
+import { exec as execOriginal } from 'child_process';
 import { readdir } from 'fs/promises';
 import { sortBy } from 'lodash';
 import { promisify } from 'util';
-import type { ArgumentsCamelCase } from 'yargs';
 import { Context } from '../core/gorealiser';
 import { type Logger } from '../core/logger';
 import { buildHandler } from './build';
 
-const exec = promisify(execOrignial);
-
-type ActionType = ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>));
+const exec = promisify(execOriginal);
 
 export const publishHandler = (ctx: Logger): ActionType =>
   async args => {
