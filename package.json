@@ -4,6 +4,7 @@
   "description": "Build and publish npm packages based on goreleaser output folder",
   "bin": "dist/cli.js",
   "main": "dist/index.js",
+  "type": "module",
   "author": {
     "email": "evg.abramovitch@gmail.com",
     "name": "Evgeny Abramovich",

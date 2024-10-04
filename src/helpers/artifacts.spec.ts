@@ -2,7 +2,7 @@ import { binArtifactPredicate } from './artifacts';
 
 describe('artifacts', () => {
   const artifacts: Artifact[] = [
-    <BinaryArtifact>{
+    ({
       name: 'package',
       path: '/usr/bin/package',
       goos: 'linux',
@@ -15,8 +15,8 @@ describe('artifacts', () => {
         Ext: '.exe',
         ID: 'builder',
       },
-    },
-    <BinaryArtifact>{
+    } as BinaryArtifact),
+    ({
       name: 'package',
       path: '/usr/bin/package',
       goos: 'linux',
@@ -27,8 +27,8 @@ describe('artifacts', () => {
         Binary: 'package',
         ID: 'builder1',
       },
-    },
-    <BinaryArtifact>{
+    } as BinaryArtifact),
+    ({
       name: 'package',
       path: '/usr/bin/package',
       goos: 'linux',
@@ -39,8 +39,8 @@ describe('artifacts', () => {
         Binary: 'package',
         ID: 'builder',
       },
-    },
-    <ChecksumArtifact>{
+    } as BinaryArtifact),
+    ({
       name: 'checksum_file',
       path: '/path/to/checksum_file.txt',
       internal_type: 12,
@@ -49,8 +49,8 @@ describe('artifacts', () => {
         algorithm: 'SHA-256',
         value: 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6',
       },
-    },
-    <ArchiveArtifact>{
+    } as ChecksumArtifact),
+    ({
       name: 'my_archive',
       path: '/path/to/my_archive.tar.gz',
       goos: 'linux',
@@ -66,7 +66,7 @@ describe('artifacts', () => {
         Replaces: null,
         WrappedIn: 'my_folder',
       },
-    },
+    } as ArchiveArtifact),
   ];
 
   it('should return empty array when builder is not defined', () => {
@@ -79,7 +79,7 @@ describe('artifacts', () => {
     const actual = artifacts.filter(binArtifactPredicate('builder'));
 
     expect(actual).toEqual([
-      <BinaryArtifact>{
+      ({
         extra: {
           Binary: 'package',
           Ext: '.exe',
@@ -92,8 +92,8 @@ describe('artifacts', () => {
         name: 'package',
         path: '/usr/bin/package',
         type: 'Binary',
-      },
-      <BinaryArtifact>{
+      } as BinaryArtifact),
+      ({
         extra: {
           Binary: 'package',
           ID: 'builder',
@@ -104,7 +104,7 @@ describe('artifacts', () => {
         name: 'package',
         path: '/usr/bin/package',
         type: 'Binary',
-      },
+      } as BinaryArtifact),
     ]);
   });
 });

@@ -173,7 +173,7 @@ interface Webhook {
   content_type?: string;
   enabled?: boolean;
   endpoint_url?: string;
-  headers?: { [key: string]: string };
+  headers?: Record<string, string>;
   message_template?: string;
   skip_tls_verify?: boolean;
 }
@@ -229,7 +229,7 @@ interface ArtifactoryElement {
   client_x509_cert?: string;
   client_x509_key?: string;
   custom_artifact_name?: boolean;
-  custom_headers?: { [key: string]: string };
+  custom_headers?: Record<string, string>;
   exts?: string[];
   ids?: string[];
   method?: string;
@@ -614,7 +614,7 @@ interface KoElement {
   flags?: string[];
   id?: string;
   ko_data_creation_time?: string;
-  labels?: { [key: string]: string };
+  labels?: Record<string, string>;
   ldflags?: string[];
   main?: string;
   platforms?: string[];
@@ -678,7 +678,7 @@ interface NfpmElement {
   license?: string;
   maintainer?: string;
   meta?: boolean;
-  overrides?: { [key: string]: OverrideValue };
+  overrides?: Record<string, OverrideValue>;
   package_name?: string;
   prerelease?: string;
   priority?: string;
@@ -910,13 +910,13 @@ interface Scoop {
   post_install?: string[];
   pre_install?: string[];
   repository?: Repository;
-  shortcuts?: Array<string[]>;
+  shortcuts?: string[][];
   skip_upload?: Skip;
   url_template?: string;
 }
 
 interface SnapcraftElement {
-  apps?: { [key: string]: AppValue };
+  apps?: Record<string, AppValue>;
   assumes?: string[];
   base?: string;
   builds?: string[];
@@ -926,14 +926,14 @@ interface SnapcraftElement {
   disable?: Skip;
   extra_files?: SnapcraftExtraFile[];
   grade?: string;
-  hooks?: { [key: string]: unknown };
+  hooks?: Record<string, unknown>;
   icon?: string;
   id?: string;
-  layout?: { [key: string]: LayoutValue };
+  layout?: Record<string, LayoutValue>;
   license?: string;
   name?: string;
   name_template?: string;
-  plugs?: { [key: string]: unknown };
+  plugs?: Record<string, unknown>;
   publish?: boolean;
   summary?: string;
   title?: string;
@@ -953,10 +953,10 @@ interface AppValue {
   completer?: string;
   daemon?: string;
   desktop?: string;
-  environment?: { [key: string]: unknown };
+  environment?: Record<string, unknown>;
   extensions?: string[];
   install_mode?: string;
-  passthrough?: { [key: string]: unknown };
+  passthrough?: Record<string, unknown>;
   plugs?: string[];
   post_stop_command?: string;
   refresh_mode?: string;
@@ -964,7 +964,7 @@ interface AppValue {
   restart_condition?: string;
   restart_delay?: string;
   slots?: string[];
-  sockets?: { [key: string]: unknown };
+  sockets?: Record<string, unknown>;
   start_timeout?: string;
   stop_command?: string;
   stop_mode?: string;
