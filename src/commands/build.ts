@@ -18,8 +18,8 @@ const copyPackageFiles = async (logger: Logger, context: Context, name: string, 
   }
 };
 
-export const buildHandler = (ctx: Logger): ActionType =>
-  (async args => {
+export const buildHandler = (ctx: Logger): ActionType<{ clear: boolean }> =>
+  async args => {
     const context = new Context(args.project);
     const artifacts = await parseArtifactsFile(context.artifactsPath);
     const metadata = await parseMetadata(context.metadataPath);
@@ -55,7 +55,7 @@ export const buildHandler = (ctx: Logger): ActionType =>
     const indexJsFile = join(context.packageFolder(metadata.project_name), 'index.js');
     await writeFile(indexJsFile, buildExecScript(packages, args.prefix), 'utf-8');
     await copyPackageFiles(ctx, context, metadata.project_name, files);
-  });
+  };
 
 const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
   const mapping = packages.reduce<Record<string, string[]>>((mappings, pkg) => {

@@ -8,7 +8,7 @@ import { buildHandler } from './build';
 
 const exec = promisify(execOriginal);
 
-export const publishHandler = (ctx: Logger): ActionType =>
+export const publishHandler = (ctx: Logger): ActionType<{ clear: boolean }> =>
   async args => {
     await buildHandler(ctx)(args);
     const context = new Context(args.project);
