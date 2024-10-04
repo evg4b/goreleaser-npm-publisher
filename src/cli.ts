@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import * as console from 'node:console';
 import { type Argv, scriptName, terminalWidth } from 'yargs';
 import { buildHandler, listHandler, publishHandler } from './commands';
 import { ConsoleLogger } from './core/logger';
@@ -60,7 +61,10 @@ void scriptName('goreleaser-npm-publisher')
       .then(descriptionOption)
       .then(filesOption)
       .then(verboseOption),
-    ({ verbose, ...options }) => listHandler(new ConsoleLogger(console, verbose))(options),
+    ({ verbose, ...options }) =>
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error test
+      listHandler(new ConsoleLogger(console, !!verbose))(options),
   )
   .command(
     'build',
@@ -72,7 +76,8 @@ void scriptName('goreleaser-npm-publisher')
       .then(prefixOption)
       .then(descriptionOption)
       .then(filesOption),
-    buildHandler(context),
+    ({ verbose, ...options }) =>
+      buildHandler(new ConsoleLogger(console, !!verbose))(options),
     [isDistEmptyCheck as never, createDistFolder as never],
   )
   .command(
@@ -85,7 +90,8 @@ void scriptName('goreleaser-npm-publisher')
       .then(prefixOption)
       .then(descriptionOption)
       .then(filesOption),
-    publishHandler(context),
+    ({ verbose, ...options }) =>
+      publishHandler(new ConsoleLogger(console, !!verbose))(options),
     [isDistEmptyCheck as never, createDistFolder as never],
   )
   .demandCommand(1, 'You need at least one command before moving on to the next step')

@@ -1,3 +1,4 @@
+import { yellow } from 'picocolors';
 import { type Logger } from './logger';
 
 export class ConsoleLogger implements Logger {
