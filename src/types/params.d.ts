@@ -5,4 +5,5 @@ interface DefaultParams {
   clear: boolean;
   prefix?: string;
   files: string[];
+  verbose?: boolean;
 }

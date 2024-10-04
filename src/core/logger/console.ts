@@ -1,7 +1,7 @@
 import { type Logger } from './logger';
 
 export class ConsoleLogger implements Logger {
-  constructor(private readonly output: typeof console) {}
+  constructor(private readonly output: typeof console, private readonly verbose: boolean) {}
 
   async group<T>(name: string, fn: () => Promise<T>): Promise<T> {
     this.output.group(name);
@@ -17,7 +17,7 @@ export class ConsoleLogger implements Logger {
   }
 
   warning(message: string | Error): void {
-    this.output.warn(message);
+    this.output.warn(yellow(message.toString()));
   }
 
   error(message: string | Error): void {
@@ -25,6 +25,8 @@ export class ConsoleLogger implements Logger {
   }
 
   debug(message: string): void {
-    this.output.debug(message);
+    if (this.verbose) {
+      this.output.debug(message);
+    }
   }
 }
