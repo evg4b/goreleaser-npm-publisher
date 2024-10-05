@@ -14,7 +14,7 @@ const archMapping: Partial<Record<GOARCH, CPU>> = {
 export const normalizeArch = (goarch: GOARCH): CPU => {
   const normalized = archMapping[goarch];
   if (!normalized) {
-    throw new Error(`${ goarch } is not supported`);
+    throw new Error(`${goarch} is not supported`);
   }
 
   return normalized;

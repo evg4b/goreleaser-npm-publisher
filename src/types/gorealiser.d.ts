@@ -532,7 +532,7 @@ interface DockerSignElement {
 }
 
 type DockerSignArtifacts =
-  'all'
+  | 'all'
   | 'manifests'
   | 'images'
   | 'checksum'

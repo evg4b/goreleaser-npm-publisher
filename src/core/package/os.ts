@@ -13,7 +13,7 @@ const platformMapping: Partial<Record<GOOS, OS>> = {
 export const normalizeOS = (goos: GOOS): OS => {
   const normalized = platformMapping[goos];
   if (!normalized) {
-    throw new Error(`${ goos } is not supported`);
+    throw new Error(`${goos} is not supported`);
   }
 
   return normalized;

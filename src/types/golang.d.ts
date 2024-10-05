@@ -1,4 +1,5 @@
-type GOOS = 'aix'
+type GOOS =
+  | 'aix'
   | 'android'
   | 'darwin'
   | 'dragonfly'
@@ -16,7 +17,8 @@ type GOOS = 'aix'
   | 'windows'
   | 'zos';
 
-type GOARCH = '386'
+type GOARCH =
+  | '386'
   | 'amd64'
   | 'amd64p32'
   | 'arm'
@@ -39,4 +41,4 @@ type GOARCH = '386'
   | 's390x'
   | 'sparc'
   | 'sparc64'
-  | 'wasm'
+  | 'wasm';

@@ -4,13 +4,13 @@ interface BinaryArtifact {
   goos: GOOS;
   goarch: GOARCH;
   goamd64?: string;
-  internal_type: 4,
-  type: 'Binary',
+  internal_type: 4;
+  type: 'Binary';
   extra: {
     Binary: string;
     Ext: string;
     ID: string;
-  }
+  };
 }
 
 interface ArchiveArtifact {
@@ -19,24 +19,24 @@ interface ArchiveArtifact {
   goos: GOOS;
   goarch: GOARCH;
   goamd64?: string;
-  internal_type: 1,
-  type: 'Archive',
+  internal_type: 1;
+  type: 'Archive';
   extra: {
-    Binaries: string[],
+    Binaries: string[];
     Checksum: string;
     Format: string;
     ID: string;
-    Replaces: string | null,
-    WrappedIn: string
-  }
+    Replaces: string | null;
+    WrappedIn: string;
+  };
 }
 
 interface ChecksumArtifact {
-  name: string,
-  path: string,
-  internal_type: 12,
-  type: 'Checksum',
-  extra: NonNullable<unknown>,
+  name: string;
+  path: string;
+  internal_type: 12;
+  type: 'Checksum';
+  extra: NonNullable<unknown>;
 }
 
 type Artifact = BinaryArtifact | ArchiveArtifact | ChecksumArtifact;

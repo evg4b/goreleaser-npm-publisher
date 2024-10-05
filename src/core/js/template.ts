@@ -22,4 +22,3 @@ export const js = (templates: TemplateStringsArray, ...data: unknown[]): Code =>
 
   return new Code(jsCode);
 };
-

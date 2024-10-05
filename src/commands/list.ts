@@ -9,38 +9,39 @@ import { binArtifactPredicate } from '../helpers';
 
 const formatPackage = (context: Context, json: PackageJson, pkg?: PackageDefinition) => {
   console.log(green(json.name));
-  console.log(gray(`  version: ${ json.version }`));
+  console.log(gray(`  version: ${json.version}`));
   if (json.description) {
-    console.log(gray(`  description: ${ json.description }`));
+    console.log(gray(`  description: ${json.description}`));
   }
-  console.log(gray(`  os: ${ json.os.join(', ') }`));
-  console.log(gray(`  cpu: ${ json.cpu.join(', ') }`));
+  console.log(gray(`  os: ${json.os.join(', ')}`));
+  console.log(gray(`  cpu: ${json.cpu.join(', ')}`));
   if (pkg) {
-    console.log(gray(`  bin: ${ context.packageFolder(pkg.sourceBinary) }`));
+    console.log(gray(`  bin: ${context.packageFolder(pkg.sourceBinary)}`));
   }
   if (json.optionalDependencies) {
     console.log(gray('  optionalDependencies:'));
     for (const [name, version] of Object.entries(json.optionalDependencies)) {
-      console.log(gray(`    ${ name }@${ version }`));
+      console.log(gray(`    ${name}@${version}`));
     }
   }
 };
 
 const header = (text: string) => {
   const space = Array.from({ length: terminalWidth() }).fill(' ').join('');
-  return bgWhite(black(`${ text }${ space }`.slice(0, terminalWidth())));
+  return bgWhite(black(`${text}${space}`.slice(0, terminalWidth())));
 };
 
-type ActionType = ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>));
+type ActionType = (args: ArgumentsCamelCase<DefaultParams>) => void | Promise<void>;
 
-export const listHandler = (ctx: ExecContext): ActionType => (async args => {
-  const context = new Context(args.project);
-  const metadata = await parseMetadata(context.metadataPath);
-  const artifacts = await parseArtifactsFile(context.artifactsPath);
-  const files = await findFiles(args.project, args.files);
-  const builder = args.builder ?? metadata.project_name;
-  const descriptions = artifacts.filter(binArtifactPredicate(builder))
-    .map(artifact => {
+export const listHandler =
+  (ctx: ExecContext): ActionType =>
+  async args => {
+    const context = new Context(args.project);
+    const metadata = await parseMetadata(context.metadataPath);
+    const artifacts = await parseArtifactsFile(context.artifactsPath);
+    const files = await findFiles(args.project, args.files);
+    const builder = args.builder ?? metadata.project_name;
+    const descriptions = artifacts.filter(binArtifactPredicate(builder)).map(artifact => {
       const definition = transformPackage(artifact, metadata, files);
 
       return {
@@ -49,22 +50,21 @@ export const listHandler = (ctx: ExecContext): ActionType => (async args => {
       };
     });
 
-  const mainPackage = formatMainPackageJson(
-    descriptions.map(({ definition }) => definition),
-    metadata,
-    args.description,
-    args.prefix,
-    files,
-  );
+    const mainPackage = formatMainPackageJson(
+      descriptions.map(({ definition }) => definition),
+      metadata,
+      args.description,
+      args.prefix,
+      files,
+    );
 
-  ctx.info(header('   Main package:'));
-  ctx.info('');
-  formatPackage(context, mainPackage);
-  ctx.info('');
-  ctx.info(header('   Platform packages:'));
-  for (const { definition, json } of descriptions) {
+    ctx.info(header('   Main package:'));
     ctx.info('');
-    formatPackage(context, json, definition);
-  }
-});
-
+    formatPackage(context, mainPackage);
+    ctx.info('');
+    ctx.info(header('   Platform packages:'));
+    for (const { definition, json } of descriptions) {
+      ctx.info('');
+      formatPackage(context, json, definition);
+    }
+  };

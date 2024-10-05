@@ -9,19 +9,21 @@ import { buildHandler } from './build';
 
 const exec = promisify(execOrignial);
 
-type ActionType = ((args: ArgumentsCamelCase<DefaultParams>) => (void | Promise<void>));
+type ActionType = (args: ArgumentsCamelCase<DefaultParams>) => void | Promise<void>;
 
-export const publishHandler = (ctx: ExecContext): ActionType => async args => {
-  await buildHandler(ctx)(args);
-  const context = new Context(args.project);
+export const publishHandler =
+  (ctx: ExecContext): ActionType =>
+  async args => {
+    await buildHandler(ctx)(args);
+    const context = new Context(args.project);
 
-  const packageFolders = sortBy(await readdir(context.distPath), p => -p.length);
-  for (const packageFolder of packageFolders) {
-    ctx.info(context.packageFolder(packageFolder));
-    const { stdout } = await exec('npm publish --access public', {
-      env: process.env,
-      cwd: context.packageFolder(packageFolder),
-    });
-    ctx.info(stdout);
-  }
-};
+    const packageFolders = sortBy(await readdir(context.distPath), p => -p.length);
+    for (const packageFolder of packageFolders) {
+      ctx.info(context.packageFolder(packageFolder));
+      const { stdout } = await exec('npm publish --access public', {
+        env: process.env,
+        cwd: context.packageFolder(packageFolder),
+      });
+      ctx.info(stdout);
+    }
+  };

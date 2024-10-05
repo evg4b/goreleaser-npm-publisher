@@ -104,7 +104,7 @@ go-package_darwin_amd64@0.0.17
   os: darwin
   cpu: x64
   bin: /Users/<user>/go-package/dist/npm/dist-go-package-darwin-amd-64-v-1-go-package
-  
+
 go-package_darwin_arm64@0.0.17
   os: darwin
   cpu: arm64
@@ -142,7 +142,7 @@ You can use `goreleaser-npm-publisher` as a GitHub Action.
   with:
     project: .
     clear: true
-    prefix: "evg4b"
+    prefix: 'evg4b'
   env:
     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
@@ -154,7 +154,7 @@ for more details see [GitHub Action documentation](https://github.com/evg4b/gore
 ### Platforms:
 
 | GOOS    | Node.js Platform |
-|---------|------------------|
+| ------- | ---------------- |
 | darwin  | darwin           |
 | linux   | linux            |
 | windows | win32            |
@@ -168,14 +168,14 @@ for more details see [GitHub Action documentation](https://github.com/evg4b/gore
 ### Architectures:
 
 | GOARCH  | Node.js Platform |
-|---------|------------------|
-| amd64   | x64              | 
-| 386     | ia32             | 
-| arm     | arm              | 
-| arm64   | arm64            | 
-| s390x   | s390x            | 
-| s390    | s390             | 
-| riscv64 | riscv64          | 
-| ppc64   | ppc64            | 
-| ppc     | ppc              | 
-| mips    | mips             | 
+| ------- | ---------------- |
+| amd64   | x64              |
+| 386     | ia32             |
+| arm     | arm              |
+| arm64   | arm64            |
+| s390x   | s390x            |
+| s390    | s390             |
+| riscv64 | riscv64          |
+| ppc64   | ppc64            |
+| ppc     | ppc              |
+| mips    | mips             |

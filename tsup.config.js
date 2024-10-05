@@ -7,7 +7,7 @@ export default defineConfig(async options => {
   const file = await readFile('package.json', 'utf-8');
   const { version } = JSON.parse(file);
 
-  return ({
+  return {
     ...options,
     entry: {
       cli: 'src/cli.ts',
@@ -30,5 +30,5 @@ export default defineConfig(async options => {
       __DEV__: JSON.stringify(!isProd),
       __VERSION__: JSON.stringify(version),
     },
-  });
+  };
 });
