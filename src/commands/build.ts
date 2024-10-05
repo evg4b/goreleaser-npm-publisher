@@ -13,12 +13,13 @@ const copyPackageFiles = async (logger: Logger, context: Context, name: string, 
   for (const file of files) {
     const sourceFile = context.project(file);
     const destFile = context.packageFolder(name, file);
-    logger.debug(`Copied file ${ sourceFile } to ${ destFile }`);
+    logger.debug(`Copied file ${sourceFile} to ${destFile}`);
     await copyFile(sourceFile, destFile);
   }
 };
 
-export const buildHandler = (ctx: Logger): ActionType<{ clear: boolean }> =>
+export const buildHandler =
+  (ctx: Logger): ActionType<{ clear: boolean }> =>
   async args => {
     const context = new Context(args.project);
     const artifacts = await parseArtifactsFile(context.artifactsPath);
@@ -31,7 +32,7 @@ export const buildHandler = (ctx: Logger): ActionType<{ clear: boolean }> =>
 
     for (const artifact of binaryArtifacts) {
       const pathItems = artifact.path.split(sep);
-      await ctx.group(`Built package ${ pathItems[1] }`, async () => {
+      await ctx.group(`Built package ${pathItems[1]}`, async () => {
         const sourceArtifactPath = join(args.project, artifact.path);
         const { base } = parsePath(artifact.path);
         const npmArtifactPath = context.packageFolder(pathItems[1]);
@@ -60,18 +61,16 @@ export const buildHandler = (ctx: Logger): ActionType<{ clear: boolean }> =>
 const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
   const mapping = packages.reduce<Record<string, string[]>>((mappings, pkg) => {
     const data = isEmpty(prefix) ? [pkg.name] : [String(prefix), pkg.name];
-    return { ...mappings, [`${ pkg.os }_${ pkg.cpu }`]: [...data, pkg.bin] };
+    return { ...mappings, [`${pkg.os}_${pkg.cpu}`]: [...data, pkg.bin] };
   }, {});
 
-  const directory = isEmpty(prefix)
-    ? js`path.dirname(__dirname)`
-    : js`path.dirname(path.dirname(__dirname))`;
+  const directory = isEmpty(prefix) ? js`path.dirname(__dirname)` : js`path.dirname(path.dirname(__dirname))`;
 
   const code = js`#!/usr/bin/env node
 const path = require('path');
 const child_process = require('child_process');
-const mapping = ${ mapping };
-const modulesDirectory = ${ directory };
+const mapping = ${mapping};
+const modulesDirectory = ${directory};
 const definition = mapping[process.platform + '_' + process.arch];
 const packagePath = path.join(modulesDirectory, ...definition);
 child_process.spawn(packagePath, process.argv.splice(2), {
@@ -81,4 +80,3 @@ child_process.spawn(packagePath, process.argv.splice(2), {
 
   return code.toString();
 };
-

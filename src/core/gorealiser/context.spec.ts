@@ -8,7 +8,7 @@ describe('context', () => {
   let context: Context;
 
   describe('for absolute path', () => {
-    beforeEach(() => context = new Context('/usr/src/app'));
+    beforeEach(() => (context = new Context('/usr/src/app')));
 
     it('should return the artifacts path', () => {
       expect(context.artifactsPath).toBe('/usr/src/app/dist/artifacts.json');
@@ -40,7 +40,7 @@ describe('context', () => {
   });
 
   describe('for absolute path', () => {
-    beforeEach(() => context = new Context('.'));
+    beforeEach(() => (context = new Context('.')));
 
     it('should return the artifacts path', () => {
       expect(context.artifactsPath).toBe('/usr/test/desktop/project1/dist/artifacts.json');
@@ -63,13 +63,15 @@ describe('context', () => {
     });
 
     it('should return the package folder with subfolders', () => {
-      expect(context.packageFolder('my-package', 'subfolder'))
-        .toBe('/usr/test/desktop/project1/dist/npm/my-package/subfolder');
+      expect(context.packageFolder('my-package', 'subfolder')).toBe(
+        '/usr/test/desktop/project1/dist/npm/my-package/subfolder',
+      );
     });
 
     it('should return the package folder with subfolders and a leading slash', () => {
-      expect(context.packageFolder('/my-package', 'subfolder'))
-        .toBe('/usr/test/desktop/project1/dist/npm/my-package/subfolder');
+      expect(context.packageFolder('/my-package', 'subfolder')).toBe(
+        '/usr/test/desktop/project1/dist/npm/my-package/subfolder',
+      );
     });
   });
 });

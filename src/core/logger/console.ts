@@ -2,7 +2,10 @@ import { yellow } from 'picocolors';
 import { type Logger } from './logger';
 
 export class ConsoleLogger implements Logger {
-  constructor(private readonly output: typeof console, private readonly verbose: boolean) {}
+  constructor(
+    private readonly output: typeof console,
+    private readonly verbose: boolean,
+  ) {}
 
   async group<T>(name: string, fn: () => Promise<T>): Promise<T> {
     this.output.group(name);

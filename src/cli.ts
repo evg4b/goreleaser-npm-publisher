@@ -5,48 +5,55 @@ import { buildHandler, listHandler, publishHandler } from './commands';
 import { ConsoleLogger } from './core/logger';
 import { createDistFolder, isDistEmptyCheck } from './helpers';
 
-const projectOption = <T>(builder: Argv<T>) => builder.option('project', {
-  alias: 'p',
-  type: 'string',
-  describe: 'Path to the project with was built by GoReleaser',
-  default: '.',
-});
+const projectOption = <T>(builder: Argv<T>) =>
+  builder.option('project', {
+    alias: 'p',
+    type: 'string',
+    describe: 'Path to the project with was built by GoReleaser',
+    default: '.',
+  });
 
-const builderOption = <T>(builder: Argv<T>) => builder.option('builder', {
-  alias: 'b',
-  type: 'string',
-  describe: 'Name of the builder',
-});
+const builderOption = <T>(builder: Argv<T>) =>
+  builder.option('builder', {
+    alias: 'b',
+    type: 'string',
+    describe: 'Name of the builder',
+  });
 
-const clearOption = <T>(builder: Argv<T>) => builder.option('clear', {
-  alias: 'c',
-  type: 'boolean',
-  describe: 'Clear the dist/npm folder before building the project',
-  default: false,
-});
+const clearOption = <T>(builder: Argv<T>) =>
+  builder.option('clear', {
+    alias: 'c',
+    type: 'boolean',
+    describe: 'Clear the dist/npm folder before building the project',
+    default: false,
+  });
 
-const prefixOption = <T>(builder: Argv<T>) => builder.option('prefix', {
-  type: 'string',
-  describe: 'Prefix for the npm package',
-});
+const prefixOption = <T>(builder: Argv<T>) =>
+  builder.option('prefix', {
+    type: 'string',
+    describe: 'Prefix for the npm package',
+  });
 
-const descriptionOption = <T>(builder: Argv<T>) => builder.option('description', {
-  type: 'string',
-  describe: 'Description for the npm package',
-});
+const descriptionOption = <T>(builder: Argv<T>) =>
+  builder.option('description', {
+    type: 'string',
+    describe: 'Description for the npm package',
+  });
 
-const filesOption = <T>(builder: Argv<T>) => builder.option('files', {
-  type: 'array',
-  string: true,
-  describe: 'File globs to include in the npm package',
-  default: ['readme.md', 'license'],
-});
+const filesOption = <T>(builder: Argv<T>) =>
+  builder.option('files', {
+    type: 'array',
+    string: true,
+    describe: 'File globs to include in the npm package',
+    default: ['readme.md', 'license'],
+  });
 
-const verboseOption = <T>(builder: Argv<T>) => builder.option('verbose', {
-  type: 'boolean',
-  describe: 'Show verbose output',
-  default: false,
-});
+const verboseOption = <T>(builder: Argv<T>) =>
+  builder.option('verbose', {
+    type: 'boolean',
+    describe: 'Show verbose output',
+    default: false,
+  });
 
 void scriptName('goreleaser-npm-publisher')
   .version(__VERSION__)
@@ -54,41 +61,42 @@ void scriptName('goreleaser-npm-publisher')
   .command(
     'list',
     'List the project',
-    builder => Promise.resolve(builder)
-      .then(projectOption)
-      .then(builderOption)
-      .then(prefixOption)
-      .then(descriptionOption)
-      .then(filesOption)
-      .then(verboseOption),
+    builder =>
+      Promise.resolve(builder)
+        .then(projectOption)
+        .then(builderOption)
+        .then(prefixOption)
+        .then(descriptionOption)
+        .then(filesOption)
+        .then(verboseOption),
     ({ verbose, ...options }) => listHandler(new ConsoleLogger(console, verbose))({ ...options, clear: false }),
   )
   .command(
     'build',
     'Build the project',
-    builder => Promise.resolve(builder)
-      .then(projectOption)
-      .then(builderOption)
-      .then(clearOption)
-      .then(prefixOption)
-      .then(descriptionOption)
-      .then(filesOption),
-    ({ verbose, ...options }) =>
-      buildHandler(new ConsoleLogger(console, !!verbose))(options),
+    builder =>
+      Promise.resolve(builder)
+        .then(projectOption)
+        .then(builderOption)
+        .then(clearOption)
+        .then(prefixOption)
+        .then(descriptionOption)
+        .then(filesOption),
+    ({ verbose, ...options }) => buildHandler(new ConsoleLogger(console, !!verbose))(options),
     [isDistEmptyCheck as never, createDistFolder as never],
   )
   .command(
     'publish',
     'Publish the project to npm registry',
-    builder => Promise.resolve(builder)
-      .then(projectOption)
-      .then(builderOption)
-      .then(clearOption)
-      .then(prefixOption)
-      .then(descriptionOption)
-      .then(filesOption),
-    ({ verbose, ...options }) =>
-      publishHandler(new ConsoleLogger(console, !!verbose))(options),
+    builder =>
+      Promise.resolve(builder)
+        .then(projectOption)
+        .then(builderOption)
+        .then(clearOption)
+        .then(prefixOption)
+        .then(descriptionOption)
+        .then(filesOption),
+    ({ verbose, ...options }) => publishHandler(new ConsoleLogger(console, !!verbose))(options),
     [isDistEmptyCheck as never, createDistFolder as never],
   )
   .demandCommand(1, 'You need at least one command before moving on to the next step')
@@ -98,6 +106,4 @@ void scriptName('goreleaser-npm-publisher')
   .global('builder')
   .hide('version')
   .hide('help')
-  .help()
-  .argv;
-
+  .help().argv;
