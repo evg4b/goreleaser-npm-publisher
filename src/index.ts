@@ -1,11 +1,7 @@
-export const publish = () => {
-  throw new Error('Not implemented');
-};
+import { buildHandler, listHandler, publishHandler } from './commands';
 
-export const list = () => {
-  throw new Error('Not implemented');
-};
+export { setLogger } from './core/logger';
 
-export const build = () => {
-  throw new Error('Not implemented');
-};
+export const publish = publishHandler;
+export const list = listHandler;
+export const build = buildHandler;
