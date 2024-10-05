@@ -2,8 +2,10 @@
 import * as console from 'node:console';
 import { type Argv, scriptName, terminalWidth } from 'yargs';
 import { buildHandler, listHandler, publishHandler } from './commands';
-import { ConsoleLogger } from './core/logger';
-import { createDistFolder, isDistEmptyCheck } from './helpers';
+import { ConsoleLogger, setLogger } from './core/logger';
+import { createDistFolder, initLogger, isDistEmptyCheck } from './helpers';
+
+setLogger(new ConsoleLogger(console, false));
 
 const projectOption = <T>(builder: Argv<T>) =>
   builder.option('project', {
@@ -69,7 +71,8 @@ void scriptName('goreleaser-npm-publisher')
         .then(descriptionOption)
         .then(filesOption)
         .then(verboseOption),
-    ({ verbose, ...options }) => listHandler(new ConsoleLogger(console, verbose))({ ...options, clear: false }),
+    options => listHandler(options),
+    [initLogger as never],
   )
   .command(
     'build',
@@ -82,8 +85,8 @@ void scriptName('goreleaser-npm-publisher')
         .then(prefixOption)
         .then(descriptionOption)
         .then(filesOption),
-    ({ verbose, ...options }) => buildHandler(new ConsoleLogger(console, !!verbose))(options),
-    [isDistEmptyCheck as never, createDistFolder as never],
+    options => buildHandler(options),
+    [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
   )
   .command(
     'publish',
@@ -96,8 +99,8 @@ void scriptName('goreleaser-npm-publisher')
         .then(prefixOption)
         .then(descriptionOption)
         .then(filesOption),
-    ({ verbose, ...options }) => publishHandler(new ConsoleLogger(console, !!verbose))(options),
-    [isDistEmptyCheck as never, createDistFolder as never],
+    options => publishHandler(options),
+    [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
   )
   .demandCommand(1, 'You need at least one command before moving on to the next step')
   .showHelpOnFail(false, 'Specify --help for available options')

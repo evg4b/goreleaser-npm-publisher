@@ -15,12 +15,9 @@ export default tseslint.config(
   ...tseslint.configs.stylisticTypeChecked,
   {
     rules: {
-      '@typescript-eslint/restrict-template-expressions': [
-        'error',
-        {
-          allowNumber: true,
-        },
-      ],
+      '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
+      '@typescript-eslint/no-confusing-void-expression': ['error', { ignoreArrowShorthand: true }],
+      '@typescript-eslint/use-unknown-in-catch-callback-variable': 'off',
     },
   },
   {
