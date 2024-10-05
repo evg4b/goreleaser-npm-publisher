@@ -1,6 +1,5 @@
 import { readFile } from 'node:fs/promises';
 
-export const parseMetadata = async (path: string): Promise<Metadata> => {
-  const metadataFile = await readFile(path, 'utf-8');
-  return JSON.parse(metadataFile) as Metadata;
+export const parseMetadata = (path: string): Promise<Metadata> => {
+  return readFile(path, 'utf-8').then(content => JSON.parse(content) as Metadata);
 };

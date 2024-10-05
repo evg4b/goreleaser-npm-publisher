@@ -1,7 +1,10 @@
-import { type ExecContext } from './exec-context';
+import { yellow } from 'picocolors';
 
-export class ConsoleExecContext implements ExecContext {
-  constructor(private readonly output: typeof console) {}
+export class ConsoleLogger implements Logger {
+  constructor(
+    private readonly output: typeof console,
+    private readonly verbose: boolean,
+  ) {}
 
   async group<T>(name: string, fn: () => Promise<T>): Promise<T> {
     this.output.group(name);
@@ -17,7 +20,7 @@ export class ConsoleExecContext implements ExecContext {
   }
 
   warning(message: string | Error): void {
-    this.output.warn(message);
+    this.output.warn(yellow(message.toString()));
   }
 
   error(message: string | Error): void {
@@ -25,6 +28,8 @@ export class ConsoleExecContext implements ExecContext {
   }
 
   debug(message: string): void {
-    this.output.debug(message);
+    if (this.verbose) {
+      this.output.debug(message);
+    }
   }
 }

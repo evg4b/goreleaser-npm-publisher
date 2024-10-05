@@ -1,8 +1,13 @@
 import { kebabCase } from 'lodash';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
+import { cwd } from 'node:process';
 
 export class Context {
-  constructor(private readonly projectPath: string) {}
+  private readonly projectPath: string;
+
+  constructor(projectPath: string) {
+    this.projectPath = resolve(cwd(), projectPath);
+  }
 
   public get artifactsPath(): string {
     return join(this.projectPath, 'dist', 'artifacts.json');

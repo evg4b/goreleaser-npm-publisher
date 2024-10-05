@@ -1,6 +1,5 @@
 import { readFile } from 'node:fs/promises';
 
-export const parseArtifactsFile = async (path: string): Promise<Artifact[]> => {
-  const artifactsFile = await readFile(path, 'utf8');
-  return (JSON.parse(artifactsFile) as Artifact[] | undefined) ?? [];
+export const parseArtifactsFile = (path: string): Promise<Artifact[]> => {
+  return readFile(path, 'utf8').then(content => JSON.parse(content) as Artifact[]);
 };

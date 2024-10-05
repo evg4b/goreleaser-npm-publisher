@@ -1,5 +1,5 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
+export default {
   clearMocks: true,
   cache: true,
   preset: 'ts-jest',

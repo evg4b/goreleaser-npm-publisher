@@ -4,9 +4,9 @@
     <img alt="goreleaser-npm-publisher logo" width="30%" src="https://raw.githubusercontent.com/evg4b/goreleaser-npm-publisher/main/.github/logo.svg">
   </a>
 </p>
-<p align="center">
-  <b>goreleaser-npm-publisher</b>
-</p>
+<div align="center">
+  <h1>goreleaser-npm-publisher</h1>
+</div>
 <p align="center">
   <a href="https://www.npmjs.com/package/goreleaser-npm-publisher" title="NPM Version">
     <img alt="NPM Version" src="https://img.shields.io/npm/v/goreleaser-npm-publisher?logo=npm">  

@@ -1,17 +1,18 @@
 #!/usr/bin/env node
+import * as console from 'node:console';
 import { type Argv, scriptName, terminalWidth } from 'yargs';
 import { buildHandler, listHandler, publishHandler } from './commands';
-import { ConsoleExecContext } from './core/logger';
-import { createDistFolder, isDistEmptyCheck } from './helpers';
+import { ConsoleLogger, setLogger } from './core/logger';
+import { createDistFolder, initLogger, isDistEmptyCheck } from './helpers';
 
-const context = new ConsoleExecContext(console);
+setLogger(new ConsoleLogger(console, false));
 
 const projectOption = <T>(builder: Argv<T>) =>
   builder.option('project', {
     alias: 'p',
     type: 'string',
     describe: 'Path to the project with was built by GoReleaser',
-    demandOption: true,
+    default: '.',
   });
 
 const builderOption = <T>(builder: Argv<T>) =>
@@ -49,6 +50,13 @@ const filesOption = <T>(builder: Argv<T>) =>
     default: ['readme.md', 'license'],
   });
 
+const verboseOption = <T>(builder: Argv<T>) =>
+  builder.option('verbose', {
+    type: 'boolean',
+    describe: 'Show verbose output',
+    default: false,
+  });
+
 void scriptName('goreleaser-npm-publisher')
   .version(__VERSION__)
   .usage('$0 <cmd> [args]')
@@ -61,8 +69,10 @@ void scriptName('goreleaser-npm-publisher')
         .then(builderOption)
         .then(prefixOption)
         .then(descriptionOption)
-        .then(filesOption),
-    listHandler(context),
+        .then(filesOption)
+        .then(verboseOption),
+    options => listHandler(options),
+    [initLogger as never],
   )
   .command(
     'build',
@@ -75,8 +85,8 @@ void scriptName('goreleaser-npm-publisher')
         .then(prefixOption)
         .then(descriptionOption)
         .then(filesOption),
-    buildHandler(context),
-    [isDistEmptyCheck as never, createDistFolder as never],
+    options => buildHandler(options),
+    [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
   )
   .command(
     'publish',
@@ -89,8 +99,8 @@ void scriptName('goreleaser-npm-publisher')
         .then(prefixOption)
         .then(descriptionOption)
         .then(filesOption),
-    publishHandler(context),
-    [isDistEmptyCheck as never, createDistFolder as never],
+    options => publishHandler(options),
+    [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
   )
   .demandCommand(1, 'You need at least one command before moving on to the next step')
   .showHelpOnFail(false, 'Specify --help for available options')
