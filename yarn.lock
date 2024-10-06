@@ -2967,7 +2967,7 @@ __metadata:
     typescript-eslint: "npm:^8.8.0"
     yargs: "npm:^17.7.2"
   bin:
-    goreleaser-npm-publisher: dist/cli.js
+    goreleaser-npm-publisher: dist/cli.cjs
   languageName: unknown
   linkType: soft
 

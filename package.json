@@ -2,8 +2,8 @@
   "name": "goreleaser-npm-publisher",
   "version": "0.0.1-alpha.11",
   "description": "Build and publish npm packages based on goreleaser output folder",
-  "bin": "dist/cli.js",
-  "main": "dist/index.js",
+  "bin": "dist/cli.cjs",
+  "main": "dist/index.cjs",
   "type": "module",
   "author": {
     "email": "evg.abramovitch@gmail.com",
