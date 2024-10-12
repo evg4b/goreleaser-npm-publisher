@@ -94,14 +94,13 @@ Displays a list of packages that can be built in the current project with passed
 
 #### Options
 
-| Option        | type     | Description                                                                           |
-|---------------|----------|---------------------------------------------------------------------------------------|
-| --project     | string   | Path to the root of go package                                                        |
-| --builder     | string   |                                                                                       |
-| --prefix      | string   | NPM package scope prefix                                                              |
-| --description | string   | NPM package description                                                               |
-| --files       | string[] | Files witch should be included to the NPM package (`README.md`, `license` by default) |
-| --verbose     | boolean  | Print verbose output                                                                  |
+| Option        | type    | Description                                                               |
+|---------------|---------|---------------------------------------------------------------------------|
+| --project     | string  | Path to the root of go package                                            |
+| --builder     | string  | The name of the builder whose output should be used for building packages |
+| --prefix      | string  | NPM package scope prefix                                                  |
+| --description | string  | NPM package description                                                   |
+| --verbose     | boolean | Print verbose output                                                      |
 
 ### build
 
@@ -111,7 +110,7 @@ Built packages can be found in the `dist/npm` folder.
 | Option        | Type     | Description                                                                           |
 |---------------|----------|---------------------------------------------------------------------------------------|
 | --project     | string   | Path to the root of go package                                                        |
-| --builder     | string   |                                                                                       |
+| --builder     | string   | The name of the builder whose output should be used for building packages             |
 | --clear       | boolean  | Clean `dist/npm` folder before build                                                  |
 | --prefix      | string   | NPM package scope prefix                                                              |
 | --description | string   | NPM package description                                                               |
@@ -126,7 +125,7 @@ parameters.
 | Option        | Type     | Description                                                                           |
 |---------------|----------|---------------------------------------------------------------------------------------|
 | --project     | string   | Path to the root of go package                                                        |
-| --builder     | string   |                                                                                       |
+| --builder     | string   | The name of the builder whose output should be used for building packages             |
 | --clear       | boolean  | Clean `dist/npm` folder before build                                                  |
 | --prefix      | string   | NPM package scope prefix                                                              |
 | --description | string   | NPM package description                                                               |

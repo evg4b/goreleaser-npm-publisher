@@ -19,7 +19,7 @@ const copyPackageFiles = async (context: Context, name: string, files: string[])
   }
 };
 
-export const buildHandler: ActionType<{ clear: boolean }> = async args => {
+export const buildHandler: ActionType<{ clear: boolean, files: string[] }> = async args => {
   const context = new Context(args.project);
   const artifacts = await parseArtifactsFile(context.artifactsPath);
   const metadata = await parseMetadata(context.metadataPath);

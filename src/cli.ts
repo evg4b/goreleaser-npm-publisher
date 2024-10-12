@@ -75,7 +75,6 @@ void scriptName('goreleaser-npm-publisher')
         .then(builderOption)
         .then(prefixOption)
         .then(descriptionOption)
-        .then(filesOption)
         .then(verboseOption),
     options => listHandler(options),
     [initLogger as never],

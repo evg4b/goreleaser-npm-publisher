@@ -3,6 +3,5 @@ interface DefaultParams {
   builder?: string;
   description?: string;
   prefix?: string;
-  files: string[];
   verbose?: boolean;
 }
