@@ -3,7 +3,7 @@ import { platform } from 'node:os';
 import { cwd } from 'node:process';
 import { execInContext } from './context';
 import { NpmExecError } from './error';
-import { ErrorResponse, NpmExecContext } from './models';
+import { type ErrorResponse, type NpmExecContext } from './models';
 
 export const npmExec = async <T>(args: string[], options?: NpmExecContext): Promise<T> => {
     const isWindows = platform() === 'win32';

@@ -1,10 +1,11 @@
 const spawnMock = jest.fn();
 jest.mock('node:child_process', () => ({ spawn: spawnMock }));
 
-const execInContextMock = jest.fn((_, action: (env: unknown) => unknown): unknown => {
-  return action(process.env);
-});
+const execInContextMock = jest.fn((_, action: (env: unknown) => unknown): unknown => action(process.env));
 jest.mock('./context', () => ({ execInContext: execInContextMock }));
+
+const platformMock = jest.fn(() => 'linux');
+jest.mock('node:os', () => ({ platform: platformMock }));
 
 import { npmExec } from './exec';
 
@@ -30,6 +31,14 @@ class ProcessMock extends FakeStream {
   public stderr = new FakeStream();
 }
 
+const execCommand = (processMock: ProcessMock): Promise<string> => {
+  spawnMock.mockReturnValue(processMock);
+  const responsePromise = npmExec<string>(['whoami']);
+  processMock.stdout.emit('data', JSON.stringify('evg4b'));
+  processMock.emit('close', 0);
+  return responsePromise;
+};
+
 describe('exec', () => {
   describe('base command', () => {
     let processMock: ProcessMock;
@@ -37,10 +46,7 @@ describe('exec', () => {
 
     beforeEach(() => {
       processMock = new ProcessMock();
-      spawnMock.mockReturnValue(processMock);
-      execPromise = npmExec(['whoami']);
-      processMock.stdout.emit('data', JSON.stringify('evg4b'));
-      processMock.emit('close', 0);
+      execPromise = execCommand(processMock);
     });
 
     it('Should return parsed value', async () => {
@@ -61,6 +67,39 @@ describe('exec', () => {
     it('Should execute with json param', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(spawnMock.mock.calls[0][1]).toContain('--json');
-    })
+    });
+  });
+
+  describe('depends on platform', () => {
+    const platforms = [
+      'darwin',
+      'linux',
+      'android',
+      'aix',
+      'freebsd',
+      'openbsd',
+      'sunos',
+      'netbsd',
+    ];
+
+    it.each(platforms)(`should use npm for %s`, platform => {
+      platformMock.mockReturnValue(platform);
+
+      const processMock = new ProcessMock();
+      void execCommand(processMock);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(spawnMock.mock.calls[0][0]).toEqual('npm');
+    });
+
+    it('should use npm.cmd', () => {
+      platformMock.mockReturnValue('win32');
+
+      const processMock = new ProcessMock();
+      void execCommand(processMock);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(spawnMock.mock.calls[0][0]).toEqual('npm.cmd');
+    });
   });
 });
