@@ -22,8 +22,15 @@
   </a>
   <br/>
   <a href="https://github.com/evg4b/goreleaser-npm-publisher/actions?query=branch%3Amain">
-    <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/evg4b/goreleaser-npm-publisher/node.js.yml?logo=github">
+    <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/evg4b/goreleaser-npm-publisher/node.js.yml?branch=main&logo=github">
   </a>
+  <a href="https://github.com/evg4b/goreleaser-npm-publisher/actions?query=branch%3Amain">
+    <img alt="Git Hub Release" src="https://img.shields.io/github/v/release/evg4b/goreleaser-npm-publisher?include_prereleases&logo=github">
+  </a>
+  <a href="https://github.com/evg4b/goreleaser-npm-publisher/?tab=MIT-1-ov-file">
+    <img alt="License" src="https://img.shields.io/github/license/evg4b/goreleaser-npm-publisher?logo=github">
+  </a>
+  <br/>
   <a title="Quality Gate Status" href="https://sonarcloud.io/project/overview?id=evg4b_goreleaser-npm-publisher">
     <img src="https://sonarcloud.io/api/project_badges/measure?project=evg4b_goreleaser-npm-publisher&metric=alert_status" alt="Quality Gate Status">
   </a>
@@ -39,15 +46,93 @@
   Publish Go binaries to npm registry, automated tool for build and publish Go binaries to npm registry.
 </p>
 
-# Overview
+# Quick start:
 
-`goreleaser-npm-publisher` is a zero-configuration tool for build and publish Go binaries to npm registry.
-Tool should be used after `goreleaser` build.
+Firstly build create release of your package via `goreleaser`.
 
-It will create npm package with Go binary and publish it to npm registry.
+```shell
+goreleaser build --clean
+```
 
-The main idea is to use npm as a distribution platform for Go binaries.
-It allows using npm as a package manager for Go binaries.
+Then just run `goreleaser-npm-publisher` in the same directory (pay attention you should be logging in the registry).
+
+```shell
+npx -y goreleaser-npm-publisher publish --clean
+```
+
+Or add `--token` parameter to use yor NPM_AUTH_TOKEN
+
+```shell
+npx -y goreleaser-npm-publisher publish --clean --token npm_*******m
+```
+
+That's it.
+
+## Use as a GitHub Action
+
+You can use `goreleaser-npm-publisher` as a GitHub Action.
+
+```yaml
+- name: Publish to npm
+  uses: evg4b/goreleaser-npm-publisher-action@main
+  with:
+    clear: true
+    prefix: 'evg4b'
+  env:
+    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+For more details see [GitHub Action documentation](https://github.com/evg4b/goreleaser-npm-publisher-action)
+
+## CLI commands and options:
+
+The `goreleaser-npm-publisher` has the following CLI commands:
+
+### list
+
+Displays a list of packages that can be built in the current project with passed options.
+
+#### Options
+
+| Option        | type     | Description                                                                           |
+|---------------|----------|---------------------------------------------------------------------------------------|
+| --project     | string   | Path to the root of go package                                                        |
+| --builder     | string   |                                                                                       |
+| --prefix      | string   | NPM package scope prefix                                                              |
+| --description | string   | NPM package description                                                               |
+| --files       | string[] | Files witch should be included to the NPM package (`README.md`, `license` by default) |
+| --verbose     | boolean  | Print verbose output                                                                  |
+
+### build
+
+Builds all packages that can be built in the current project with the specified parameters.
+Built packages can be found in the `dist/npm` folder.
+
+| Option        | Type     | Description                                                                           |
+|---------------|----------|---------------------------------------------------------------------------------------|
+| --project     | string   | Path to the root of go package                                                        |
+| --builder     | string   |                                                                                       |
+| --clear       | boolean  | Clean `dist/npm` folder before build                                                  |
+| --prefix      | string   | NPM package scope prefix                                                              |
+| --description | string   | NPM package description                                                               |
+| --files       | string[] | Files witch should be included to the NPM package (`README.md`, `license` by default) |
+| --verbose     | boolean  | Print verbose output                                                                  |
+
+### publish
+
+Builds and publishes to the `registry` all packages that can be built in the current project with the specified
+parameters.
+
+| Option        | Type     | Description                                                                           |
+|---------------|----------|---------------------------------------------------------------------------------------|
+| --project     | string   | Path to the root of go package                                                        |
+| --builder     | string   |                                                                                       |
+| --clear       | boolean  | Clean `dist/npm` folder before build                                                  |
+| --prefix      | string   | NPM package scope prefix                                                              |
+| --description | string   | NPM package description                                                               |
+| --files       | string[] | Files witch should be included to the NPM package (`README.md`, `license` by default) |
+| --token       | string   | The NPM auth token                                                                    |
+| --verbose     | boolean  | Print verbose output                                                                  |
 
 ## Structure of npm package:
 
@@ -111,50 +196,12 @@ go-package_darwin_arm64@0.0.17
   bin: /Users/<user>/go-package/dist/npm/dist-go-package-darwin-arm-64-go-package
 ```
 
-## Use as a CLI tool
-
-Goreleaser-npm-publisher can be used as general npm cli tool.
-
-Via npx:
-
-```bash
-npx -y goreleaser-npm-publisher publish --clear --project <path-to-goreleaser-project>
-```
-
-or install globally:
-
-```bash
-npm install -g goreleaser-npm-publisher
-goreleaser-npm-publisher publish --clear --project <path-to-goreleaser-project>
-```
-
-### Commands and options:
-
-TBD
-
-## Use as a GitHub Action
-
-You can use `goreleaser-npm-publisher` as a GitHub Action.
-
-```yaml
-- name: Publish to npm
-  uses: evg4b/goreleaser-npm-publisher@main
-  with:
-    project: .
-    clear: true
-    prefix: 'evg4b'
-  env:
-    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-```
-
-for more details see [GitHub Action documentation](https://github.com/evg4b/goreleaser-npm-publisher-action)
-
 ## Supported platforms and architectures:
 
 ### Platforms:
 
 | GOOS    | Node.js Platform |
-| ------- | ---------------- |
+|---------|------------------|
 | darwin  | darwin           |
 | linux   | linux            |
 | windows | win32            |
@@ -168,7 +215,7 @@ for more details see [GitHub Action documentation](https://github.com/evg4b/gore
 ### Architectures:
 
 | GOARCH  | Node.js Platform |
-| ------- | ---------------- |
+|---------|------------------|
 | amd64   | x64              |
 | 386     | ia32             |
 | arm     | arm              |

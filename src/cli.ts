@@ -90,7 +90,8 @@ void scriptName('goreleaser-npm-publisher')
         .then(clearOption)
         .then(prefixOption)
         .then(descriptionOption)
-        .then(filesOption),
+        .then(filesOption)
+        .then(verboseOption),
     options => buildHandler(options),
     [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
   )
@@ -105,7 +106,8 @@ void scriptName('goreleaser-npm-publisher')
         .then(prefixOption)
         .then(descriptionOption)
         .then(filesOption)
-        .then(tokenOption),
+        .then(tokenOption)
+        .then(verboseOption),
     options => publishHandler(options),
     [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
   )
