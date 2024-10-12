@@ -3,15 +3,9 @@ import { EOL } from 'node:os';
 import { resolve } from 'node:path';
 import { cwd } from 'node:process';
 import { env } from 'process';
+import { NpmExecAction, NpmExecContext } from './models';
 
-export interface NpmExecContext {
-  pwd?: string;
-  token?: string;
-}
-
-type Action<T> = (env: Record<string, string>) => Promise<T>
-
-export const execInContext = async <T>(context: NpmExecContext, action: Action<T>): Promise<T> => {
+export const execInContext = async <T>(context: NpmExecContext, action: NpmExecAction<T>): Promise<T> => {
   if (!context.token) {
     return await action({ ...env } as Record<string, string>);
   }
