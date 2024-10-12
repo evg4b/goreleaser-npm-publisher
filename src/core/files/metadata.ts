@@ -51,15 +51,15 @@ const validate: ValidateFunction<Metadata> = new Ajv().compile({
 
 export const parseMetadata = async (path: string): Promise<Metadata> => {
   const content = await readFile(path, 'utf8');
-  const artifacts: unknown = JSON.parse(content);
+  const metadata: unknown = JSON.parse(content);
 
-  return validate(artifacts)
-    ? artifacts
-    : Promise.reject(
-      new Error(
-        (validate.errors ?? [{ message: 'Unknown error' }])
-          .map(p => p.message).join('\n'),
-      ),
-    );
+  if (validate(metadata)) {
+    return metadata;
+  }
+
+  throw new Error(
+    (validate.errors ?? [{ message: 'Unknown error' }])
+      .map(p => p.message).join('\n'),
+  );
 };
 
