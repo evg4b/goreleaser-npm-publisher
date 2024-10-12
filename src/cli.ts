@@ -50,6 +50,12 @@ const filesOption = <T>(builder: Argv<T>) =>
     default: ['readme.md', 'license'],
   });
 
+const tokenOption = <T>(builder: Argv<T>) =>
+  builder.option('token', {
+    type: 'string',
+    describe: 'Token for the npm package',
+  })
+
 const verboseOption = <T>(builder: Argv<T>) =>
   builder.option('verbose', {
     type: 'boolean',
@@ -98,7 +104,8 @@ void scriptName('goreleaser-npm-publisher')
         .then(clearOption)
         .then(prefixOption)
         .then(descriptionOption)
-        .then(filesOption),
+        .then(filesOption)
+        .then(tokenOption),
     options => publishHandler(options),
     [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
   )
