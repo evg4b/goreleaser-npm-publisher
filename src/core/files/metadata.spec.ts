@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 const readFileMock = jest.fn()
   .mockName('readFileMock');
 

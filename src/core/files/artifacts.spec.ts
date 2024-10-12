@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 const readFileMock = jest.fn();
 
 jest.mock('node:fs/promises', () => ({

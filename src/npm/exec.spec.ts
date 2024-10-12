@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 const spawnMock = jest.fn();
 jest.mock('node:child_process', () => ({ spawn: spawnMock }));
 
@@ -65,7 +66,6 @@ describe('exec', () => {
     });
 
     it('Should execute with json param', () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(spawnMock.mock.calls[0][1]).toContain('--json');
     });
   });
@@ -88,7 +88,6 @@ describe('exec', () => {
       const processMock = new ProcessMock();
       void execCommand(processMock);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(spawnMock.mock.calls[0][0]).toEqual('npm');
     });
 
@@ -98,7 +97,6 @@ describe('exec', () => {
       const processMock = new ProcessMock();
       void execCommand(processMock);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(spawnMock.mock.calls[0][0]).toEqual('npm.cmd');
     });
   });
