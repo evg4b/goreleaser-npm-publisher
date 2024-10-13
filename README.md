@@ -12,9 +12,6 @@
     <img alt="NPM Version" src="https://img.shields.io/npm/v/goreleaser-npm-publisher?logo=npm">  
   </a>
   <a href="https://www.npmjs.com/package/goreleaser-npm-publisher" title="NPM Version">
-    <img alt="NPM License" src="https://img.shields.io/npm/l/goreleaser-npm-publisher?logo=npm">
-  </a>
-  <a href="https://www.npmjs.com/package/goreleaser-npm-publisher" title="NPM Version">
     <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/goreleaser-npm-publisher?logo=npm">
   </a>
   <a href="https://www.npmjs.com/package/goreleaser-npm-publisher" title="NPM Unpacked Size">
@@ -106,44 +103,44 @@ Displays a list of packages that can be built in the current project with passed
 
 #### Options
 
-| Option        | type    | Description                                                               |
-| ------------- | ------- | ------------------------------------------------------------------------- |
-| --project     | string  | Path to the root of go package                                            |
-| --builder     | string  | The name of the builder whose output should be used for building packages |
-| --prefix      | string  | NPM package scope prefix                                                  |
-| --description | string  | NPM package description                                                   |
-| --verbose     | boolean | Print verbose output                                                      |
+| Option          | type    | Description                                                               |
+| --------------- | ------- | ------------------------------------------------------------------------- |
+| **project**     | string  | Path to the root of go package                                            |
+| **builder**     | string  | The name of the builder whose output should be used for building packages |
+| **prefix**      | string  | NPM package scope prefix                                                  |
+| **description** | string  | NPM package description                                                   |
+| **verbose**     | boolean | Print verbose output                                                      |
 
 ### build
 
 Builds all packages that can be built in the current project with the specified parameters.
 Built packages can be found in the `dist/npm` folder.
 
-| Option        | Type     | Description                                                                           |
-| ------------- | -------- | ------------------------------------------------------------------------------------- |
-| --project     | string   | Path to the root of go package                                                        |
-| --builder     | string   | The name of the builder whose output should be used for building packages             |
-| --clear       | boolean  | Clean `dist/npm` folder before build                                                  |
-| --prefix      | string   | NPM package scope prefix                                                              |
-| --description | string   | NPM package description                                                               |
-| --files       | string[] | Files witch should be included to the NPM package (`README.md`, `license` by default) |
-| --verbose     | boolean  | Print verbose output                                                                  |
+| Option          | Type     | Description                                                                           |
+| --------------- | -------- | ------------------------------------------------------------------------------------- |
+| **project**     | string   | Path to the root of go package                                                        |
+| **builder**     | string   | The name of the builder whose output should be used for building packages             |
+| **clear**       | boolean  | Clean `dist/npm` folder before build                                                  |
+| **prefix**      | string   | NPM package scope prefix                                                              |
+| **description** | string   | NPM package description                                                               |
+| **files**       | string[] | Files witch should be included to the NPM package (`README.md`, `license` by default) |
+| **verbose**     | boolean  | Print verbose output                                                                  |
 
 ### publish
 
 Builds and publishes to the `registry` all packages that can be built in the current project with the specified
 parameters.
 
-| Option        | Type     | Description                                                                           |
-| ------------- | -------- | ------------------------------------------------------------------------------------- |
-| --project     | string   | Path to the root of go package                                                        |
-| --builder     | string   | The name of the builder whose output should be used for building packages             |
-| --clear       | boolean  | Clean `dist/npm` folder before build                                                  |
-| --prefix      | string   | NPM package scope prefix                                                              |
-| --description | string   | NPM package description                                                               |
-| --files       | string[] | Files witch should be included to the NPM package (`README.md`, `license` by default) |
-| --token       | string   | The NPM auth token                                                                    |
-| --verbose     | boolean  | Print verbose output                                                                  |
+| Option          | Type     | Description                                                                           |
+| --------------- | -------- | ------------------------------------------------------------------------------------- |
+| **project**     | string   | Path to the root of go package                                                        |
+| **builder**     | string   | The name of the builder whose output should be used for building packages             |
+| **clear**       | boolean  | Clean `dist/npm` folder before build                                                  |
+| **prefix**      | string   | NPM package scope prefix                                                              |
+| **description** | string   | NPM package description                                                               |
+| **files**       | string[] | Files witch should be included to the NPM package (`README.md`, `license` by default) |
+| **token**       | string   | The NPM auth token                                                                    |
+| **verbose**     | boolean  | Print verbose output                                                                  |
 
 ## Structure of npm package:
 
