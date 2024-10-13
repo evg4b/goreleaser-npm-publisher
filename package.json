@@ -1,6 +1,6 @@
 {
   "name": "goreleaser-npm-publisher",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "Build and publish npm packages based on goreleaser output folder",
   "bin": "dist/cli.cjs",
   "main": "dist/index.cjs",
