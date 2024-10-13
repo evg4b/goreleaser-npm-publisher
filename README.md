@@ -68,6 +68,18 @@ npx -y goreleaser-npm-publisher publish --clean --token npm_*******m
 
 That's it.
 
+## Use as a library
+
+You can use `goreleaser-npm-publisher` as a standard npm package
+
+```ts publish.ts
+import { publish } from 'goreleaser-npm-publisher';
+
+publish({ token: process.env.NPM_TOKEN })
+  .then(console.log)
+  .catch(console.error);
+```
+
 ## Use as a GitHub Action
 
 You can use `goreleaser-npm-publisher` as a GitHub Action.
@@ -95,7 +107,7 @@ Displays a list of packages that can be built in the current project with passed
 #### Options
 
 | Option        | type    | Description                                                               |
-|---------------|---------|---------------------------------------------------------------------------|
+| ------------- | ------- | ------------------------------------------------------------------------- |
 | --project     | string  | Path to the root of go package                                            |
 | --builder     | string  | The name of the builder whose output should be used for building packages |
 | --prefix      | string  | NPM package scope prefix                                                  |
@@ -108,7 +120,7 @@ Builds all packages that can be built in the current project with the specified 
 Built packages can be found in the `dist/npm` folder.
 
 | Option        | Type     | Description                                                                           |
-|---------------|----------|---------------------------------------------------------------------------------------|
+| ------------- | -------- | ------------------------------------------------------------------------------------- |
 | --project     | string   | Path to the root of go package                                                        |
 | --builder     | string   | The name of the builder whose output should be used for building packages             |
 | --clear       | boolean  | Clean `dist/npm` folder before build                                                  |
@@ -123,7 +135,7 @@ Builds and publishes to the `registry` all packages that can be built in the cur
 parameters.
 
 | Option        | Type     | Description                                                                           |
-|---------------|----------|---------------------------------------------------------------------------------------|
+| ------------- | -------- | ------------------------------------------------------------------------------------- |
 | --project     | string   | Path to the root of go package                                                        |
 | --builder     | string   | The name of the builder whose output should be used for building packages             |
 | --clear       | boolean  | Clean `dist/npm` folder before build                                                  |
@@ -200,7 +212,7 @@ go-package_darwin_arm64@0.0.17
 ### Platforms:
 
 | GOOS    | Node.js Platform |
-|---------|------------------|
+| ------- | ---------------- |
 | darwin  | darwin           |
 | linux   | linux            |
 | windows | win32            |
@@ -214,7 +226,7 @@ go-package_darwin_arm64@0.0.17
 ### Architectures:
 
 | GOARCH  | Node.js Platform |
-|---------|------------------|
+| ------- | ---------------- |
 | amd64   | x64              |
 | 386     | ia32             |
 | arm     | arm              |

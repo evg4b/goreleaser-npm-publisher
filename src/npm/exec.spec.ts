@@ -11,7 +11,7 @@ jest.mock('node:os', () => ({ platform: platformMock }));
 import { npmExec } from './exec';
 
 class FakeStream {
-  private callbacks = new Map<string, (...args: unknown[]) => void>;
+  private callbacks = new Map<string, (...args: unknown[]) => void>();
 
   public on(type: string, callback: (...args: unknown[]) => void): void {
     this.callbacks.set(type, callback);
@@ -71,16 +71,7 @@ describe('exec', () => {
   });
 
   describe('depends on platform', () => {
-    const platforms = [
-      'darwin',
-      'linux',
-      'android',
-      'aix',
-      'freebsd',
-      'openbsd',
-      'sunos',
-      'netbsd',
-    ];
+    const platforms = ['darwin', 'linux', 'android', 'aix', 'freebsd', 'openbsd', 'sunos', 'netbsd'];
 
     it.each(platforms)(`should use npm for %s`, platform => {
       platformMock.mockReturnValue(platform);

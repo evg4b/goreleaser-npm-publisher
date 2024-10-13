@@ -5,19 +5,19 @@ import { formatMainPackageJson, formatPackageJson, transformPackage } from '../c
 import { binArtifactPredicate } from '../helpers';
 
 const formatPackage = async (context: Context, json: PackageJson, pkg?: PackageDefinition) => {
-  await logger.group(`${ json.name }@${ json.version }`, () => {
+  await logger.group(`${json.name}@${json.version}`, () => {
     if (json.description) {
-      logger.info(`description: ${ json.description }`);
+      logger.info(`description: ${json.description}`);
     }
-    logger.info(`os: ${ json.os.join(', ') }`);
-    logger.info(`cpu: ${ json.cpu.join(', ') }`);
+    logger.info(`os: ${json.os.join(', ')}`);
+    logger.info(`cpu: ${json.cpu.join(', ')}`);
     if (pkg) {
-      logger.info(`bin: ${ context.packageFolder(pkg.sourceBinary) }`);
+      logger.info(`bin: ${context.packageFolder(pkg.sourceBinary)}`);
     }
     if (json.optionalDependencies) {
       logger.debug('  optionalDependencies:');
       for (const [name, version] of Object.entries(json.optionalDependencies)) {
-        logger.debug(`    ${ name }@${ version }`);
+        logger.debug(`    ${name}@${version}`);
       }
     }
     return Promise.resolve();

@@ -38,22 +38,13 @@ const validate: ValidateFunction<Artifact[]> = new Ajv().compile({
             type: 'string',
           },
         },
-        required: [
-          'Binary',
-          'Ext',
-          'ID',
-        ],
+        required: ['Binary', 'Ext', 'ID'],
       },
       goamd64: {
         type: 'string',
       },
     },
-    required: [
-      'internal_type',
-      'name',
-      'path',
-      'type',
-    ],
+    required: ['internal_type', 'name', 'path', 'type'],
   },
   type: 'array',
 });
@@ -62,13 +53,9 @@ export const parseArtifactsFile = async (path: string): Promise<Artifact[]> => {
   const content = await readFile(path, 'utf8');
   const artifacts: unknown = JSON.parse(content);
 
-
   if (validate(artifacts)) {
     return artifacts;
   }
 
-  throw new Error(
-    (validate.errors ?? [{ message: 'Unknown error' }])
-      .map(p => p.message).join('\n'),
-  );
+  throw new Error((validate.errors ?? [{ message: 'Unknown error' }]).map(p => p.message).join('\n'));
 };

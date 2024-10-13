@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import * as console from 'node:console';
 import { type Argv, scriptName, terminalWidth } from 'yargs';
 import { buildHandler, listHandler, publishHandler } from './commands';
 import { ConsoleLogger, setLogger } from './core/logger';
@@ -54,7 +53,7 @@ const tokenOption = <T>(builder: Argv<T>) =>
   builder.option('token', {
     type: 'string',
     describe: 'Token for the npm package',
-  })
+  });
 
 const verboseOption = <T>(builder: Argv<T>) =>
   builder.option('verbose', {

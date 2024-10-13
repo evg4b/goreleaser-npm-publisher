@@ -7,7 +7,7 @@ export interface ErrorResponse {
     code: string;
     summary: string;
     detail: string;
-  }
+  };
 }
 
 export interface PublishResponse {
@@ -35,4 +35,4 @@ export interface NpmExecContext {
   token?: string;
 }
 
-export type NpmExecAction<T> = (env: Record<string, string>) => Promise<T>
+export type NpmExecAction<T> = (env: Record<string, string>) => Promise<T>;

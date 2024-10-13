@@ -6,15 +6,18 @@ import { NpmExecError } from './error';
 import { type ErrorResponse, type NpmExecContext } from './models';
 
 export const npmExec = async <T>(args: string[], options?: NpmExecContext): Promise<T> => {
-    const isWindows = platform() === 'win32';
-    const npmBin = isWindows ? 'npm.cmd' : 'npm';
-    const context = options ?? {};
+  const isWindows = platform() === 'win32';
+  const npmBin = isWindows ? 'npm.cmd' : 'npm';
+  const context = options ?? {};
 
-    return execInContext<T>(context, (env) => new Promise((resolve, reject) => {
+  return execInContext<T>(
+    context,
+    env =>
+      new Promise((resolve, reject) => {
         const npmProcess = spawn(npmBin, ['--json', ...args], {
-            cwd: options?.pwd ?? cwd(),
-            env: env,
-            shell: isWindows,
+          cwd: options?.pwd ?? cwd(),
+          env: env,
+          shell: isWindows,
         });
 
         let stdout = '';
@@ -22,15 +25,14 @@ export const npmExec = async <T>(args: string[], options?: NpmExecContext): Prom
         npmProcess.stdout.on('data', (data: string) => (stdout += data));
         npmProcess.stderr.on('data', (data: string) => (stderr += data));
         npmProcess.on('close', code => {
-            if (code) {
-                const errorResp = JSON.parse(stdout) as ErrorResponse;
-                reject(new NpmExecError(errorResp.error));
-            }
+          if (code) {
+            const errorResp = JSON.parse(stdout) as ErrorResponse;
+            reject(new NpmExecError(errorResp.error));
+          }
 
-            resolve(JSON.parse(stdout) as T);
+          resolve(JSON.parse(stdout) as T);
         });
-        npmProcess.on('error', (err) => reject(err));
-    }));
+        npmProcess.on('error', err => reject(err));
+      }),
+  );
 };
-
-

@@ -32,21 +32,10 @@ const validate: ValidateFunction<Metadata> = new Ajv().compile({
           type: 'string',
         },
       },
-      required: [
-        'goarch',
-        'goos',
-      ],
+      required: ['goarch', 'goos'],
     },
   },
-  required: [
-    'commit',
-    'date',
-    'previous_tag',
-    'project_name',
-    'runtime',
-    'tag',
-    'version',
-  ],
+  required: ['commit', 'date', 'previous_tag', 'project_name', 'runtime', 'tag', 'version'],
 });
 
 export const parseMetadata = async (path: string): Promise<Metadata> => {
@@ -57,9 +46,5 @@ export const parseMetadata = async (path: string): Promise<Metadata> => {
     return metadata;
   }
 
-  throw new Error(
-    (validate.errors ?? [{ message: 'Unknown error' }])
-      .map(p => p.message).join('\n'),
-  );
+  throw new Error((validate.errors ?? [{ message: 'Unknown error' }]).map(p => p.message).join('\n'));
 };
-

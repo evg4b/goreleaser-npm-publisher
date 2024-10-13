@@ -15,7 +15,7 @@ export const execInContext = async <T>(context: NpmExecContext, action: NpmExecA
     const lines = [
       '; THIS_FILE_WAS_GENERATED_BY GORELEASER_NPM_PUBLISHER',
       '; PLEASE_DO_NOT_TOUCH_IT!',
-      `//registry.npmjs.org/:_authToken=${ context.token }`,
+      `//registry.npmjs.org/:_authToken=${context.token}`,
     ];
     await writeFile(rcFilePath, lines.join(EOL), 'utf-8');
     return await action({

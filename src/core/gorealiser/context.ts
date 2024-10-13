@@ -32,8 +32,4 @@ export class Context {
   public packageJson(packageName: string): string {
     return join(this.projectPath, 'dist', 'npm', kebabCase(packageName), 'package.json');
   }
-
-  public readmeForPackage(packageName: string): string {
-    return join(this.projectPath, 'dist', 'npm', kebabCase(packageName), 'README.md');
-  }
 }
