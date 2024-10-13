@@ -20,20 +20,13 @@ export const publishHandler: ActionType<{ clear: boolean; token?: string; files:
       logger.info(`Unpacked size: ${packageInfo.unpackedSize}`);
       logger.info(`SHA sum: ${packageInfo.shasum}`);
       logger.info(`Integrity: ${packageInfo.integrity}`);
-      logger.info(`Filename: ${packageInfo.filename}`);
-      if (packageInfo.files.length) {
-        await logger.group('Files', () =>
-          Promise.all(
-            packageInfo.files.map(file => {
-              return logger.group(`Path: ${file.path}`, () => {
-                logger.info(`Size: ${file.size}`);
-                logger.info(`Mode: ${file.mode}`);
+      for (const file of packageInfo.files) {
+        await logger.group(`Filename: ${file.path}`, () => {
+          logger.info(`Size: ${file.size}`);
+          logger.info(`Mode: ${file.mode}`);
 
-                return Promise.resolve();
-              });
-            }),
-          ),
-        );
+          return Promise.resolve();
+        });
       }
       logger.info(`Entry count: ${packageInfo.entryCount}`);
     });
