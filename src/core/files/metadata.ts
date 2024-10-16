@@ -1,5 +1,6 @@
 import { Ajv, ValidateFunction } from 'ajv';
-import { readFile } from 'node:fs/promises';
+import { readFile } from '../../helpers/fs';
+import { FileFormatError } from './error';
 
 const validate: ValidateFunction<Metadata> = new Ajv().compile({
   type: 'object',
@@ -39,12 +40,11 @@ const validate: ValidateFunction<Metadata> = new Ajv().compile({
 });
 
 export const parseMetadata = async (path: string): Promise<Metadata> => {
-  const content = await readFile(path, 'utf8');
-  const metadata: unknown = JSON.parse(content);
+  const metadata: unknown = JSON.parse(await readFile(path));
 
   if (validate(metadata)) {
     return metadata;
   }
 
-  throw new Error((validate.errors ?? [{ message: 'Unknown error' }]).map(p => p.message).join('\n'));
+  throw new FileFormatError(validate.errors);
 };

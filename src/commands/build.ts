@@ -1,5 +1,4 @@
 import { isEmpty } from 'lodash';
-import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
 import { findFiles, parseArtifactsFile, parseMetadata, writePackage } from '../core/files';
@@ -7,21 +6,21 @@ import { Context } from '../core/gorealiser';
 import js from '../core/js';
 import { logger } from '../core/logger';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
-import { assertNotEmpty, binArtifactPredicate, tap } from '../helpers';
+import { assertNotEmpty, binArtifactPredicate } from '../helpers';
+import { copyFile, mkdir, writeFile } from '../helpers/fs';
 
 const copyPackageFiles = async (context: Context, name: string, files: string[]) => {
   for (const file of files) {
     const sourceFile = context.project(file);
     const destFile = context.packageFolder(name, file);
-    await copyFile(sourceFile, destFile)
-      .then(tap(() => logger.debug(`Copied file ${sourceFile} to ${destFile}`)))
-      .catch(tap(() => logger.error(`Copied file ${sourceFile} to ${destFile}`)));
+    await copyFile(sourceFile, destFile);
   }
 };
 
 export const buildHandler: ActionType<{ clear: boolean; files: string[] }> = async args => {
   const context = new Context(args.project);
   logger.debug(`Start build package in ${context.project()}`);
+
   const artifacts = await parseArtifactsFile(context.artifactsPath);
   assertNotEmpty(artifacts, 'Couldn’t find any artifacts.');
   logger.debug(`Found ${artifacts.length} artifact(s)`);
@@ -63,7 +62,7 @@ export const buildHandler: ActionType<{ clear: boolean; files: string[] }> = asy
       const sourceArtifactPath = join(args.project, artifact.path);
       const { base } = parsePath(artifact.path);
       const npmArtifactPath = context.packageFolder(pathItems[1]);
-      await mkdir(npmArtifactPath, { recursive: true });
+      await mkdir(npmArtifactPath);
       logger.debug(`Created package path: ${npmArtifactPath}`);
       const npmArtifact = join(npmArtifactPath, base);
       const packageDefinition = transformPackage(artifact, metadata, files);
@@ -93,11 +92,21 @@ export const buildHandler: ActionType<{ clear: boolean; files: string[] }> = asy
   logger.debug(`Copied ${files.length} extra file(s)`);
 };
 
+const insertIf = <T>(condition: boolean, value: T): T[] => (condition ? [value] : []);
+
 const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
-  const mapping = packages.reduce<Record<string, string[]>>((mappings, pkg) => {
-    const data = prefix ? [prefix, pkg.name] : [pkg.name];
-    return { ...mappings, [`${pkg.os}_${pkg.cpu}`]: [...data, pkg.bin] };
-  }, {});
+  const mapping = packages.reduce<Record<string, string[]>>(
+    (mappings, pkg) => ({
+      ...mappings,
+      [`${pkg.os}_${pkg.cpu}`]: [
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ...insertIf<string>(!!prefix, prefix!),
+        pkg.name,
+        pkg.bin,
+      ],
+    }),
+    {},
+  );
 
   const directory = isEmpty(prefix) ? js`path.dirname(__dirname)` : js`path.dirname(path.dirname(__dirname))`;
 

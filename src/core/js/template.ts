@@ -7,13 +7,11 @@ import { transform } from './transform';
  * Example:
  * ```ts
  * const module = 'path';
- * const actual = js`const path = require(${ module });`;
+ * const code = js`const path = require(${ module });`;
  *
- * console.log(actual.toString());
+ * console.log(code.toString());
  * // const path = require('path');
  * ```
- * @param templates
- * @param data
  */
 export const js = (templates: TemplateStringsArray, ...data: unknown[]): Code => {
   const jsCode = templates.reduce((firsBlock, secondBlock, index) => {
