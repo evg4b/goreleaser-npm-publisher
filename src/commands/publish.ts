@@ -4,6 +4,7 @@ import { Context } from '../core/gorealiser';
 import { logger } from '../core/logger';
 import { publish } from '../npm';
 import { buildHandler } from './build';
+import { ActionType } from './models';
 
 export const publishHandler: ActionType<{ clear: boolean; token?: string; files: string[] }> = async args => {
   await buildHandler(args);

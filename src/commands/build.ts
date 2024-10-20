@@ -8,6 +8,7 @@ import { logger } from '../core/logger';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
 import { assertNotEmpty, binArtifactPredicate } from '../helpers';
 import { copyFile, mkdir, writeFile } from '../helpers/fs';
+import { ActionType } from './models';
 
 const copyPackageFiles = async (context: Context, name: string, files: string[]) => {
   for (const file of files) {
@@ -81,12 +82,12 @@ export const buildHandler: ActionType<{ clear: boolean; files: string[] }> = asy
   logger.debug(`Built ${packages.length} platform package(s)`);
 
   const packageJsonObject = formatMainPackageJson(packages, metadata, args.description, args.prefix, files);
-  await mkdir(context.packageFolder(metadata.project_name), { recursive: true });
+  await mkdir(context.packageFolder(metadata.project_name));
   logger.debug(`Created package path: ${context.packageFolder(metadata.project_name)}`);
   await writePackage(context.packageJson(metadata.project_name), packageJsonObject);
   logger.debug(`Written package json file: ${context.packageJson(metadata.project_name)}`);
   const indexJsFile = join(context.packageFolder(metadata.project_name), 'index.js');
-  await writeFile(indexJsFile, buildExecScript(packages, args.prefix), 'utf-8');
+  await writeFile(indexJsFile, buildExecScript(packages, args.prefix));
   logger.debug(`Written package index.js file: ${indexJsFile}`);
   await copyPackageFiles(context, metadata.project_name, files);
   logger.debug(`Copied ${files.length} extra file(s)`);
