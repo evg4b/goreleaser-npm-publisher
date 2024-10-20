@@ -4,7 +4,7 @@ interface Metadata {
   previous_tag: string;
   version: string;
   commit: string;
-  date: Date;
+  date: string;
   runtime: Runtime;
 }
 

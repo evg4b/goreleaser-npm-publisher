@@ -36,7 +36,7 @@ export const buildHandler: ActionType<{ clear: boolean; files: string[] }> = asy
       logger.debug(`previous_tag: ${metadata.previous_tag}`);
       logger.debug(`version: ${metadata.version}`);
       logger.debug(`commit: ${metadata.commit}`);
-      logger.debug(`date: ${metadata.date.toISOString()}`);
+      logger.debug(`date: ${metadata.date}`);
       logger.debug(`runtime_goos: ${metadata.runtime.goos}`);
       logger.debug(`runtime_goarch: ${metadata.runtime.goarch}`);
       return Promise.resolve();
