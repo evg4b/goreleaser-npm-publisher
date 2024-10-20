@@ -40,12 +40,12 @@
 
 </p>
 <p align="center">
-  Publish Go binaries to npm registry, automated tool for build and publish Go binaries to npm registry.
+  Automated tool for building and publishing NPM packages from Go binaries.
 </p>
 
 # Quick start:
 
-Firstly build create release of your package via `goreleaser`.
+Firstly build create release of your package via [goreleaser](https://goreleaser.com/).
 
 ```shell
 goreleaser build --clean
@@ -60,7 +60,7 @@ npx -y goreleaser-npm-publisher publish --clean
 Or add `--token` parameter to use yor NPM_AUTH_TOKEN
 
 ```shell
-npx -y goreleaser-npm-publisher publish --clean --token npm_*******m
+npx -y goreleaser-npm-publisher publish --clean --token npm_********
 ```
 
 That's it.
@@ -83,11 +83,10 @@ You can use `goreleaser-npm-publisher` as a GitHub Action.
 
 ```yaml
 - name: Publish to npm
-  uses: evg4b/goreleaser-npm-publisher-action@main
+  uses: evg4b/goreleaser-npm-publisher-action@v1.0.0
   with:
-    clear: true
     prefix: 'evg4b'
-    token: secrets.NPM_TOKEN
+    token: ${{ secrets.NPM_AUTH_TOKEN }}
 ```
 
 For more details see [GitHub Action documentation](https://github.com/evg4b/goreleaser-npm-publisher-action)
