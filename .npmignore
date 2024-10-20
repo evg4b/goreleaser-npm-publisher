@@ -8,10 +8,16 @@ src/
 .editorconfig
 .eslintrc.js
 .gitattributes
+.prettierignore
+.prettierrc
+eslint.config.mjs
+prettier.config.js
+sonar-project.properties
 .gitignore
 .yarnrc.yml
 jest.config.js
 tsconfig.eslint.json
+tsconfig.spec.json
 tsconfig.json
 tsup.config.js
 yarn.lock
