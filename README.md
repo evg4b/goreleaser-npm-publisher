@@ -45,7 +45,7 @@
 
 # Quick start:
 
-Firstly build create release of your package via [goreleaser](https://goreleaser.com/).
+Firstly create release of your package via [goreleaser](https://goreleaser.com/).
 
 ```shell
 goreleaser build --clean
