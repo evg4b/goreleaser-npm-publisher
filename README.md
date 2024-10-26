@@ -85,7 +85,7 @@ You can use `goreleaser-npm-publisher` as a GitHub Action.
 - name: Publish to npm
   uses: evg4b/goreleaser-npm-publisher-action@v1.0.0
   with:
-    prefix: 'evg4b'
+    prefix: '@evg4b'
     token: ${{ secrets.NPM_AUTH_TOKEN }}
 ```
 
