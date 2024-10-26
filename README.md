@@ -41,33 +41,33 @@
 </p>
 <p align="center">
   Automated tool for building and publishing NPM packages from Go binaries.
-</p>
+</p>`
 
 # Quick start:
 
-Firstly create release of your package via [goreleaser](https://goreleaser.com/).
+First, create a release of your package using [goreleaser](https://goreleaser.com/).
 
 ```shell
 goreleaser build --clean
 ```
 
-Then just run `goreleaser-npm-publisher` in the same directory (pay attention you should be logging in the registry).
+Then, run `goreleaser-npm-publisher` in the same directory. Make sure you're logged into the registry.
 
 ```shell
 npx -y goreleaser-npm-publisher publish --clean
 ```
 
-Or add `--token` parameter to use yor NPM_AUTH_TOKEN
+Alternatively, add the `--token` parameter to use your `NPM_AUTH_TOKEN`.
 
 ```shell
 npx -y goreleaser-npm-publisher publish --clean --token npm_********
 ```
 
-That's it.
+That’s it!
 
 ## Use as a library
 
-You can use `goreleaser-npm-publisher` as a standard npm package
+You can use `goreleaser-npm-publisher` as a standard npm package.
 
 ```ts publish.ts
 import { publish } from 'goreleaser-npm-publisher';
@@ -89,66 +89,66 @@ You can use `goreleaser-npm-publisher` as a GitHub Action.
     token: ${{ secrets.NPM_AUTH_TOKEN }}
 ```
 
-For more details see [GitHub Action documentation](https://github.com/evg4b/goreleaser-npm-publisher-action)
+For more details, see [the GitHub Action documentation](https://github.com/evg4b/goreleaser-npm-publisher-action).
 
 ## CLI commands and options:
 
-The `goreleaser-npm-publisher` has the following CLI commands:
+`goreleaser-npm-publisher` provides the following CLI commands:
 
 ### list
 
-Displays a list of packages that can be built in the current project with passed options.
+Displays a list of packages that can be built in the current project using the specified options.
 
 #### Options
 
-| Option          | type    | Description                                                               |
-| --------------- | ------- | ------------------------------------------------------------------------- |
-| **project**     | string  | Path to the root of go package                                            |
-| **builder**     | string  | The name of the builder whose output should be used for building packages |
-| **prefix**      | string  | NPM package scope prefix                                                  |
-| **description** | string  | NPM package description                                                   |
-| **verbose**     | boolean | Print verbose output                                                      |
+| Option          | type    | Description                                                                  |
+|-----------------|---------|------------------------------------------------------------------------------|
+| **project**     | string  | Specifies the path to the root of the Go package.                            |
+| **builder**     | string  | The name of the builder whose output will be used for building the packages. |
+| **prefix**      | string  | NPM package scope prefix.                                                    |
+| **description** | string  | NPM package description.                                                     |
+| **verbose**     | boolean | Print verbose output.                                                        |
 
 ### build
 
-Builds all packages that can be built in the current project with the specified parameters.
-Built packages can be found in the `dist/npm` folder.
+Builds all packages that can be built in the current project using the specified parameters.
+The built packages can be found in the `dist/npm` folder.
 
-| Option          | Type     | Description                                                                           |
-| --------------- | -------- | ------------------------------------------------------------------------------------- |
-| **project**     | string   | Path to the root of go package                                                        |
-| **builder**     | string   | The name of the builder whose output should be used for building packages             |
-| **clear**       | boolean  | Clean `dist/npm` folder before build                                                  |
-| **prefix**      | string   | NPM package scope prefix                                                              |
-| **description** | string   | NPM package description                                                               |
-| **files**       | string[] | Files witch should be included to the NPM package (`README.md`, `license` by default) |
-| **verbose**     | boolean  | Print verbose output                                                                  |
+| Option          | Type     | Description                                                                                 |
+|-----------------|----------|---------------------------------------------------------------------------------------------|
+| **project**     | string   | Specifies the path to the root of the Go package.                                           |
+| **builder**     | string   | The name of the builder whose output will be used for building the packages.                |
+| **clear**       | boolean  | Clean the `dist/npm` folder before the build.                                               |
+| **prefix**      | string   | NPM package scope prefix.                                                                   |
+| **description** | string   | NPM package description.                                                                    |
+| **files**       | string[] | Files that should be included in the NPM package (e.g., `README.md`, `LICENSE` by default). |
+| **verbose**     | boolean  | Print verbose output.                                                                       |
 
 ### publish
 
-Builds and publishes to the `registry` all packages that can be built in the current project with the specified
+Builds and publishes to the `registry` all packages that can be built in the current project using the specified
 parameters.
 
-| Option          | Type     | Description                                                                           |
-| --------------- | -------- | ------------------------------------------------------------------------------------- |
-| **project**     | string   | Path to the root of go package                                                        |
-| **builder**     | string   | The name of the builder whose output should be used for building packages             |
-| **clear**       | boolean  | Clean `dist/npm` folder before build                                                  |
-| **prefix**      | string   | NPM package scope prefix                                                              |
-| **description** | string   | NPM package description                                                               |
-| **files**       | string[] | Files witch should be included to the NPM package (`README.md`, `license` by default) |
-| **token**       | string   | The NPM auth token                                                                    |
-| **verbose**     | boolean  | Print verbose output                                                                  |
+| Option          | Type     | Description                                                                                 |
+|-----------------|----------|---------------------------------------------------------------------------------------------|
+| **project**     | string   | Specifies the path to the root of the Go package.                                           |
+| **builder**     | string   | The name of the builder whose output will be used for building the packages.                |
+| **clear**       | boolean  | Clean the `dist/npm` folder before the build.                                               |
+| **prefix**      | string   | NPM package scope prefix.                                                                   |
+| **description** | string   | NPM package description.                                                                    |
+| **files**       | string[] | Files that should be included in the NPM package (e.g., `README.md`, `LICENSE` by default). |
+| **token**       | string   | The NPM authentication token.                                                               |
+| **verbose**     | boolean  | Print verbose output.                                                                       |
 
 ## Structure of npm package:
 
-The output will have a main package and platform packages.
-The main package will contain the executable script
-which will detect the platform and architecture and run the corresponding platform package.
-Platform packages will contain the Go binary for the specific platform and architecture.
+The output will include a main package and platform packages.
+The main package will contain the executable script that detects the platform and architecture, running the
+corresponding platform package.
+The platform packages will include the Go binary for the specific platform and architecture.
 
-For example, for the package `go-package` with version `0.0.17`, and goreleaser build for `linux`, `windows`, `darwin`
-and `ia32`, `x64`, `arm64` architectures:
+For example, for the package `go-package` with version `0.0.17`, and with Goreleaser building for `linux`, `windows`,
+and `darwin` along with `ia32`, `x64`, and `arm64` architectures:
 
 Main package:
 
@@ -207,7 +207,7 @@ go-package_darwin_arm64@0.0.17
 ### Platforms:
 
 | GOOS    | Node.js Platform |
-| ------- | ---------------- |
+|---------|------------------|
 | darwin  | darwin           |
 | linux   | linux            |
 | windows | win32            |
@@ -221,7 +221,7 @@ go-package_darwin_arm64@0.0.17
 ### Architectures:
 
 | GOARCH  | Node.js Platform |
-| ------- | ---------------- |
+|---------|------------------|
 | amd64   | x64              |
 | 386     | ia32             |
 | arm     | arm              |
@@ -232,3 +232,4 @@ go-package_darwin_arm64@0.0.17
 | ppc64   | ppc64            |
 | ppc     | ppc              |
 | mips    | mips             |
+
