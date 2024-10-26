@@ -41,7 +41,7 @@
 </p>
 <p align="center">
   Automated tool for building and publishing NPM packages from Go binaries.
-</p>`
+</p>
 
 # Quick start:
 
