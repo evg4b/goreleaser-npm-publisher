@@ -10,6 +10,7 @@ interface PackageDefinition {
   os: OS;
   cpu: CPU;
   files: string[];
+  keywords: string[];
 }
 
 interface PackageJson {
@@ -21,4 +22,5 @@ interface PackageJson {
   os: OS[];
   cpu: CPU[];
   files: string[];
+  keywords: string[];
 }

@@ -4,6 +4,7 @@ interface ListParams {
   description?: string;
   prefix?: string;
   verbose?: boolean;
+  keywords?: string[];
 }
 
 interface BuildParams extends ListParams {
