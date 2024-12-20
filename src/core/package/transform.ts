@@ -12,7 +12,7 @@ export const transformPackage = (artifact: BinaryArtifact, metadata: Metadata, f
     sourceBinary: artifact.path,
     destinationBinary: artifact.path,
     files,
-    keywords: keywords ?? [],
+    keywords,
   };
 };
 
