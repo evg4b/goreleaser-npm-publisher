@@ -62,6 +62,13 @@ const verboseOption = <T>(builder: Argv<T>) =>
     default: false,
   });
 
+const keywordsOption = <T>(builder: Argv<T>) =>
+  builder.option('keywords', {
+    type: 'array',
+    string: true,
+    describe: 'Keywords for the npm package',
+  });
+
 void scriptName('goreleaser-npm-publisher')
   .version(__VERSION__)
   .usage('$0 <cmd> [args]')
@@ -89,6 +96,7 @@ void scriptName('goreleaser-npm-publisher')
         .then(prefixOption)
         .then(descriptionOption)
         .then(filesOption)
+        .then(keywordsOption)
         .then(verboseOption),
     options => buildHandler(options),
     [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
@@ -104,6 +112,7 @@ void scriptName('goreleaser-npm-publisher')
         .then(prefixOption)
         .then(descriptionOption)
         .then(filesOption)
+        .then(keywordsOption)
         .then(tokenOption)
         .then(verboseOption),
     options => publishHandler(options),

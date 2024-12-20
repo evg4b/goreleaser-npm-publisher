@@ -18,7 +18,7 @@ const copyPackageFiles = async (context: Context, name: string, files: string[])
   }
 };
 
-export const buildHandler: ActionType<{ clear: boolean; files: string[] }> = async args => {
+export const buildHandler: ActionType<BuildParams> = async args => {
   const context = new Context(args.project);
   logger.debug(`Start build package in ${context.project()}`);
 

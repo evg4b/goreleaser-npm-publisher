@@ -6,7 +6,7 @@ import { publish } from '../npm';
 import { buildHandler } from './build';
 import { ActionType } from './models';
 
-export const publishHandler: ActionType<{ clear: boolean; token?: string; files: string[] }> = async args => {
+export const publishHandler: ActionType<PublishParams> = async args => {
   await buildHandler(args);
   const context = new Context(args.project);
 

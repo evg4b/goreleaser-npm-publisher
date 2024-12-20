@@ -25,7 +25,7 @@ const formatPackage = async (context: Context, json: PackageJson, pkg?: PackageD
   });
 };
 
-export const listHandler: ActionType = async args => {
+export const listHandler: ActionType<ListParams> = async args => {
   const context = new Context(args.project);
   const metadata = await parseMetadata(context.metadataPath);
   const artifacts = await parseArtifactsFile(context.artifactsPath);
