@@ -18,7 +18,7 @@ const copyPackageFiles = async (context: Context, name: string, files: string[])
   }
 };
 
-export const buildHandler: ActionType<{ clear: boolean; files: string[] }> = async args => {
+export const buildHandler: ActionType<BuildParams> = async args => {
   const context = new Context(args.project);
   logger.debug(`Start build package in ${context.project()}`);
 
@@ -57,31 +57,33 @@ export const buildHandler: ActionType<{ clear: boolean; files: string[] }> = asy
     }
   }
 
+  const keywords = args.keywords ?? [];
+
   for (const artifact of binaryArtifacts) {
-    const pathItems = artifact.path.split(sep);
-    await logger.group(`Built package ${pathItems[1]}`, async () => {
+    const [, pathItem] = artifact.path.split(sep);
+    await logger.group(`Built package ${pathItem}`, async () => {
       const sourceArtifactPath = join(args.project, artifact.path);
       const { base } = parsePath(artifact.path);
-      const npmArtifactPath = context.packageFolder(pathItems[1]);
+      const npmArtifactPath = context.packageFolder(pathItem);
       await mkdir(npmArtifactPath);
       logger.debug(`Created package path: ${npmArtifactPath}`);
       const npmArtifact = join(npmArtifactPath, base);
-      const packageDefinition = transformPackage(artifact, metadata, files);
+      const packageDefinition = transformPackage(artifact, metadata, files, keywords);
       logger.debug(`Created package ${packageDefinition.name}: ${packageDefinition.destinationBinary}`);
       packages.push(packageDefinition);
       await copyFile(sourceArtifactPath, npmArtifact);
-      const packageJsonObject = formatPackageJson(packageDefinition, args.description, args.prefix, files);
-      const packageJsonPath = context.packageJson(pathItems[1]);
+      const packageJsonObject = formatPackageJson(packageDefinition, args.description, args.prefix, files, keywords);
+      const packageJsonPath = context.packageJson(pathItem);
       await writePackage(packageJsonPath, packageJsonObject);
       logger.debug(`Written package json file: ${packageJsonPath}`);
-      await copyPackageFiles(context, pathItems[1], files);
+      await copyPackageFiles(context, pathItem, files);
       logger.debug(`Copied ${files.length} extra file(s)`);
     });
   }
 
   logger.debug(`Built ${packages.length} platform package(s)`);
 
-  const packageJsonObject = formatMainPackageJson(packages, metadata, args.description, args.prefix, files);
+  const packageJsonObject = formatMainPackageJson(packages, metadata, args.description, args.prefix, files, keywords);
   await mkdir(context.packageFolder(metadata.project_name));
   logger.debug(`Created package path: ${context.packageFolder(metadata.project_name)}`);
   await writePackage(context.packageJson(metadata.project_name), packageJsonObject);

@@ -10,6 +10,10 @@ const formatPackage = async (context: Context, json: PackageJson, pkg?: PackageD
     if (json.description) {
       logger.info(`description: ${json.description}`);
     }
+    if (json.keywords.length) {
+      logger.info(`keywords: ${json.keywords.join(', ')}`);
+    }
+    logger.info(`version: ${json.version}`);
     logger.info(`os: ${json.os.join(', ')}`);
     logger.info(`cpu: ${json.cpu.join(', ')}`);
     if (pkg) {
@@ -25,17 +29,18 @@ const formatPackage = async (context: Context, json: PackageJson, pkg?: PackageD
   });
 };
 
-export const listHandler: ActionType = async args => {
+export const listHandler: ActionType<ListParams> = async args => {
   const context = new Context(args.project);
   const metadata = await parseMetadata(context.metadataPath);
   const artifacts = await parseArtifactsFile(context.artifactsPath);
   const builder = args.builder ?? metadata.project_name;
+  const keywords = args.keywords ?? [];
   const descriptions = artifacts.filter(binArtifactPredicate(builder)).map(artifact => {
-    const definition = transformPackage(artifact, metadata, []);
+    const definition = transformPackage(artifact, metadata, [], keywords);
 
     return {
       definition,
-      json: formatPackageJson(definition, args.description, args.prefix, []),
+      json: formatPackageJson(definition, args.description, args.prefix, [], keywords),
     };
   });
 
@@ -45,6 +50,7 @@ export const listHandler: ActionType = async args => {
     args.description,
     args.prefix,
     [],
+    keywords,
   );
 
   await logger.group('Main package:', () => formatPackage(context, mainPackage));

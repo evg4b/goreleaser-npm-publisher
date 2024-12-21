@@ -1,1 +1,1 @@
-export type ActionType<T = object> = (args: DefaultParams & T) => void | Promise<void>;
+export type ActionType<T> = (args: T) => void | Promise<void>;
