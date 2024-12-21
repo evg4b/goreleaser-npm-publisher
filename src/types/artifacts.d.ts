@@ -36,7 +36,18 @@ interface ChecksumArtifact {
   path: string;
   internal_type: 12;
   type: 'Checksum';
-  extra: NonNullable<unknown>;
 }
 
-type Artifact = BinaryArtifact | ArchiveArtifact | ChecksumArtifact;
+interface UnknownArtifact {
+  name: string;
+  path: string;
+  goos: GOOS;
+  goarch: GOARCH;
+  goamd64?: string;
+  internal_type: 4;
+  type: 'string';
+  extra: unknown;
+}
+
+type Artifact = BinaryArtifact | ArchiveArtifact | ChecksumArtifact | UnknownArtifact;
+

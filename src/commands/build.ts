@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
-import { findFiles, parseArtifactsFile, parseMetadata, writePackage } from '../core/files';
+import { findFiles, parseArtifactsFile, parseMetadata, validateBinaryArtifact, writePackage } from '../core/files';
 import { Context } from '../core/gorealiser';
 import js from '../core/js';
 import { logger } from '../core/logger';
@@ -47,6 +47,17 @@ export const buildHandler: ActionType<BuildParams> = async args => {
   const builder = args.builder ?? metadata.project_name;
   const binaryArtifacts = artifacts.filter(binArtifactPredicate(builder));
   assertNotEmpty(binaryArtifacts, `Couldn’t find any binary artifacts from ${builder} builder`);
+  if (!validateBinaryArtifact(binaryArtifacts)) {
+    logger.error('Invalid binary artifacts');
+    validateBinaryArtifact.errors?.forEach(error => {
+      logger.error(JSON.stringify(error, null, 2));
+    });
+    await logger.group('artifacts:', () => {
+      logger.error(JSON.stringify(binaryArtifacts, null, 2));
+      return Promise.resolve();
+    });
+    throw new Error('Invalid binary artifacts');
+  }
   logger.debug(`Found ${binaryArtifacts.length} artifact(s)`);
 
   const files = await findFiles(args.project, args.files);
