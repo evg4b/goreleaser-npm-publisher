@@ -790,18 +790,36 @@ describe('validateBinaryArtifact', () => {
         goarch: 'amd64',
         internal_type: 4,
         type: 'Binary',
-        ext: {
-          "Binary": "donkey",
-          "Builder": "go",
-          "Ext": ".exe",
-          "ID": "donkey"
-        }
-      },
+        extra: {
+          'Binary': 'donkey',
+          'Builder': 'go',
+          'Ext': '.exe',
+          'ID': 'donkey',
+        },
+      } as BinaryArtifact,
       expected: true,
-    }
+    },
+    {
+      name: 'full binary artifact with incorrect internal_type',
+      object: {
+        name: 'donkey',
+        path: 'dist/donkey_linux_amd64_v1/donkey',
+        goos: 'windows',
+        goarch: 'amd64',
+        internal_type: 5,
+        type: 'Binary',
+        extra: {
+          'Binary': 'donkey',
+          'Builder': 'go',
+          'Ext': '.exe',
+          'ID': 'donkey',
+        },
+      },
+      expected: false,
+    },
   ];
 
   it.each(cases)('for $name should return $expected', ({ object, expected }) => {
-    expect(validateBinaryArtifact(object)).toEqual(expected);
+    expect(validateBinaryArtifact([object])).toEqual(expected);
   });
 });

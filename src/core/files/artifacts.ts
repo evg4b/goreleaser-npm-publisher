@@ -51,7 +51,7 @@ export const validateBinaryArtifact: ValidateFunction<BinaryArtifact[]> = ajv.co
         type: 'string',
       },
       internal_type: {
-        type: 'integer',
+        const: 4,
       },
       type: {
         type: 'string',
@@ -69,6 +69,9 @@ export const validateBinaryArtifact: ValidateFunction<BinaryArtifact[]> = ajv.co
           Binary: {
             type: 'string',
           },
+          Builder: {
+            type: 'string',
+          },
           Ext: {
             type: 'string',
           },
@@ -82,7 +85,7 @@ export const validateBinaryArtifact: ValidateFunction<BinaryArtifact[]> = ajv.co
         type: 'string',
       },
     },
-    required: ['internal_type', 'name', 'path', 'type'],
+    required: ['internal_type', 'name', 'path', 'type', 'extra'],
   },
   type: 'array',
 })

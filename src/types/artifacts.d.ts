@@ -8,6 +8,7 @@ interface BinaryArtifact {
   type: 'Binary';
   extra: {
     Binary: string;
+    Builder?: string;
     Ext: string;
     ID: string;
   };
@@ -44,7 +45,7 @@ interface UnknownArtifact {
   goos: GOOS;
   goarch: GOARCH;
   goamd64?: string;
-  internal_type: 4;
+  internal_type: number;
   type: 'string';
   extra: unknown;
 }
