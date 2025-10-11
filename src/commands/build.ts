@@ -1,4 +1,3 @@
-import { isEmpty } from 'lodash';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
 import { findFiles, parseArtifactsFile, parseMetadata, validateBinaryArtifact, writePackage } from '../core/files';
@@ -136,10 +135,8 @@ const buildExecScript = (packages: PackageDefinition[], prefix: string | undefin
 const path = require('path');
 const child_process = require('child_process');
 const mapping = ${mapping};
-const modulesDirectory = __dirname;
 const definition = mapping[process.platform + '_' + process.arch];
-const packageName = definition.name.join('/');
-const packageJsonPath = require.resolve(packageName + '/package.json', { paths: [modulesDirectory] });
+const packageJsonPath = require.resolve(definition.name.join('/') + '/package.json');
 const packagePath = path.join(path.dirname(packageJsonPath), definition.bin);
 child_process.spawn(packagePath, process.argv.splice(2), {
   stdio: 'inherit',
