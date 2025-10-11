@@ -132,13 +132,11 @@ const buildExecScript = (packages: PackageDefinition[], prefix: string | undefin
     {},
   );
 
-  const directory = isEmpty(prefix) ? js`path.dirname(__dirname)` : js`path.dirname(path.dirname(__dirname))`;
-
   const code = js`#!/usr/bin/env node
 const path = require('path');
 const child_process = require('child_process');
 const mapping = ${mapping};
-const modulesDirectory = ${directory};
+const modulesDirectory = __dirname;
 const definition = mapping[process.platform + '_' + process.arch];
 const packageName = definition.name.join('/');
 const packageJsonPath = require.resolve(packageName + '/package.json', { paths: [modulesDirectory] });
