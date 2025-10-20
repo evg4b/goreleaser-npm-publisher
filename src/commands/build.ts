@@ -1,4 +1,3 @@
-import { isEmpty } from 'lodash';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
 import { findFiles, parseArtifactsFile, parseMetadata, validateBinaryArtifact, writePackage } from '../core/files';
@@ -109,28 +108,36 @@ export const buildHandler: ActionType<BuildParams> = async args => {
 const insertIf = <T>(condition: boolean, value: T): T[] => (condition ? [value] : []);
 
 const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
-  const mapping = packages.reduce<Record<string, string[]>>(
+  const mapping = packages.reduce<
+    Record<
+      string,
+      {
+        name: string[];
+        bin: string;
+      }
+    >
+  >(
     (mappings, pkg) => ({
       ...mappings,
-      [`${pkg.os}_${pkg.cpu}`]: [
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ...insertIf<string>(!!prefix, prefix!),
-        pkg.name,
-        pkg.bin,
-      ],
+      [`${pkg.os}_${pkg.cpu}`]: {
+        name: [
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          ...insertIf<string>(!!prefix, prefix!),
+          pkg.name,
+        ],
+        bin: pkg.bin,
+      },
     }),
     {},
   );
-
-  const directory = isEmpty(prefix) ? js`path.dirname(__dirname)` : js`path.dirname(path.dirname(__dirname))`;
 
   const code = js`#!/usr/bin/env node
 const path = require('path');
 const child_process = require('child_process');
 const mapping = ${mapping};
-const modulesDirectory = ${directory};
 const definition = mapping[process.platform + '_' + process.arch];
-const packagePath = path.join(modulesDirectory, ...definition);
+const packageJsonPath = require.resolve(definition.name.join('/') + '/package.json');
+const packagePath = path.join(path.dirname(packageJsonPath), definition.bin);
 child_process.spawn(packagePath, process.argv.splice(2), {
   stdio: 'inherit',
   env: process.env,
