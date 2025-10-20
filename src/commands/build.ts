@@ -1,3 +1,4 @@
+import { fromPairs } from 'lodash';
 import { join, sep } from 'node:path';
 import { parse as parsePath } from 'path';
 import { findFiles, parseArtifactsFile, parseMetadata, validateBinaryArtifact, writePackage } from '../core/files';
@@ -7,7 +8,7 @@ import { logger } from '../core/logger';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
 import { assertNotEmpty, binArtifactPredicate } from '../helpers';
 import { copyFile, mkdir, writeFile } from '../helpers/fs';
-import { ActionType } from './models';
+import { ActionType, PackageMapping } from './models';
 
 const copyPackageFiles = async (context: Context, name: string, files: string[]) => {
   for (const file of files) {
@@ -107,28 +108,17 @@ export const buildHandler: ActionType<BuildParams> = async args => {
 
 const insertIf = <T>(condition: boolean, value: T): T[] => (condition ? [value] : []);
 
+
 const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
-  const mapping = packages.reduce<
-    Record<
-      string,
-      {
-        name: string[];
-        bin: string;
-      }
-    >
-  >(
-    (mappings, pkg) => ({
-      ...mappings,
-      [`${pkg.os}_${pkg.cpu}`]: {
-        name: [
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          ...insertIf<string>(!!prefix, prefix!),
-          pkg.name,
-        ],
-        bin: pkg.bin,
-      },
-    }),
-    {},
+  const mapping = fromPairs(
+    packages.map<[string, PackageMapping]>(pkg => [`${ pkg.os }_${ pkg.cpu }`, {
+      name: [
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ...insertIf<string>(!!prefix, prefix!),
+        pkg.name,
+      ],
+      bin: pkg.bin,
+    }]),
   );
 
   const code = js`#!/usr/bin/env node
