@@ -29,7 +29,7 @@
     "url": "https://github.com/evg4b/goreleaser-npm-publisher/issues"
   },
   "readme": "README.md",
-  "packageManager": "yarn@4.5.1",
+  "packageManager": "yarn@4.10.3",
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "build:dev": "NODE_ENV=development tsup",
