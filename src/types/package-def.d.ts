@@ -11,6 +11,7 @@ interface PackageDefinition {
   cpu: CPU;
   files: string[];
   keywords: string[];
+  license?: string;
 }
 
 interface PackageJson {
@@ -23,4 +24,5 @@ interface PackageJson {
   cpu: CPU[];
   files: string[];
   keywords: string[];
+  license?: string;
 }

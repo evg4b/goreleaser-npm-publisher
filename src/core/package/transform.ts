@@ -2,7 +2,13 @@ import { isEmpty, uniq } from 'lodash';
 import { normalizeArch } from './arch';
 import { normalizeOS } from './os';
 
-export const transformPackage = (artifact: BinaryArtifact, metadata: Metadata, files: string[], keywords: string[]): PackageDefinition => {
+export const transformPackage = (
+  artifact: BinaryArtifact,
+  metadata: Metadata,
+  files: string[],
+  keywords: string[],
+  license?: string,
+): PackageDefinition => {
   return {
     name: `${metadata.project_name}_${artifact.goos}_${artifact.goarch}`,
     version: metadata.version,
@@ -13,6 +19,7 @@ export const transformPackage = (artifact: BinaryArtifact, metadata: Metadata, f
     destinationBinary: artifact.path,
     files,
     keywords,
+    license,
   };
 };
 
@@ -32,6 +39,7 @@ export const formatPackageJson = (
     cpu: [pkg.cpu],
     files,
     keywords,
+    license: pkg.license,
   });
 
 export const formatPackageName = (pkg: PackageDefinition | Metadata, prefix: string | undefined): string => {
@@ -49,6 +57,7 @@ export const formatMainPackageJson = (
   prefix: string | undefined,
   files: string[],
   keywords: string[],
+  license?: string,
 ): PackageJson =>
   normalize({
     name: formatPackageName(metadata, prefix),
@@ -66,6 +75,7 @@ export const formatMainPackageJson = (
     cpu: uniq(packages.map(pkg => pkg.cpu)),
     files,
     keywords,
+    license: license,
   });
 
 const normalize = ({ description, ...other }: PackageJson): PackageJson => {
