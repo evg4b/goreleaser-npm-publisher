@@ -69,6 +69,12 @@ const keywordsOption = <T>(builder: Argv<T>) =>
     describe: 'Keywords for the npm package',
   });
 
+const licenseOption = <T>(builder: Argv<T>) =>
+  builder.option('license', {
+    type: 'string',
+    describe: 'Package license / SPDX identifier',
+  });
+
 void scriptName('goreleaser-npm-publisher')
   .version(__VERSION__)
   .usage('$0 <cmd> [args]')
@@ -97,7 +103,8 @@ void scriptName('goreleaser-npm-publisher')
         .then(descriptionOption)
         .then(filesOption)
         .then(keywordsOption)
-        .then(verboseOption),
+        .then(verboseOption)
+        .then(licenseOption),
     options => buildHandler(options),
     [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
   )
@@ -114,7 +121,8 @@ void scriptName('goreleaser-npm-publisher')
         .then(filesOption)
         .then(keywordsOption)
         .then(tokenOption)
-        .then(verboseOption),
+        .then(verboseOption)
+        .then(licenseOption),
     options => publishHandler(options),
     [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
   )

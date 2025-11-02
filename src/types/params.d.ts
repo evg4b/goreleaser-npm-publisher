@@ -10,6 +10,7 @@ interface ListParams {
 interface BuildParams extends ListParams {
   clear: boolean;
   files: string[];
+  license?: string;
 }
 
 interface PublishParams extends BuildParams {
