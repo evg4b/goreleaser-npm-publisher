@@ -1,14 +1,10 @@
 import { isEmpty, uniq } from 'lodash';
 import { normalizeArch } from './arch';
+import { FormatMainPackageJsonParams, FormatPackageJsonParams, TransformPackageParams, } from './models';
 import { normalizeOS } from './os';
 
-export const transformPackage = (
-  artifact: BinaryArtifact,
-  metadata: Metadata,
-  files: string[],
-  keywords: string[],
-  license?: string,
-): PackageDefinition => {
+export const transformPackage = (params: TransformPackageParams): PackageDefinition => {
+  const { artifact, metadata, files, keywords, license } = params;
   return {
     name: `${metadata.project_name}_${artifact.goos}_${artifact.goarch}`,
     version: metadata.version,
@@ -23,24 +19,20 @@ export const transformPackage = (
   };
 };
 
-export const formatPackageJson = (
-  pkg: PackageDefinition,
-  description: string | undefined,
-  prefix: string | undefined,
-  files: string[],
-  keywords: string[],
-): PackageJson =>
-  normalize({
+export const formatPackageJson = (params: FormatPackageJsonParams): PackageJson => {
+  const { pkg, description, prefix, files, keywords } = params;
+  return normalize({
     name: formatPackageName(pkg, prefix),
     description,
     version: pkg.version,
     bin: { [pkg.name]: pkg.bin },
-    os: [pkg.os],
-    cpu: [pkg.cpu],
+    os: [ pkg.os ],
+    cpu: [ pkg.cpu ],
     files,
     keywords,
     license: pkg.license,
   });
+};
 
 export const formatPackageName = (pkg: PackageDefinition | Metadata, prefix: string | undefined): string => {
   if ('project_name' in pkg) {
@@ -50,16 +42,9 @@ export const formatPackageName = (pkg: PackageDefinition | Metadata, prefix: str
   return isEmpty(prefix) ? pkg.name : `${prefix}/${pkg.name}`;
 };
 
-export const formatMainPackageJson = (
-  packages: PackageDefinition[],
-  metadata: Metadata,
-  description: string | undefined,
-  prefix: string | undefined,
-  files: string[],
-  keywords: string[],
-  license?: string,
-): PackageJson =>
-  normalize({
+export const formatMainPackageJson = (params: FormatMainPackageJsonParams): PackageJson => {
+  const { packages, metadata, description, prefix, files, keywords, license } = params;
+  return normalize({
     name: formatPackageName(metadata, prefix),
     description,
     version: metadata.version,
@@ -77,6 +62,7 @@ export const formatMainPackageJson = (
     keywords,
     license: license,
   });
+};
 
 const normalize = ({ description, ...other }: PackageJson): PackageJson => {
   if (description) {

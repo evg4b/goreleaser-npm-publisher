@@ -78,11 +78,25 @@ export const buildHandler: ActionType<BuildParams> = async args => {
       await mkdir(npmArtifactPath);
       logger.debug(`Created package path: ${npmArtifactPath}`);
       const npmArtifact = join(npmArtifactPath, base);
-      const packageDefinition = transformPackage(artifact, metadata, files, keywords, args.license);
-      logger.debug(`Created package ${packageDefinition.name}: ${packageDefinition.destinationBinary}`);
+      const packageDefinition = transformPackage({
+        artifact,
+        metadata,
+        files,
+        keywords,
+        license: args.license,
+      });
+      logger.debug(
+        `Created package ${packageDefinition.name}: ${packageDefinition.destinationBinary}`,
+      );
       packages.push(packageDefinition);
       await copyFile(sourceArtifactPath, npmArtifact);
-      const packageJsonObject = formatPackageJson(packageDefinition, args.description, args.prefix, files, keywords);
+      const packageJsonObject = formatPackageJson({
+        pkg: packageDefinition,
+        description: args.description,
+        prefix: args.prefix,
+        files,
+        keywords,
+      });
       const packageJsonPath = context.packageJson(pathItem);
       await writePackage(packageJsonPath, packageJsonObject);
       logger.debug(`Written package json file: ${packageJsonPath}`);
@@ -93,15 +107,15 @@ export const buildHandler: ActionType<BuildParams> = async args => {
 
   logger.debug(`Built ${packages.length} platform package(s)`);
 
-  const packageJsonObject = formatMainPackageJson(
+  const packageJsonObject = formatMainPackageJson({
     packages,
     metadata,
-    args.description,
-    args.prefix,
+    description: args.description,
+    prefix: args.prefix,
     files,
     keywords,
-    args.license,
-  );
+    license: args.license,
+  });
   await mkdir(context.packageFolder(metadata.project_name));
   logger.debug(`Created package path: ${context.packageFolder(metadata.project_name)}`);
   await writePackage(context.packageJson(metadata.project_name), packageJsonObject);

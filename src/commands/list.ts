@@ -36,22 +36,33 @@ export const listHandler: ActionType<ListParams> = async args => {
   const builder = args.builder ?? metadata.project_name;
   const keywords = args.keywords ?? [];
   const descriptions = artifacts.filter(binArtifactPredicate(builder)).map(artifact => {
-    const definition = transformPackage(artifact, metadata, [], keywords);
+    const definition = transformPackage({
+      artifact,
+      metadata,
+      files: [],
+      keywords,
+    });
 
     return {
       definition,
-      json: formatPackageJson(definition, args.description, args.prefix, [], keywords),
+      json: formatPackageJson({
+        pkg: definition,
+        description: args.description,
+        prefix: args.prefix,
+        files: [],
+        keywords,
+      }),
     };
   });
 
-  const mainPackage = formatMainPackageJson(
-    descriptions.map(({ definition }) => definition),
+  const mainPackage = formatMainPackageJson({
+    packages: descriptions.map(({ definition }) => definition),
     metadata,
-    args.description,
-    args.prefix,
-    [],
+    description: args.description,
+    prefix: args.prefix,
+    files: [],
     keywords,
-  );
+  });
 
   await logger.group('Main package:', () => formatPackage(context, mainPackage));
   logger.info('');

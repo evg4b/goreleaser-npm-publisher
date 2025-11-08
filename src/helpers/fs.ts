@@ -3,8 +3,8 @@ import {
   copyFile as copyFileFn,
   mkdir as mkdirFn,
   readFile as readFileFn,
-  writeFile as writeFileFn,
   rm as rmFn,
+  writeFile as writeFileFn,
 } from 'node:fs/promises';
 import { logger } from '../core/logger';
 import { tap } from './promise';
