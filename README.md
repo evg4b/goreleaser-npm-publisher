@@ -123,6 +123,7 @@ The built packages can be found in the `dist/npm` folder.
 | **description** | string   | NPM package description.                                                                    |
 | **files**       | string[] | Files that should be included in the NPM package (e.g., `README.md`, `LICENSE` by default). |
 | **keywords**    | string[] | NPM package keywords.                                                                       |
+| **license**     | string   | NPM package license.                                                                        |
 | **verbose**     | boolean  | Print verbose output.                                                                       |
 
 ### publish
@@ -139,6 +140,7 @@ parameters.
 | **description** | string   | NPM package description.                                                                    |
 | **files**       | string[] | Files that should be included in the NPM package (e.g., `README.md`, `LICENSE` by default). |
 | **keywords**    | string[] | NPM package keywords.                                                                       |
+| **license**     | string   | NPM package license.                                                                        |
 | **token**       | string   | The NPM authentication token.                                                               |
 | **verbose**     | boolean  | Print verbose output.                                                                       |
 
