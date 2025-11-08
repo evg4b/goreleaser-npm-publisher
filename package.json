@@ -29,7 +29,7 @@
     "url": "https://github.com/evg4b/goreleaser-npm-publisher/issues"
   },
   "readme": "README.md",
-  "packageManager": "yarn@4.10.3",
+  "packageManager": "yarn@4.11.0",
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "build:dev": "NODE_ENV=development tsup",
@@ -41,12 +41,12 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@eslint/js": "^9.38.0",
+    "@eslint/js": "^9.39.1",
     "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.20",
     "@types/node": "^22.18.11",
-    "eslint": "^9.38.0",
-    "globals": "^16.4.0",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
     "install": "^0.13.0",
     "jest": "^30.2.0",
     "jest-esbuild": "^0.4.0",
@@ -55,7 +55,7 @@
     "tslib": "^2.8.1",
     "tsup": "^8.5.0",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.46.1"
+    "typescript-eslint": "^8.46.3"
   },
   "dependencies": {
     "ajv": "^8.17.1",
