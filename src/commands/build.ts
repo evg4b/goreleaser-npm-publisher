@@ -113,7 +113,7 @@ export const buildHandler: ActionType<BuildParams> = async args => {
   logger.debug(`Copied ${files.length} extra file(s)`);
 };
 
-const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
+export const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
   const mapping = Object.fromEntries(
     packages.map(pkg => [
       `${pkg.os}_${pkg.cpu}`,
@@ -129,7 +129,7 @@ const path = require('path');
 const child_process = require('child_process');
 const mapping = ${mapping};
 const definition = mapping[process.platform + '_' + process.arch];
-const packageJsonPath = require.resolve(definition.name.join('/') + '/package.json');
+const packageJsonPath = require.resolve(path.join(...definition.name, 'package.json'));
 const packagePath = path.join(path.dirname(packageJsonPath), definition.bin);
 child_process.spawn(packagePath, process.argv.splice(2), {
   stdio: 'inherit',
