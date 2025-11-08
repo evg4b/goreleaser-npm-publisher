@@ -1,79 +1,22 @@
 #!/usr/bin/env node
-import { type Argv, scriptName, terminalWidth } from 'yargs';
+import { scriptName, terminalWidth } from 'yargs';
 import { buildHandler, listHandler, publishHandler } from './commands';
 import { ConsoleLogger, setLogger } from './core/logger';
-import { createDistFolder, initLogger, isDistEmptyCheck } from './helpers';
+import { createDistFolder, isDistEmptyCheck } from './helpers';
+import {
+  builderOption,
+  clearOption,
+  descriptionOption,
+  filesOption,
+  keywordsOption,
+  licenseOption,
+  prefixOption,
+  projectOption,
+  tokenOption,
+  verboseOption,
+} from './cli.options';
 
 setLogger(new ConsoleLogger(console, false));
-
-const projectOption = <T>(builder: Argv<T>) =>
-  builder.option('project', {
-    alias: 'p',
-    type: 'string',
-    describe: 'Path to the project with was built by GoReleaser',
-    default: '.',
-  });
-
-const builderOption = <T>(builder: Argv<T>) =>
-  builder.option('builder', {
-    alias: 'b',
-    type: 'string',
-    describe: 'Name of the builder',
-  });
-
-const clearOption = <T>(builder: Argv<T>) =>
-  builder.option('clear', {
-    alias: 'c',
-    type: 'boolean',
-    describe: 'Clear the dist/npm folder before building the project',
-    default: false,
-  });
-
-const prefixOption = <T>(builder: Argv<T>) =>
-  builder.option('prefix', {
-    type: 'string',
-    describe: 'Prefix for the npm package',
-  });
-
-const descriptionOption = <T>(builder: Argv<T>) =>
-  builder.option('description', {
-    type: 'string',
-    describe: 'Description for the npm package',
-  });
-
-const filesOption = <T>(builder: Argv<T>) =>
-  builder.option('files', {
-    type: 'array',
-    string: true,
-    describe: 'File globs to include in the npm package',
-    default: ['readme.md', 'license'],
-  });
-
-const tokenOption = <T>(builder: Argv<T>) =>
-  builder.option('token', {
-    type: 'string',
-    describe: 'Token for the npm package',
-  });
-
-const verboseOption = <T>(builder: Argv<T>) =>
-  builder.option('verbose', {
-    type: 'boolean',
-    describe: 'Show verbose output',
-    default: false,
-  });
-
-const keywordsOption = <T>(builder: Argv<T>) =>
-  builder.option('keywords', {
-    type: 'array',
-    string: true,
-    describe: 'Keywords for the npm package',
-  });
-
-const licenseOption = <T>(builder: Argv<T>) =>
-  builder.option('license', {
-    type: 'string',
-    describe: 'Package license / SPDX identifier',
-  });
 
 void scriptName('goreleaser-npm-publisher')
   .version(__VERSION__)
@@ -89,7 +32,6 @@ void scriptName('goreleaser-npm-publisher')
         .then(descriptionOption)
         .then(verboseOption),
     options => listHandler(options),
-    [initLogger as never],
   )
   .command(
     'build',
@@ -106,7 +48,7 @@ void scriptName('goreleaser-npm-publisher')
         .then(verboseOption)
         .then(licenseOption),
     options => buildHandler(options),
-    [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
+    [isDistEmptyCheck as never, createDistFolder as never],
   )
   .command(
     'publish',
@@ -124,7 +66,7 @@ void scriptName('goreleaser-npm-publisher')
         .then(verboseOption)
         .then(licenseOption),
     options => publishHandler(options),
-    [isDistEmptyCheck as never, createDistFolder as never, initLogger as never],
+    [isDistEmptyCheck as never, createDistFolder as never],
   )
   .demandCommand(1, 'You need at least one command before moving on to the next step')
   .showHelpOnFail(false, 'Specify --help for available options')

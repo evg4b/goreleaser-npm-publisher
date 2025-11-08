@@ -34,7 +34,7 @@ describe('buildExecScript', () => {
     // runtime selection and spawn
     expect(code).toContain("const definition = mapping[process.platform + '_' + process.arch];");
     expect(code).toContain("const packageJsonPath = require.resolve(path.join(...definition.name, 'package.json'));");
-    expect(code).toContain("const packagePath = path.join(path.dirname(packageJsonPath), definition.bin);");
+    expect(code).toContain('const packagePath = path.join(path.dirname(packageJsonPath), definition.bin);');
     expect(code.trim().endsWith('});')).toBe(true);
   });
 

@@ -85,9 +85,7 @@ export const buildHandler: ActionType<BuildParams> = async args => {
         keywords,
         license: args.license,
       });
-      logger.debug(
-        `Created package ${packageDefinition.name}: ${packageDefinition.destinationBinary}`,
-      );
+      logger.debug(`Created package ${packageDefinition.name}: ${packageDefinition.destinationBinary}`);
       packages.push(packageDefinition);
       await copyFile(sourceArtifactPath, npmArtifact);
       const packageJsonObject = formatPackageJson({

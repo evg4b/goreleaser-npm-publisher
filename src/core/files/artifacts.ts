@@ -88,7 +88,7 @@ export const validateBinaryArtifact: ValidateFunction<BinaryArtifact[]> = ajv.co
     required: ['internal_type', 'name', 'path', 'type', 'extra'],
   },
   type: 'array',
-})
+});
 
 export const parseArtifactsFile = async (path: string): Promise<Artifact[]> => {
   const artifacts: unknown = JSON.parse(await readFile(path));

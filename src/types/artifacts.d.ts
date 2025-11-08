@@ -51,4 +51,3 @@ interface UnknownArtifact {
 }
 
 type Artifact = BinaryArtifact | ArchiveArtifact | ChecksumArtifact | UnknownArtifact;
-

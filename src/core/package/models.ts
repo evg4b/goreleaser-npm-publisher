@@ -1,4 +1,3 @@
-
 export interface TransformPackageParams {
   artifact: BinaryArtifact;
   metadata: Metadata;

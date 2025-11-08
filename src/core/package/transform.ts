@@ -1,6 +1,6 @@
 import { isEmpty, uniq } from 'lodash';
 import { normalizeArch } from './arch';
-import { FormatMainPackageJsonParams, FormatPackageJsonParams, TransformPackageParams, } from './models';
+import { FormatMainPackageJsonParams, FormatPackageJsonParams, TransformPackageParams } from './models';
 import { normalizeOS } from './os';
 
 export const transformPackage = (params: TransformPackageParams): PackageDefinition => {
@@ -26,8 +26,8 @@ export const formatPackageJson = (params: FormatPackageJsonParams): PackageJson 
     description,
     version: pkg.version,
     bin: { [pkg.name]: pkg.bin },
-    os: [ pkg.os ],
-    cpu: [ pkg.cpu ],
+    os: [pkg.os],
+    cpu: [pkg.cpu],
     files,
     keywords,
     license: pkg.license,
