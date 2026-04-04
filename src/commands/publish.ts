@@ -1,4 +1,4 @@
-import { readdir } from 'fs/promises';
+import { readdir } from 'node:fs/promises';
 import { sortBy } from 'lodash';
 import { Context } from '../core/gorealiser';
 import { logger } from '../core/logger';

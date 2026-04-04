@@ -14,12 +14,10 @@ export const handleCliError = (msg?: string, err?: Error): void => {
 
 const getMessage = (err?: Error): string | null => {
   if (err instanceof NpmExecError) {
-    switch (err.code) {
-      case 'EOTP':
-        return 'NPM requires a one-time password (OTP). Provide it with --otp <code>.';
-      default:
-        return null;
+    if (err.code === 'EOTP') {
+      return 'NPM requires a one-time password (OTP). Provide it with --otp <code>.';
     }
+    return null;
   }
 
   return null;

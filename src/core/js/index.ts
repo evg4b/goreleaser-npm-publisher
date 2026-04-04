@@ -1,3 +1,1 @@
-import { js } from './template';
-
-export default js;
+export { js as default } from './template';

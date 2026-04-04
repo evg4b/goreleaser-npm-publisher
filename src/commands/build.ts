@@ -1,5 +1,5 @@
 import { join, sep } from 'node:path';
-import { parse as parsePath } from 'path';
+import { parse as parsePath } from 'node:path';
 import { findFiles, parseArtifactsFile, parseMetadata, validateBinaryArtifact, writePackage } from '../core/files';
 import { Context } from '../core/gorealiser';
 import js from '../core/js';

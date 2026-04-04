@@ -16,10 +16,10 @@ const formatDate = (node: Date) => {
 const formatObject = (node: object): string => {
   const fields = Object.entries(node).map(([key, value]) => `${key}: ${transform(value)}`);
 
-  return !isEmpty(node) ? `{ ${fields.join(', ')} }` : '{}';
+  return isEmpty(node) ? '{}' : `{ ${fields.join(', ')} }`;
 };
 
-const formatArray = (node: unknown[]): string => (!isEmpty(node) ? `[ ${node.map(transform).join(', ')} ]` : '[]');
+const formatArray = (node: unknown[]): string => (isEmpty(node) ? '[]' : `[ ${node.map(transform).join(', ')} ]`);
 
 /**
  * Transform a node to a code string
