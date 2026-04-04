@@ -1,5 +1,6 @@
 export interface BaseOptions {
   token?: string;
+  otp?: string;
 }
 
 export interface ErrorResponse {
@@ -33,6 +34,7 @@ export interface File {
 export interface NpmExecContext {
   pwd?: string;
   token?: string;
+  otp?: string;
 }
 
 export type NpmExecAction<T> = (env: Record<string, string>) => Promise<T>;
