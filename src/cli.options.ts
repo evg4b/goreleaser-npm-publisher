@@ -49,6 +49,12 @@ export const tokenOption = <T>(builder: Argv<T>) =>
     describe: 'Token for the npm package',
   });
 
+export const otpOption = <T>(builder: Argv<T>) =>
+  builder.option('otp', {
+    type: 'string',
+    describe: 'One-time password for npm two-factor authentication',
+  });
+
 export const verboseOption = <T>(builder: Argv<T>) =>
   builder.option('verbose', {
     type: 'boolean',

@@ -15,4 +15,5 @@ interface BuildParams extends ListParams {
 
 interface PublishParams extends BuildParams {
   token?: string;
+  otp?: string;
 }

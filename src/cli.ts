@@ -11,6 +11,7 @@ import {
   filesOption,
   keywordsOption,
   licenseOption,
+  otpOption,
   prefixOption,
   projectOption,
   tokenOption,
@@ -67,6 +68,7 @@ void cli
         .then(filesOption)
         .then(keywordsOption)
         .then(tokenOption)
+        .then(otpOption)
         .then(verboseOption)
         .then(licenseOption),
     (options: PublishParams) => publishHandler(options),
