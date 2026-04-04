@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 const readFileMock = jest.fn().mockName('readFileMock');
 
 jest.mock('node:fs/promises', () => ({
@@ -40,9 +39,9 @@ describe('parseMetadata', () => {
     });
   });
 
-  it('should throw an error if the given invalid file', () => {
+  it('should throw an error if the given invalid file', async () => {
     readFileMock.mockResolvedValueOnce(`{ "name": "test" }`);
 
-    expect(parseMetadata(`/dist/artifacts.json`)).rejects.toThrow(Error);
+    await expect(parseMetadata(`/dist/artifacts.json`)).rejects.toThrow(Error);
   });
 });

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
+    "ignoreDeprecations": "6.0",
     "module": "es2020",
     "target": "ES2022",
     "moduleResolution": "node",
@@ -22,9 +22,22 @@
     "strictPropertyInitialization": true,
     "noImplicitOverride": true,
     "noUnusedParameters": true,
-    "lib": ["esNext"],
+    "lib": [
+      "esNext"
+    ],
     "sourceMap": true
   },
-  "include": ["src/**/*.ts", "src/types/*.d.ts"],
-  "exclude": ["node_modules", "src/**/*.spec.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/types/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/**/*.spec.ts"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

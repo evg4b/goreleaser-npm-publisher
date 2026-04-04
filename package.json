@@ -29,7 +29,7 @@
     "url": "https://github.com/evg4b/goreleaser-npm-publisher/issues"
   },
   "readme": "README.md",
-  "packageManager": "yarn@4.11.0",
+  "packageManager": "yarn@4.13.0",
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "build:dev": "NODE_ENV=development tsup",
@@ -41,28 +41,28 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^10.0.1",
     "@types/jest": "^30.0.0",
-    "@types/lodash": "^4.17.20",
-    "@types/node": "^22.18.11",
-    "eslint": "^9.39.1",
-    "globals": "^16.5.0",
+    "@types/lodash": "^4.17.24",
+    "@types/node": "^25.5.2",
+    "eslint": "^10.2.0",
+    "globals": "^17.4.0",
     "install": "^0.13.0",
-    "jest": "^30.2.0",
+    "jest": "^30.3.0",
     "jest-esbuild": "^0.4.0",
-    "prettier": "^3.6.2",
-    "ts-jest": "^29.4.5",
+    "prettier": "^3.8.1",
+    "ts-jest": "^29.4.9",
     "tslib": "^2.8.1",
-    "tsup": "^8.5.0",
-    "typescript": "~5.9.3",
-    "typescript-eslint": "^8.46.3"
+    "tsup": "^8.5.1",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.58.0"
   },
   "dependencies": {
-    "ajv": "^8.17.1",
-    "glob": "^11.0.3",
-    "lodash": "^4.17.21",
+    "ajv": "^8.18.0",
+    "glob": "^13.0.6",
+    "lodash": "^4.18.1",
     "picocolors": "^1.1.1",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   },
   "engines": {
     "node": ">=16"
