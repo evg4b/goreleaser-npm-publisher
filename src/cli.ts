@@ -3,6 +3,7 @@ import yargs, { type Argv } from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { buildHandler, listHandler, publishHandler } from './commands';
 import { ConsoleLogger, setLogger } from './core/logger';
+import { handleCliError } from './cli-error-handler';
 import { createDistFolder, isDistEmptyCheck } from './helpers';
 import {
   builderOption,
@@ -75,6 +76,7 @@ void cli
     [isDistEmptyCheck as never, createDistFolder as never],
   )
   .demandCommand(1, 'You need at least one command before moving on to the next step')
+  .fail((msg, err) => handleCliError(msg, err))
   .showHelpOnFail(false, 'Specify --help for available options')
   .wrap(Math.min(100, cli.terminalWidth()))
   .global('project')

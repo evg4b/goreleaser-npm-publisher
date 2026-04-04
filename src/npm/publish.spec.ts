@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 const npmExecMock = jest.fn();
 jest.mock('./exec', () => ({ npmExec: npmExecMock }));
 
