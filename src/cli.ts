@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { scriptName, terminalWidth } from 'yargs';
+import yargs, { type Argv } from 'yargs';
+import { hideBin } from 'yargs/helpers';
 import { buildHandler, listHandler, publishHandler } from './commands';
 import { ConsoleLogger, setLogger } from './core/logger';
 import { createDistFolder, isDistEmptyCheck } from './helpers';
@@ -18,25 +19,28 @@ import {
 
 setLogger(new ConsoleLogger(console, false));
 
-void scriptName('goreleaser-npm-publisher')
+const cli = yargs(hideBin(process.argv));
+
+void cli
+  .scriptName('goreleaser-npm-publisher')
   .version(__VERSION__)
   .usage('$0 <cmd> [args]')
   .command(
     'list',
     'List the project',
-    builder =>
+    (builder: Argv) =>
       Promise.resolve(builder)
         .then(projectOption)
         .then(builderOption)
         .then(prefixOption)
         .then(descriptionOption)
         .then(verboseOption),
-    options => listHandler(options),
+    (options: ListParams) => listHandler(options),
   )
   .command(
     'build',
     'Build the project',
-    builder =>
+    (builder: Argv) =>
       Promise.resolve(builder)
         .then(projectOption)
         .then(builderOption)
@@ -47,13 +51,13 @@ void scriptName('goreleaser-npm-publisher')
         .then(keywordsOption)
         .then(verboseOption)
         .then(licenseOption),
-    options => buildHandler(options),
+    (options: BuildParams) => buildHandler(options),
     [isDistEmptyCheck as never, createDistFolder as never],
   )
   .command(
     'publish',
     'Publish the project to npm registry',
-    builder =>
+    (builder: Argv) =>
       Promise.resolve(builder)
         .then(projectOption)
         .then(builderOption)
@@ -65,12 +69,12 @@ void scriptName('goreleaser-npm-publisher')
         .then(tokenOption)
         .then(verboseOption)
         .then(licenseOption),
-    options => publishHandler(options),
+    (options: PublishParams) => publishHandler(options),
     [isDistEmptyCheck as never, createDistFolder as never],
   )
   .demandCommand(1, 'You need at least one command before moving on to the next step')
   .showHelpOnFail(false, 'Specify --help for available options')
-  .wrap(Math.min(100, terminalWidth()))
+  .wrap(Math.min(100, cli.terminalWidth()))
   .global('project')
   .global('builder')
   .hide('version')

@@ -70,6 +70,19 @@ describe('exec', () => {
     });
   });
 
+  describe('non-zero exit code', () => {
+    it('should reject with NpmExecError', async () => {
+      const processMock = new ProcessMock();
+      spawnMock.mockReturnValue(processMock);
+      const errorBody = JSON.stringify({ error: { code: 'E403', summary: 'Forbidden', detail: 'No access' } });
+      const responsePromise = npmExec<string>(['publish']);
+      processMock.stdout.emit('data', errorBody);
+      processMock.emit('close', 1);
+
+      await expect(responsePromise).rejects.toMatchObject({ code: 'E403', message: '[E403]: Forbidden' });
+    });
+  });
+
   describe('depends on platform', () => {
     const platforms = ['darwin', 'linux', 'android', 'aix', 'freebsd', 'openbsd', 'sunos', 'netbsd'];
 

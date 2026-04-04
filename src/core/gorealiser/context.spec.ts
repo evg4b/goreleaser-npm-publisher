@@ -37,6 +37,14 @@ describe('context', () => {
     it('should return the package folder with subfolders and a leading slash', () => {
       expect(context.packageFolder('/my-package', 'subfolder')).toBe('/usr/src/app/dist/npm/my-package/subfolder');
     });
+
+    it('should return the project root when called with no parts', () => {
+      expect(context.project()).toBe('/usr/src/app');
+    });
+
+    it('should join parts to the project root', () => {
+      expect(context.project('src', 'main.go')).toBe('/usr/src/app/src/main.go');
+    });
   });
 
   describe('for absolute path', () => {

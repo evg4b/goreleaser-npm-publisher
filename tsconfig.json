@@ -3,7 +3,7 @@
     "ignoreDeprecations": "6.0",
     "module": "es2020",
     "target": "ES2022",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "importHelpers": true,
     "alwaysStrict": true,
