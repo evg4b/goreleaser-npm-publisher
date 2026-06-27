@@ -70,8 +70,14 @@ jobs:
           name: tests-artifacts
       - name: Add verdaccio user
         run: |
-          echo "//localhost:4873/:_authToken=test-token" >> ~/.npmrc
-          echo "registry=http://localhost:4873" >> ~/.npmrc
+          npm adduser --registry http://localhost:4873 <<EOF
+          test
+          test
+          test@example.com
+          EOF
+#      - name: Add verdaccio user
+#        run: |
+#          echo "registry=http://localhost:4873" >> ~/.npmrc
       - name: Test code
         run: node ./dist/cli.cjs publish --project './tests/test-app' --registry http://localhost:4873
       - name: List packages
