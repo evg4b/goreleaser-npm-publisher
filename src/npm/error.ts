@@ -1,4 +1,4 @@
-import { ErrorResponse } from './models';
+import { type ErrorResponse } from './models';
 
 export class NpmExecError extends Error {
   public readonly code: string;
