@@ -15,7 +15,7 @@ describe('artifacts', () => {
         Ext: '.exe',
         ID: 'builder',
       },
-    } as BinaryArtifact,
+    },
     {
       name: 'package',
       path: '/usr/bin/package',
@@ -66,7 +66,7 @@ describe('artifacts', () => {
         Replaces: null,
         WrappedIn: 'my_folder',
       },
-    } as ArchiveArtifact,
+    },
   ];
 
   it('should return empty array when builder is not defined', () => {
@@ -92,7 +92,7 @@ describe('artifacts', () => {
         name: 'package',
         path: '/usr/bin/package',
         type: 'Binary',
-      } as BinaryArtifact,
+      },
       {
         extra: {
           Binary: 'package',
