@@ -41,6 +41,44 @@ jobs:
           path: ./*
           key: ${{ github.sha }}
 
+  test:
+    runs-on: ubuntu-latest
+    services:
+      verdaccio:
+        image: verdaccio/verdaccio:6.7
+        ports:
+          - 4873:4873
+    steps:
+      - uses: actions/checkout@v5
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Build code
+        run: yarn run build
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v7
+        with:
+          distribution: goreleaser
+          version: "~> v2"
+          args: release --clean --snapshot
+          workdir: 'tests/test-app'
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./tests
+          name: tests-artifacts
+      - name: Setup npm auth
+        run: |
+          npm config set registry http://localhost:4873
+          npm config set //localhost:4873/:username test
+          npm config set //localhost:4873/:_password dGVzdA==
+          npm config set //localhost:4873/:email test@example.com
+      - name: Test code
+        run: node ./dist/cli.cjs publish --project './tests/test-app' --registry http://localhost:4873
+      - name: List packages
+        run: curl -X GET "http://localhost:4873/-/verdaccio/packages"
+
   release:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
