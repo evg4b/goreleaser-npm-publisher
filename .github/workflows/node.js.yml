@@ -68,16 +68,12 @@ jobs:
         with:
           path: ./tests
           name: tests-artifacts
-      - name: Add verdaccio user
+      - name: Setup npm auth
         run: |
-          npm adduser --registry http://localhost:4873 <<EOF
-          test
-          test
-          test@example.com
-          EOF
-#      - name: Add verdaccio user
-#        run: |
-#          echo "registry=http://localhost:4873" >> ~/.npmrc
+          npm config set registry http://localhost:4873
+          npm config set //localhost:4873/:username test
+          npm config set //localhost:4873/:_password dGVzdA==
+          npm config set //localhost:4873/:email test@example.com
       - name: Test code
         run: node ./dist/cli.cjs publish --project './tests/test-app' --registry http://localhost:4873
       - name: List packages
