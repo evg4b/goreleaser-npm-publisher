@@ -53,19 +53,27 @@ jobs:
       - name: Use Node.js 24.x
         uses: actions/setup-node@v6
       - name: Add verdaccio user
-        run: npm adduser --registry http://localhost:4873
+        run: echo "//localhost:4873/:_authToken=test-token" >> ~/.npmrc
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Build code
+        run: yarn run build
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v7
         with:
           distribution: goreleaser
           version: "~> v2"
           args: release --clean --snapshot
-          workdir: 'test/test-app'
+          workdir: 'tests/test-app'
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          path: ./test
-          name: test-artifacts
+          path: ./tests
+          name: tests-artifacts
+      - name: Test code
+        run: node ./dist/cli.cjs publish --project './tests/test-app' --registry http://localhost:4873
+      - name: List packages
+        run: curl -X GET "http://localhost:4873/-/verdaccio/packages"
 
   release:
     runs-on: ubuntu-latest
