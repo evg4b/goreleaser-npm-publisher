@@ -39,6 +39,7 @@ export const listHandler: ActionType<ListParams> = async args => {
     const definition = transformPackage({
       artifact,
       metadata,
+      name: args.name,
       files: [],
       keywords,
     });
@@ -58,6 +59,8 @@ export const listHandler: ActionType<ListParams> = async args => {
   const mainPackage = formatMainPackageJson({
     packages: descriptions.map(({ definition }) => definition),
     metadata,
+    name: args.name,
+    bin: args.bin,
     description: args.description,
     prefix: args.prefix,
     files: [],

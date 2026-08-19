@@ -81,6 +81,7 @@ export const buildHandler: ActionType<BuildParams> = async args => {
       const packageDefinition = transformPackage({
         artifact,
         metadata,
+        name: args.name,
         files,
         keywords,
         license: args.license,
@@ -108,20 +109,23 @@ export const buildHandler: ActionType<BuildParams> = async args => {
   const packageJsonObject = formatMainPackageJson({
     packages,
     metadata,
+    name: args.name,
+    bin: args.bin,
     description: args.description,
     prefix: args.prefix,
     files,
     keywords,
     license: args.license,
   });
-  await mkdir(context.packageFolder(metadata.project_name));
-  logger.debug(`Created package path: ${context.packageFolder(metadata.project_name)}`);
-  await writePackage(context.packageJson(metadata.project_name), packageJsonObject);
-  logger.debug(`Written package json file: ${context.packageJson(metadata.project_name)}`);
-  const indexJsFile = join(context.packageFolder(metadata.project_name), 'index.js');
+  const mainPackageFolder = args.name ?? metadata.project_name;
+  await mkdir(context.packageFolder(mainPackageFolder));
+  logger.debug(`Created package path: ${context.packageFolder(mainPackageFolder)}`);
+  await writePackage(context.packageJson(mainPackageFolder), packageJsonObject);
+  logger.debug(`Written package json file: ${context.packageJson(mainPackageFolder)}`);
+  const indexJsFile = join(context.packageFolder(mainPackageFolder), 'index.js');
   await writeFile(indexJsFile, buildExecScript(packages, args.prefix));
   logger.debug(`Written package index.js file: ${indexJsFile}`);
-  await copyPackageFiles(context, metadata.project_name, files);
+  await copyPackageFiles(context, mainPackageFolder, files);
   logger.debug(`Copied ${files.length} extra file(s)`);
 };
 

@@ -6,12 +6,14 @@ import { ConsoleLogger, setLogger } from './core/logger';
 import { handleCliError } from './cli-error-handler';
 import { createDistFolder, isDistEmptyCheck } from './helpers';
 import {
+  binOption,
   builderOption,
   clearOption,
   descriptionOption,
   filesOption,
   keywordsOption,
   licenseOption,
+  nameOption,
   otpOption,
   prefixOption,
   projectOption,
@@ -35,6 +37,8 @@ Promise.resolve(
         Promise.resolve(builder)
           .then(projectOption)
           .then(builderOption)
+          .then(nameOption)
+          .then(binOption)
           .then(prefixOption)
           .then(descriptionOption)
           .then(verboseOption),
@@ -48,6 +52,8 @@ Promise.resolve(
           .then(projectOption)
           .then(builderOption)
           .then(clearOption)
+          .then(nameOption)
+          .then(binOption)
           .then(prefixOption)
           .then(descriptionOption)
           .then(filesOption)
@@ -65,6 +71,8 @@ Promise.resolve(
           .then(projectOption)
           .then(builderOption)
           .then(clearOption)
+          .then(nameOption)
+          .then(binOption)
           .then(prefixOption)
           .then(descriptionOption)
           .then(filesOption)

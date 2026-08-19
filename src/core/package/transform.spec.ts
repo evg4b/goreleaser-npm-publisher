@@ -55,6 +55,12 @@ describe('transformPackage', () => {
 
     expect(result.bin).toBe('myapp.exe');
   });
+
+  it('should use name override instead of project_name when provided', () => {
+    const result = transformPackage({ artifact, metadata, name: 'cli', files: [], keywords: [] });
+
+    expect(result.name).toBe('cli_linux_amd64');
+  });
 });
 
 describe('formatPackageName', () => {
@@ -208,5 +214,51 @@ describe('formatMainPackageJson', () => {
     });
 
     expect(result).not.toHaveProperty('description');
+  });
+
+  it('should use name override for package name and bin when provided', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      name: 'cli',
+      description: undefined,
+      prefix: '@scope',
+      files: [],
+      keywords: [],
+    });
+
+    expect(result.name).toBe('@scope/cli');
+    expect(result.bin).toEqual({ cli: 'index.js' });
+  });
+
+  it('should use bin override for the command name when provided', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      name: 'cli',
+      bin: 'myapp',
+      description: undefined,
+      prefix: '@scope',
+      files: [],
+      keywords: [],
+    });
+
+    expect(result.name).toBe('@scope/cli');
+    expect(result.bin).toEqual({ myapp: 'index.js' });
+  });
+
+  it('should use bin override without name override', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      bin: 'my-command',
+      description: undefined,
+      prefix: undefined,
+      files: [],
+      keywords: [],
+    });
+
+    expect(result.name).toBe('myapp');
+    expect(result.bin).toEqual({ 'my-command': 'index.js' });
   });
 });

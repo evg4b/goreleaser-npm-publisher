@@ -1,11 +1,13 @@
 import type { Argv } from 'yargs';
 import {
+  binOption,
   builderOption,
   clearOption,
   descriptionOption,
   filesOption,
   keywordsOption,
   licenseOption,
+  nameOption,
   otpOption,
   prefixOption,
   projectOption,
@@ -39,6 +41,27 @@ describe('cli options', () => {
       builderOption(builder);
       expect(mockOption).toHaveBeenCalledWith('builder', expect.objectContaining({
         alias: 'b',
+        type: 'string',
+      }));
+    });
+  });
+
+  describe('nameOption', () => {
+    it('adds name option with alias n', () => {
+      const { builder, mockOption } = createMockBuilder();
+      nameOption(builder);
+      expect(mockOption).toHaveBeenCalledWith('name', expect.objectContaining({
+        alias: 'n',
+        type: 'string',
+      }));
+    });
+  });
+
+  describe('binOption', () => {
+    it('adds bin option', () => {
+      const { builder, mockOption } = createMockBuilder();
+      binOption(builder);
+      expect(mockOption).toHaveBeenCalledWith('bin', expect.objectContaining({
         type: 'string',
       }));
     });
