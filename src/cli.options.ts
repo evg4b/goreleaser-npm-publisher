@@ -42,6 +42,12 @@ export const binOption = <T>(builder: Argv<T>) =>
     describe: 'Name of the installed command (defaults to the package name)',
   });
 
+export const repositoryOption = <T>(builder: Argv<T>) =>
+  builder.option('repository', {
+    type: 'string',
+    describe: 'Source repository URL to set in the npm packages (required for npm provenance)',
+  });
+
 export const descriptionOption = <T>(builder: Argv<T>) =>
   builder.option('description', {
     type: 'string',

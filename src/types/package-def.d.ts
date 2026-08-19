@@ -46,4 +46,10 @@ interface PackageJson {
   files: string[];
   keywords: string[];
   license?: string;
+  repository?: PackageRepository;
+}
+
+interface PackageRepository {
+  type: 'git';
+  url: string;
 }

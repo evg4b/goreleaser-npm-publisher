@@ -93,6 +93,7 @@ export const buildHandler: ActionType<BuildParams> = async args => {
         pkg: packageDefinition,
         description: args.description,
         prefix: args.prefix,
+        repository: args.repository,
         files,
         keywords,
       });
@@ -113,6 +114,7 @@ export const buildHandler: ActionType<BuildParams> = async args => {
     bin: args.bin,
     description: args.description,
     prefix: args.prefix,
+    repository: args.repository,
     files,
     keywords,
     license: args.license,

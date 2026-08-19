@@ -128,6 +128,21 @@ describe('formatPackageJson', () => {
 
     expect(result).not.toHaveProperty('description');
   });
+
+  it('should include repository when provided and omit it otherwise', () => {
+    const withRepo = formatPackageJson({
+      pkg,
+      description: undefined,
+      prefix: undefined,
+      repository: 'git+https://github.com/scope/myapp.git',
+      files: [],
+      keywords: [],
+    });
+    const withoutRepo = formatPackageJson({ pkg, description: undefined, prefix: undefined, files: [], keywords: [] });
+
+    expect(withRepo.repository).toEqual({ type: 'git', url: 'git+https://github.com/scope/myapp.git' });
+    expect(withoutRepo).not.toHaveProperty('repository');
+  });
 });
 
 describe('formatMainPackageJson', () => {
@@ -245,6 +260,33 @@ describe('formatMainPackageJson', () => {
 
     expect(result.name).toBe('@scope/cli');
     expect(result.bin).toEqual({ myapp: 'index.js' });
+  });
+
+  it('should include repository in the main package.json when provided', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      description: undefined,
+      prefix: undefined,
+      repository: 'git+https://github.com/scope/myapp.git',
+      files: [],
+      keywords: [],
+    });
+
+    expect(result.repository).toEqual({ type: 'git', url: 'git+https://github.com/scope/myapp.git' });
+  });
+
+  it('should omit repository when not provided', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      description: undefined,
+      prefix: undefined,
+      files: [],
+      keywords: [],
+    });
+
+    expect(result).not.toHaveProperty('repository');
   });
 
   it('should use bin override without name override', () => {

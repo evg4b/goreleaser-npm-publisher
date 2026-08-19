@@ -50,6 +50,7 @@ export const listHandler: ActionType<ListParams> = async args => {
         pkg: definition,
         description: args.description,
         prefix: args.prefix,
+        repository: args.repository,
         files: [],
         keywords,
       }),
@@ -63,6 +64,7 @@ export const listHandler: ActionType<ListParams> = async args => {
     bin: args.bin,
     description: args.description,
     prefix: args.prefix,
+    repository: args.repository,
     files: [],
     keywords,
   });

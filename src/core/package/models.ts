@@ -11,6 +11,7 @@ export interface FormatPackageJsonParams {
   pkg: PackageDefinition;
   description: string | undefined;
   prefix: string | undefined;
+  repository?: string;
   files: string[];
   keywords: string[];
 }
@@ -22,6 +23,7 @@ export interface FormatMainPackageJsonParams {
   bin?: string;
   description: string | undefined;
   prefix: string | undefined;
+  repository?: string;
   files: string[];
   keywords: string[];
   license?: string;

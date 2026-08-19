@@ -107,6 +107,7 @@ Displays a list of packages that can be built in the current project using the s
 | **builder**     | string  | The name of the builder whose output will be used for building the packages. |
 | **name**        | string  | Base name for the npm packages (defaults to the GoReleaser project name).    |
 | **bin**         | string  | Name of the installed command (defaults to the package name).                |
+| **repository**  | string  | Source repository URL set in the npm packages (required for npm provenance). |
 | **prefix**      | string  | NPM package scope prefix.                                                    |
 | **description** | string  | NPM package description.                                                     |
 | **verbose**     | boolean | Print verbose output.                                                        |
@@ -123,6 +124,7 @@ The built packages can be found in the `dist/npm` folder.
 | **clear**       | boolean  | Clean the `dist/npm` folder before the build.                                               |
 | **name**        | string   | Base name for the npm packages (defaults to the GoReleaser project name).                   |
 | **bin**         | string   | Name of the installed command (defaults to the package name).                               |
+| **repository**  | string   | Source repository URL set in the npm packages (required for npm provenance).                |
 | **prefix**      | string   | NPM package scope prefix.                                                                   |
 | **description** | string   | NPM package description.                                                                    |
 | **files**       | string[] | Files that should be included in the NPM package (e.g., `README.md`, `LICENSE` by default). |
@@ -142,6 +144,7 @@ parameters.
 | **clear**       | boolean  | Clean the `dist/npm` folder before the build.                                               |
 | **name**        | string   | Base name for the npm packages (defaults to the GoReleaser project name).                   |
 | **bin**         | string   | Name of the installed command (defaults to the package name).                               |
+| **repository**  | string   | Source repository URL set in the npm packages (required for npm provenance).                |
 | **prefix**      | string   | NPM package scope prefix.                                                                   |
 | **description** | string   | NPM package description.                                                                    |
 | **files**       | string[] | Files that should be included in the NPM package (e.g., `README.md`, `LICENSE` by default). |

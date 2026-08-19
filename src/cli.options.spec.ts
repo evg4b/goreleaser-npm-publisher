@@ -11,6 +11,7 @@ import {
   otpOption,
   prefixOption,
   projectOption,
+  repositoryOption,
   tokenOption,
   verboseOption,
 } from './cli.options';
@@ -62,6 +63,16 @@ describe('cli options', () => {
       const { builder, mockOption } = createMockBuilder();
       binOption(builder);
       expect(mockOption).toHaveBeenCalledWith('bin', expect.objectContaining({
+        type: 'string',
+      }));
+    });
+  });
+
+  describe('repositoryOption', () => {
+    it('adds repository option', () => {
+      const { builder, mockOption } = createMockBuilder();
+      repositoryOption(builder);
+      expect(mockOption).toHaveBeenCalledWith('repository', expect.objectContaining({
         type: 'string',
       }));
     });
