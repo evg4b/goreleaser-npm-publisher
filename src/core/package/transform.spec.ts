@@ -129,8 +129,8 @@ describe('formatPackageJson', () => {
     expect(result).not.toHaveProperty('description');
   });
 
-  it('should include repository when provided and omit it otherwise', () => {
-    const withRepo = formatPackageJson({
+  it('should include repository when provided', () => {
+    const result = formatPackageJson({
       pkg,
       description: undefined,
       prefix: undefined,
@@ -138,10 +138,14 @@ describe('formatPackageJson', () => {
       files: [],
       keywords: [],
     });
-    const withoutRepo = formatPackageJson({ pkg, description: undefined, prefix: undefined, files: [], keywords: [] });
 
-    expect(withRepo.repository).toEqual({ type: 'git', url: 'git+https://github.com/scope/myapp.git' });
-    expect(withoutRepo).not.toHaveProperty('repository');
+    expect(result.repository).toEqual({ type: 'git', url: 'git+https://github.com/scope/myapp.git' });
+  });
+
+  it('should omit repository when not provided', () => {
+    const result = formatPackageJson({ pkg, description: undefined, prefix: undefined, files: [], keywords: [] });
+
+    expect(result).not.toHaveProperty('repository');
   });
 
   it('should pass the repository type and directory to the repository field', () => {

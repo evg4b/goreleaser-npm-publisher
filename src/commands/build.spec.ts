@@ -213,16 +213,10 @@ describe('buildHandler', () => {
     expect(mockLoggerError).toHaveBeenCalled();
   });
 
-  it('logs artifact details in verbose mode', async () => {
+  it.each(['artifact(s)', 'project_name'])('logs details containing "%s" in verbose mode', async substring => {
     await buildHandler(makeArgs({ verbose: true }));
 
-    expect(mockLoggerDebug).toHaveBeenCalledWith(expect.stringContaining('artifact(s)'));
-  });
-
-  it('logs metadata details in verbose mode', async () => {
-    await buildHandler(makeArgs({ verbose: true }));
-
-    expect(mockLoggerDebug).toHaveBeenCalledWith(expect.stringContaining('project_name'));
+    expect(mockLoggerDebug).toHaveBeenCalledWith(expect.stringContaining(substring));
   });
 
   it('logs file details in verbose mode', async () => {

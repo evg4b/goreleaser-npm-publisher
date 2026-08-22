@@ -26,173 +26,34 @@ const createMockBuilder = () => {
 };
 
 describe('cli options', () => {
-  describe('projectOption', () => {
-    it('adds project option with alias p and default "."', () => {
-      const { builder, mockOption } = createMockBuilder();
-      projectOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('project', expect.objectContaining({
-        alias: 'p',
-        type: 'string',
-        default: '.',
-      }));
-    });
-  });
+  it.each([
+    ['projectOption', projectOption, 'project', { alias: 'p', type: 'string', default: '.' }],
+    ['builderOption', builderOption, 'builder', { alias: 'b', type: 'string' }],
+    ['nameOption', nameOption, 'name', { alias: 'n', type: 'string' }],
+    ['binOption', binOption, 'bin', { type: 'string' }],
+    ['repositoryOption', repositoryOption, 'repository', { type: 'string' }],
+    [
+      'repositoryTypeOption',
+      repositoryTypeOption,
+      'repository-type',
+      { type: 'string', choices: ['git', 'svn', 'hg', 'bzr'] },
+    ],
+    ['repositoryDirectoryOption', repositoryDirectoryOption, 'repository-directory', { type: 'string' }],
+    ['clearOption', clearOption, 'clear', { alias: 'c', type: 'boolean', default: false }],
+    ['prefixOption', prefixOption, 'prefix', { type: 'string' }],
+    ['descriptionOption', descriptionOption, 'description', { type: 'string' }],
+    ['filesOption', filesOption, 'files', { type: 'array', default: ['readme.md', 'license'] }],
+    ['tokenOption', tokenOption, 'token', { type: 'string' }],
+    ['otpOption', otpOption, 'otp', { type: 'string' }],
+    ['verboseOption', verboseOption, 'verbose', { type: 'boolean', default: false }],
+    ['keywordsOption', keywordsOption, 'keywords', { type: 'array' }],
+    ['licenseOption', licenseOption, 'license', { type: 'string' }],
+  ] as const)('%s adds the "%s" option with the expected settings', (_label, optionFn, flag, expected) => {
+    const { builder, mockOption } = createMockBuilder();
 
-  describe('builderOption', () => {
-    it('adds builder option with alias b', () => {
-      const { builder, mockOption } = createMockBuilder();
-      builderOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('builder', expect.objectContaining({
-        alias: 'b',
-        type: 'string',
-      }));
-    });
-  });
+    optionFn(builder);
 
-  describe('nameOption', () => {
-    it('adds name option with alias n', () => {
-      const { builder, mockOption } = createMockBuilder();
-      nameOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('name', expect.objectContaining({
-        alias: 'n',
-        type: 'string',
-      }));
-    });
-  });
-
-  describe('binOption', () => {
-    it('adds bin option', () => {
-      const { builder, mockOption } = createMockBuilder();
-      binOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('bin', expect.objectContaining({
-        type: 'string',
-      }));
-    });
-  });
-
-  describe('repositoryOption', () => {
-    it('adds repository option', () => {
-      const { builder, mockOption } = createMockBuilder();
-      repositoryOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('repository', expect.objectContaining({
-        type: 'string',
-      }));
-    });
-  });
-
-  describe('repositoryTypeOption', () => {
-    it('adds repository-type option limited to the supported types', () => {
-      const { builder, mockOption } = createMockBuilder();
-      repositoryTypeOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('repository-type', expect.objectContaining({
-        type: 'string',
-        choices: ['git', 'svn', 'hg', 'bzr'],
-      }));
-    });
-  });
-
-  describe('repositoryDirectoryOption', () => {
-    it('adds repository-directory option', () => {
-      const { builder, mockOption } = createMockBuilder();
-      repositoryDirectoryOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('repository-directory', expect.objectContaining({
-        type: 'string',
-      }));
-    });
-  });
-
-  describe('clearOption', () => {
-    it('adds clear option with alias c and default false', () => {
-      const { builder, mockOption } = createMockBuilder();
-      clearOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('clear', expect.objectContaining({
-        alias: 'c',
-        type: 'boolean',
-        default: false,
-      }));
-    });
-  });
-
-  describe('prefixOption', () => {
-    it('adds prefix option as string type', () => {
-      const { builder, mockOption } = createMockBuilder();
-      prefixOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('prefix', expect.objectContaining({
-        type: 'string',
-      }));
-    });
-  });
-
-  describe('descriptionOption', () => {
-    it('adds description option as string type', () => {
-      const { builder, mockOption } = createMockBuilder();
-      descriptionOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('description', expect.objectContaining({
-        type: 'string',
-      }));
-    });
-  });
-
-  describe('filesOption', () => {
-    it('adds files option as array with default readme/license globs', () => {
-      const { builder, mockOption } = createMockBuilder();
-      filesOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('files', expect.objectContaining({
-        type: 'array',
-        default: ['readme.md', 'license'],
-      }));
-    });
-  });
-
-  describe('tokenOption', () => {
-    it('adds token option as string type', () => {
-      const { builder, mockOption } = createMockBuilder();
-      tokenOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('token', expect.objectContaining({
-        type: 'string',
-      }));
-    });
-  });
-
-  describe('otpOption', () => {
-    it('adds otp option as string type', () => {
-      const { builder, mockOption } = createMockBuilder();
-      otpOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('otp', expect.objectContaining({
-        type: 'string',
-      }));
-    });
-  });
-
-  describe('verboseOption', () => {
-    it('adds verbose option with default false', () => {
-      const { builder, mockOption } = createMockBuilder();
-      verboseOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('verbose', expect.objectContaining({
-        type: 'boolean',
-        default: false,
-      }));
-    });
-  });
-
-  describe('keywordsOption', () => {
-    it('adds keywords option as array type', () => {
-      const { builder, mockOption } = createMockBuilder();
-      keywordsOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('keywords', expect.objectContaining({
-        type: 'array',
-      }));
-    });
-  });
-
-  describe('licenseOption', () => {
-    it('adds license option as string type', () => {
-      const { builder, mockOption } = createMockBuilder();
-      licenseOption(builder);
-      expect(mockOption).toHaveBeenCalledWith('license', expect.objectContaining({
-        type: 'string',
-      }));
-    });
+    expect(mockOption).toHaveBeenCalledWith(flag, expect.objectContaining(expected));
   });
 
   describe('option builders return builder for chaining', () => {

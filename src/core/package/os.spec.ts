@@ -14,20 +14,16 @@ describe('os', () => {
       { input: 'netbsd', expected: 'netbsd' },
     ];
 
-    testCases.forEach(({ input, expected }) => {
-      it(`should transform ${input} to ${expected}`, () => {
-        expect(normalizeOS(input)).toEqual(expected);
-      });
+    it.each(testCases)('should transform $input to $expected', ({ input, expected }) => {
+      expect(normalizeOS(input)).toEqual(expected);
     });
   });
 
   describe('should throw error', () => {
     const testCases: GOOS[] = ['dragonfly', 'hurd', 'illumos', 'ios', 'js', 'nacl', 'plan9', 'zos'];
 
-    testCases.forEach(input => {
-      it(`should throw error when os is ${input} and it is not supported`, () => {
-        expect(() => normalizeOS(input)).toThrow(`${input} is not supported`);
-      });
+    it.each(testCases)('should throw error when os is %s and it is not supported', input => {
+      expect(() => normalizeOS(input)).toThrow(`${input} is not supported`);
     });
 
     it('should throw error when os is unknown', () => {

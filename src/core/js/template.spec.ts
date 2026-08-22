@@ -30,12 +30,10 @@ describe('js transformer', () => {
       { name: 'Symbol', value: Symbol('test-symbol'), expected: "const value = Symbol('test-symbol');" },
     ];
 
-    cases.forEach(({ name, value, expected }) => {
-      it(name, () => {
-        const actual = js`const value = ${value};`.toString();
+    it.each(cases)('$name', ({ value, expected }) => {
+      const actual = js`const value = ${value};`.toString();
 
-        expect(actual).toEqual(expected);
-      });
+      expect(actual).toEqual(expected);
     });
   });
 
@@ -80,12 +78,10 @@ describe('js transformer', () => {
       },
     ];
 
-    cases.forEach(({ name, value, expected }) => {
-      it(name, () => {
-        const actual = js`const value = ${value};`.toString();
+    it.each(cases)('$name', ({ value, expected }) => {
+      const actual = js`const value = ${value};`.toString();
 
-        expect(actual).toEqual(expected);
-      });
+      expect(actual).toEqual(expected);
     });
   });
 
@@ -125,12 +121,10 @@ describe('js transformer', () => {
       },
     ];
 
-    cases.forEach(({ name, value, expected }) => {
-      it(name, () => {
-        const actual = js`const value = ${value};`.toString();
+    it.each(cases)('$name', ({ value, expected }) => {
+      const actual = js`const value = ${value};`.toString();
 
-        expect(actual).toEqual(expected);
-      });
+      expect(actual).toEqual(expected);
     });
   });
 

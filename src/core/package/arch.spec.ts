@@ -14,10 +14,8 @@ describe('arch', () => {
       { input: 'ppc', expected: 'ppc' },
     ];
 
-    testCases.forEach(({ input, expected }) => {
-      it(`should transform ${input} to ${expected}`, () => {
-        expect(normalizeArch(input)).toEqual(expected);
-      });
+    it.each(testCases)('should transform $input to $expected', ({ input, expected }) => {
+      expect(normalizeArch(input)).toEqual(expected);
     });
   });
 
@@ -39,10 +37,8 @@ describe('arch', () => {
       'wasm',
     ];
 
-    testCases.forEach(input => {
-      it(`should throw error when os is ${input} and it is not supported`, () => {
-        expect(() => normalizeArch(input)).toThrow(`${input} is not supported`);
-      });
+    it.each(testCases)('should throw error when os is %s and it is not supported', input => {
+      expect(() => normalizeArch(input)).toThrow(`${input} is not supported`);
     });
 
     it('should throw error when arch is unknown', () => {

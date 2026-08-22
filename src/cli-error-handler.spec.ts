@@ -19,47 +19,38 @@ describe('handleCliError', () => {
     jest.restoreAllMocks();
   });
 
-  describe('EOTP error', () => {
-    it('should log OTP-specific message with ERROR prefix', () => {
-      const err = new NpmExecError({
-        code: 'EOTP',
-        summary: 'This operation requires a one-time password.',
-        detail: 'Open this URL...',
-      });
-
-      handleCliError('fallback message', err);
-
-      expect(mockError).toHaveBeenCalledWith(
+  describe('with an error', () => {
+    it.each([
+      [
+        'EOTP error logs an OTP-specific message',
+        new NpmExecError({
+          code: 'EOTP',
+          summary: 'This operation requires a one-time password.',
+          detail: 'Open this URL...',
+        }),
+        'fallback message',
         'ERROR: NPM requires a one-time password (OTP). Provide it with --otp <code>.',
-      );
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(jest.mocked(process.exit)).toHaveBeenCalledWith(1);
-    });
-  });
+      ],
+      [
+        'other NPM errors fall back to the provided message',
+        new NpmExecError({
+          code: 'E403',
+          summary: 'Forbidden',
+          detail: 'You are not allowed to publish this package',
+        }),
+        'Custom error message',
+        'ERROR: Custom error message',
+      ],
+      [
+        'non-npm errors log the provided message',
+        new Error('Network timeout'),
+        'Connection failed',
+        'ERROR: Connection failed',
+      ],
+    ] as const)('%s', (_name, err, message, expectedLog) => {
+      handleCliError(message, err);
 
-  describe('other NPM errors', () => {
-    it('should fall back to provided message for unknown error codes', () => {
-      const err = new NpmExecError({
-        code: 'E403',
-        summary: 'Forbidden',
-        detail: 'You are not allowed to publish this package',
-      });
-
-      handleCliError('Custom error message', err);
-
-      expect(mockError).toHaveBeenCalledWith('ERROR: Custom error message');
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(jest.mocked(process.exit)).toHaveBeenCalledWith(1);
-    });
-  });
-
-  describe('non-npm error', () => {
-    it('should log provided message with ERROR prefix', () => {
-      const err = new Error('Network timeout');
-
-      handleCliError('Connection failed', err);
-
-      expect(mockError).toHaveBeenCalledWith('ERROR: Connection failed');
+      expect(mockError).toHaveBeenCalledWith(expectedLog);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(jest.mocked(process.exit)).toHaveBeenCalledWith(1);
     });

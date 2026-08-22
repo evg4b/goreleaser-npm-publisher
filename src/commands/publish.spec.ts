@@ -111,19 +111,10 @@ describe('publishHandler', () => {
     expect(mockLoggerInfo).toHaveBeenCalledWith(expect.stringContaining('/project/dist/npm/'));
   });
 
-  it('logs published package info', async () => {
+  it.each(['Name:', 'Version:', 'Size:', 'Mode:'])('logs published package info containing "%s"', async label => {
     await publishHandler(makeArgs());
 
-    expect(mockLoggerInfo).toHaveBeenCalledWith(expect.stringContaining('Name:'));
-    expect(mockLoggerInfo).toHaveBeenCalledWith(expect.stringContaining('Version:'));
-    expect(mockLoggerInfo).toHaveBeenCalledWith(expect.stringContaining('Size:'));
-  });
-
-  it('logs file info for each published file', async () => {
-    await publishHandler(makeArgs());
-
-    expect(mockLoggerInfo).toHaveBeenCalledWith(expect.stringContaining('Size:'));
-    expect(mockLoggerInfo).toHaveBeenCalledWith(expect.stringContaining('Mode:'));
+    expect(mockLoggerInfo).toHaveBeenCalledWith(expect.stringContaining(label));
   });
 
   it('publishes packages sorted by name length descending', async () => {
