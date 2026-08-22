@@ -145,14 +145,60 @@ export const buildExecScript = (packages: PackageDefinition[], prefix: string | 
 
   const code = js`#!/usr/bin/env node
 const path = require('path');
-const child_process = require('child_process');
 const mapping = ${mapping};
-const definition = mapping[process.platform + '_' + process.arch];
-const packageJsonPath = require.resolve(path.join(...definition.name, 'package.json'));
-const packagePath = path.join(path.dirname(packageJsonPath), definition.bin);
-child_process.spawn(packagePath, process.argv.splice(2), {
-  stdio: 'inherit',
-  env: process.env,
+const key = process.platform + '_' + process.arch;
+const definition = mapping[key];
+
+if (!definition) {
+  console.error('Unsupported platform: ' + key + '. Supported: ' + Object.keys(mapping).join(', '));
+  process.exit(1);
+}
+
+let packagePath;
+try {
+  const packageJsonPath = require.resolve(path.join(...definition.name, 'package.json'));
+  packagePath = path.join(path.dirname(packageJsonPath), definition.bin);
+} catch {
+  console.error('Missing platform package for ' + key + '. Reinstall without --no-optional.');
+  process.exit(1);
+}
+
+const args = process.argv.slice(2);
+
+// On POSIX, replace this process image with the binary. The binary keeps our
+// pid, so exit codes and signals are handled by the kernel rather than relayed
+// by hand, and no node process lingers for the lifetime of the CLI.
+if (typeof process.execve === 'function') {
+  try {
+    process.execve(packagePath, [packagePath, ...args]);
+  } catch (error) {
+    console.error('Failed to exec ' + packagePath + ': ' + error.message);
+    process.exit(1);
+  }
+}
+
+// Windows has no process replacement, and process.execve landed in node 22.15.
+// Fall back to spawning and relaying exit codes and signals ourselves.
+const os = require('os');
+const child_process = require('child_process');
+const signals = ['SIGINT', 'SIGTERM', 'SIGHUP', 'SIGBREAK'];
+const child = child_process.spawn(packagePath, args, { stdio: 'inherit' });
+
+child.on('error', error => {
+  console.error('Failed to spawn ' + packagePath + ': ' + error.message);
+  process.exit(1);
+});
+
+for (const signal of signals) {
+  process.on(signal, () => child.kill(signal));
+}
+
+child.on('exit', (code, signal) => {
+  for (const registered of signals) {
+    process.removeAllListeners(registered);
+  }
+
+  process.exit(signal ? 128 + (os.constants.signals[signal] ?? 0) : (code ?? 0));
 });`;
 
   return code.toString();
