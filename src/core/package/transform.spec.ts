@@ -55,6 +55,12 @@ describe('transformPackage', () => {
 
     expect(result.bin).toBe('myapp.exe');
   });
+
+  it('should use name override instead of project_name when provided', () => {
+    const result = transformPackage({ artifact, metadata, name: 'cli', files: [], keywords: [] });
+
+    expect(result.name).toBe('cli_linux_amd64');
+  });
 });
 
 describe('formatPackageName', () => {
@@ -121,6 +127,21 @@ describe('formatPackageJson', () => {
     const result = formatPackageJson({ pkg, description: undefined, prefix: undefined, files: [], keywords: [] });
 
     expect(result).not.toHaveProperty('description');
+  });
+
+  it('should include repository when provided and omit it otherwise', () => {
+    const withRepo = formatPackageJson({
+      pkg,
+      description: undefined,
+      prefix: undefined,
+      repository: 'git+https://github.com/scope/myapp.git',
+      files: [],
+      keywords: [],
+    });
+    const withoutRepo = formatPackageJson({ pkg, description: undefined, prefix: undefined, files: [], keywords: [] });
+
+    expect(withRepo.repository).toEqual({ type: 'git', url: 'git+https://github.com/scope/myapp.git' });
+    expect(withoutRepo).not.toHaveProperty('repository');
   });
 });
 
@@ -208,5 +229,78 @@ describe('formatMainPackageJson', () => {
     });
 
     expect(result).not.toHaveProperty('description');
+  });
+
+  it('should use name override for package name and bin when provided', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      name: 'cli',
+      description: undefined,
+      prefix: '@scope',
+      files: [],
+      keywords: [],
+    });
+
+    expect(result.name).toBe('@scope/cli');
+    expect(result.bin).toEqual({ cli: 'index.js' });
+  });
+
+  it('should use bin override for the command name when provided', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      name: 'cli',
+      bin: 'myapp',
+      description: undefined,
+      prefix: '@scope',
+      files: [],
+      keywords: [],
+    });
+
+    expect(result.name).toBe('@scope/cli');
+    expect(result.bin).toEqual({ myapp: 'index.js' });
+  });
+
+  it('should include repository in the main package.json when provided', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      description: undefined,
+      prefix: undefined,
+      repository: 'git+https://github.com/scope/myapp.git',
+      files: [],
+      keywords: [],
+    });
+
+    expect(result.repository).toEqual({ type: 'git', url: 'git+https://github.com/scope/myapp.git' });
+  });
+
+  it('should omit repository when not provided', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      description: undefined,
+      prefix: undefined,
+      files: [],
+      keywords: [],
+    });
+
+    expect(result).not.toHaveProperty('repository');
+  });
+
+  it('should use bin override without name override', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      bin: 'my-command',
+      description: undefined,
+      prefix: undefined,
+      files: [],
+      keywords: [],
+    });
+
+    expect(result.name).toBe('myapp');
+    expect(result.bin).toEqual({ 'my-command': 'index.js' });
   });
 });

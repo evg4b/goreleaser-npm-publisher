@@ -1,6 +1,9 @@
 interface ListParams {
   project: string;
   builder?: string;
+  name?: string;
+  bin?: string;
+  repository?: string;
   description?: string;
   prefix?: string;
   verbose?: boolean;

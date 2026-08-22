@@ -4,9 +4,9 @@ import { FormatMainPackageJsonParams, FormatPackageJsonParams, TransformPackageP
 import { normalizeOS } from './os';
 
 export const transformPackage = (params: TransformPackageParams): PackageDefinition => {
-  const { artifact, metadata, files, keywords, license } = params;
+  const { artifact, metadata, name, files, keywords, license } = params;
   return {
-    name: `${metadata.project_name}_${artifact.goos}_${artifact.goarch}`,
+    name: `${name ?? metadata.project_name}_${artifact.goos}_${artifact.goarch}`,
     version: metadata.version,
     os: normalizeOS(artifact.goos),
     cpu: normalizeArch(artifact.goarch),
@@ -20,7 +20,7 @@ export const transformPackage = (params: TransformPackageParams): PackageDefinit
 };
 
 export const formatPackageJson = (params: FormatPackageJsonParams): PackageJson => {
-  const { pkg, description, prefix, files, keywords } = params;
+  const { pkg, description, prefix, repository, files, keywords } = params;
   return normalize({
     name: formatPackageName(pkg, prefix),
     description,
@@ -31,6 +31,7 @@ export const formatPackageJson = (params: FormatPackageJsonParams): PackageJson 
     files,
     keywords,
     license: pkg.license,
+    repository: formatRepository(repository),
   });
 };
 
@@ -43,12 +44,13 @@ export const formatPackageName = (pkg: PackageDefinition | Metadata, prefix: str
 };
 
 export const formatMainPackageJson = (params: FormatMainPackageJsonParams): PackageJson => {
-  const { packages, metadata, description, prefix, files, keywords, license } = params;
+  const { packages, metadata, name, bin, description, prefix, repository, files, keywords, license } = params;
+  const packageName = name ?? metadata.project_name;
   return normalize({
-    name: formatPackageName(metadata, prefix),
+    name: isEmpty(prefix) ? packageName : `${prefix}/${packageName}`,
     description,
     version: metadata.version,
-    bin: { [metadata.project_name]: 'index.js' },
+    bin: { [bin ?? packageName]: 'index.js' },
     optionalDependencies: packages.reduce<Record<string, string>>(
       (dependencies, pkg) => ({
         ...dependencies,
@@ -61,13 +63,18 @@ export const formatMainPackageJson = (params: FormatMainPackageJsonParams): Pack
     files,
     keywords,
     license: license,
+    repository: formatRepository(repository),
   });
 };
 
-const normalize = ({ description, ...other }: PackageJson): PackageJson => {
-  if (description) {
-    return { ...other, description };
-  }
+const formatRepository = (repository: string | undefined): PackageRepository | undefined => {
+  return repository ? { type: 'git', url: repository } : undefined;
+};
 
-  return other;
+const normalize = ({ description, repository, ...other }: PackageJson): PackageJson => {
+  return {
+    ...other,
+    ...(description ? { description } : {}),
+    ...(repository ? { repository } : {}),
+  };
 };

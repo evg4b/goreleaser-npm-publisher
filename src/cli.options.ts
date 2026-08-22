@@ -29,6 +29,25 @@ export const prefixOption = <T>(builder: Argv<T>) =>
     describe: 'Prefix for the npm package',
   });
 
+export const nameOption = <T>(builder: Argv<T>) =>
+  builder.option('name', {
+    alias: 'n',
+    type: 'string',
+    describe: 'Base name for the npm packages (defaults to the GoReleaser project name)',
+  });
+
+export const binOption = <T>(builder: Argv<T>) =>
+  builder.option('bin', {
+    type: 'string',
+    describe: 'Name of the installed command (defaults to the package name)',
+  });
+
+export const repositoryOption = <T>(builder: Argv<T>) =>
+  builder.option('repository', {
+    type: 'string',
+    describe: 'Source repository URL to set in the npm packages (required for npm provenance)',
+  });
+
 export const descriptionOption = <T>(builder: Argv<T>) =>
   builder.option('description', {
     type: 'string',
