@@ -101,64 +101,74 @@ Displays a list of packages that can be built in the current project using the s
 
 #### Options
 
-| Option          | type    | Description                                                                  |
-|-----------------|---------|------------------------------------------------------------------------------|
-| **project**     | string  | Specifies the path to the root of the Go package.                            |
-| **builder**     | string  | The name of the builder whose output will be used for building the packages. |
-| **name**        | string  | Base name for the npm packages (defaults to the GoReleaser project name).    |
-| **bin**         | string  | Name of the installed command (defaults to the package name).                |
-| **repository**  | string  | Source repository URL set in the npm packages (required for npm provenance). |
-| **prefix**      | string  | NPM package scope prefix.                                                    |
-| **description** | string  | NPM package description.                                                     |
-| **verbose**     | boolean | Print verbose output.                                                        |
+| Option                   | Type    | Description                                                                                                           |
+|--------------------------|---------|-----------------------------------------------------------------------------------------------------------------------|
+| **project**              | string  | Path to the project root built by GoReleaser (`.` by default).                                                        |
+| **builder**              | string  | Name of the GoReleaser builder whose output is used to build the packages.                                            |
+| **name**                 | string  | Base name for the npm packages (defaults to the GoReleaser project name).                                             |
+| **bin**                  | string  | Name of the installed command (defaults to the package name).                                                         |
+| **prefix**               | string  | Scope prefix for the npm packages.                                                                                    |
+| **repository**           | string  | Source repository URL for the npm packages (required for npm provenance).                                             |
+| **repository-type**      | string  | Type of the source repository (detected from the repository URL, `git` by default). One of `git`, `svn`, `hg`, `bzr`. |
+| **repository-directory** | string  | Directory of the package inside the source repository (for monorepos).                                                |
+| **description**          | string  | Description for the npm packages.                                                                                     |
+| **verbose**              | boolean | Show verbose output.                                                                                                  |
 
 ### build
 
-Builds all packages that can be built in the current project using the specified parameters.
-The built packages can be found in the `dist/npm` folder.
+Builds all packages that can be built in the current project using the specified parameters. The built packages can be
+found in the `dist/npm` folder.
 
-| Option          | Type     | Description                                                                                 |
-|-----------------|----------|---------------------------------------------------------------------------------------------|
-| **project**     | string   | Specifies the path to the root of the Go package.                                           |
-| **builder**     | string   | The name of the builder whose output will be used for building the packages.                |
-| **clear**       | boolean  | Clean the `dist/npm` folder before the build.                                               |
-| **name**        | string   | Base name for the npm packages (defaults to the GoReleaser project name).                   |
-| **bin**         | string   | Name of the installed command (defaults to the package name).                               |
-| **repository**  | string   | Source repository URL set in the npm packages (required for npm provenance).                |
-| **prefix**      | string   | NPM package scope prefix.                                                                   |
-| **description** | string   | NPM package description.                                                                    |
-| **files**       | string[] | Files that should be included in the NPM package (e.g., `README.md`, `LICENSE` by default). |
-| **keywords**    | string[] | NPM package keywords.                                                                       |
-| **license**     | string   | NPM package license.                                                                        |
-| **verbose**     | boolean  | Print verbose output.                                                                       |
+#### Options
+
+| Option                   | Type     | Description                                                                                                           |
+|--------------------------|----------|-----------------------------------------------------------------------------------------------------------------------|
+| **project**              | string   | Path to the project root built by GoReleaser (`.` by default).                                                        |
+| **builder**              | string   | Name of the GoReleaser builder whose output is used to build the packages.                                            |
+| **clear**                | boolean  | Clear the `dist/npm` folder before building.                                                                          |
+| **name**                 | string   | Base name for the npm packages (defaults to the GoReleaser project name).                                             |
+| **bin**                  | string   | Name of the installed command (defaults to the package name).                                                         |
+| **prefix**               | string   | Scope prefix for the npm packages.                                                                                    |
+| **repository**           | string   | Source repository URL for the npm packages (required for npm provenance).                                             |
+| **repository-type**      | string   | Type of the source repository (detected from the repository URL, `git` by default). One of `git`, `svn`, `hg`, `bzr`. |
+| **repository-directory** | string   | Directory of the package inside the source repository (for monorepos).                                                |
+| **description**          | string   | Description for the npm packages.                                                                                     |
+| **files**                | string[] | File globs to include in the npm packages (`readme.md`, `license` by default).                                        |
+| **keywords**             | string[] | Keywords for the npm packages.                                                                                        |
+| **license**              | string   | License (SPDX identifier) for the npm packages.                                                                       |
+| **verbose**              | boolean  | Show verbose output.                                                                                                  |
 
 ### publish
 
 Builds and publishes to the `registry` all packages that can be built in the current project using the specified
 parameters.
 
-| Option          | Type     | Description                                                                                 |
-|-----------------|----------|---------------------------------------------------------------------------------------------|
-| **project**     | string   | Specifies the path to the root of the Go package.                                           |
-| **builder**     | string   | The name of the builder whose output will be used for building the packages.                |
-| **clear**       | boolean  | Clean the `dist/npm` folder before the build.                                               |
-| **name**        | string   | Base name for the npm packages (defaults to the GoReleaser project name).                   |
-| **bin**         | string   | Name of the installed command (defaults to the package name).                               |
-| **repository**  | string   | Source repository URL set in the npm packages (required for npm provenance).                |
-| **prefix**      | string   | NPM package scope prefix.                                                                   |
-| **description** | string   | NPM package description.                                                                    |
-| **files**       | string[] | Files that should be included in the NPM package (e.g., `README.md`, `LICENSE` by default). |
-| **keywords**    | string[] | NPM package keywords.                                                                       |
-| **license**     | string   | NPM package license.                                                                        |
-| **token**       | string   | The NPM authentication token.                                                               |
-| **verbose**     | boolean  | Print verbose output.                                                                       |
+#### Options
+
+| Option                   | Type     | Description                                                                                                           |
+|--------------------------|----------|-----------------------------------------------------------------------------------------------------------------------|
+| **project**              | string   | Path to the project root built by GoReleaser (`.` by default).                                                        |
+| **builder**              | string   | Name of the GoReleaser builder whose output is used to build the packages.                                            |
+| **clear**                | boolean  | Clear the `dist/npm` folder before building.                                                                          |
+| **name**                 | string   | Base name for the npm packages (defaults to the GoReleaser project name).                                             |
+| **bin**                  | string   | Name of the installed command (defaults to the package name).                                                         |
+| **prefix**               | string   | Scope prefix for the npm packages.                                                                                    |
+| **repository**           | string   | Source repository URL for the npm packages (required for npm provenance).                                             |
+| **repository-type**      | string   | Type of the source repository (detected from the repository URL, `git` by default). One of `git`, `svn`, `hg`, `bzr`. |
+| **repository-directory** | string   | Directory of the package inside the source repository (for monorepos).                                                |
+| **description**          | string   | Description for the npm packages.                                                                                     |
+| **files**                | string[] | File globs to include in the npm packages (`readme.md`, `license` by default).                                        |
+| **keywords**             | string[] | Keywords for the npm packages.                                                                                        |
+| **license**              | string   | License (SPDX identifier) for the npm packages.                                                                       |
+| **token**                | string   | Token for npm registry authentication.                                                                                |
+| **otp**                  | string   | One-time password for npm two-factor authentication.                                                                  |
+| **verbose**              | boolean  | Show verbose output.                                                                                                  |
 
 ## Structure of npm package:
 
-The output will include a main package and platform packages.
-The main package will contain the executable script that detects the platform and architecture, running the
-corresponding platform package.
-The platform packages will include the Go binary for the specific platform and architecture.
+The output will include a main package and platform packages. The main package will contain the executable script that
+detects the platform and architecture, running the corresponding platform package. The platform packages will include
+the Go binary for the specific platform and architecture.
 
 For example, for the package `go-package` with version `0.0.17`, and with Goreleaser building for `linux`, `windows`,
 and `darwin` along with `ia32`, `x64`, and `arm64` architectures:

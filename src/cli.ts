@@ -7,7 +7,6 @@ import { handleCliError } from './cli-error-handler';
 import { createDistFolder, isDistEmptyCheck } from './helpers';
 import {
   binOption,
-  
   builderOption,
   clearOption,
   descriptionOption,
@@ -18,7 +17,9 @@ import {
   otpOption,
   prefixOption,
   projectOption,
+  repositoryDirectoryOption,
   repositoryOption,
+  repositoryTypeOption,
   tokenOption,
   verboseOption,
 } from './cli.options';
@@ -43,6 +44,8 @@ Promise.resolve(
           .then(binOption)
           .then(prefixOption)
           .then(repositoryOption)
+          .then(repositoryTypeOption)
+          .then(repositoryDirectoryOption)
           .then(descriptionOption)
           .then(verboseOption),
       (options: ListParams) => listHandler(options),
@@ -59,6 +62,8 @@ Promise.resolve(
           .then(binOption)
           .then(prefixOption)
           .then(repositoryOption)
+          .then(repositoryTypeOption)
+          .then(repositoryDirectoryOption)
           .then(descriptionOption)
           .then(filesOption)
           .then(keywordsOption)
@@ -79,6 +84,8 @@ Promise.resolve(
           .then(binOption)
           .then(prefixOption)
           .then(repositoryOption)
+          .then(repositoryTypeOption)
+          .then(repositoryDirectoryOption)
           .then(descriptionOption)
           .then(filesOption)
           .then(keywordsOption)

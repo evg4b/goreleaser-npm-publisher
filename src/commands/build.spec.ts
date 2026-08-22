@@ -40,6 +40,7 @@ jest.mock('../core/package', () => ({
   transformPackage: mockTransformPackage,
   formatPackageJson: mockFormatPackageJson,
   formatMainPackageJson: mockFormatMainPackageJson,
+  pickRepositoryParams: jest.requireActual<typeof import('../core/package')>('../core/package').pickRepositoryParams,
 }));
 
 const mockContextInstance = {
