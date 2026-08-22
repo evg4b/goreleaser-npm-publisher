@@ -21,7 +21,9 @@ jest.mock('../core/logger', () => ({
 const mockTransformPackage = jest.fn();
 const mockFormatPackageJson = jest.fn();
 const mockFormatMainPackageJson = jest.fn();
+
 jest.mock('../core/package', () => ({
+  ...jest.requireActual<object>('../core/package'),
   transformPackage: mockTransformPackage,
   formatPackageJson: mockFormatPackageJson,
   formatMainPackageJson: mockFormatMainPackageJson,
@@ -102,7 +104,10 @@ describe('listHandler', () => {
     mockParseMetadata.mockResolvedValue(makeMetadata());
     mockTransformPackage.mockReturnValue(makePackageDef());
     mockFormatPackageJson.mockReturnValue(makePackageJson());
-    mockFormatMainPackageJson.mockReturnValue(makePackageJson({ name: 'tool', optionalDependencies: { 'tool-linux-x64': '1.0.0' } }));
+    mockFormatMainPackageJson.mockReturnValue(makePackageJson({
+      name: 'tool',
+      optionalDependencies: { 'tool-linux-x64': '1.0.0' },
+    }));
     mockLoggerGroup.mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
   });
 

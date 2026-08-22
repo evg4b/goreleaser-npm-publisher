@@ -1,3 +1,9 @@
+export interface RepositoryParams {
+  repository?: string;
+  repositoryType?: RepositoryType;
+  repositoryDirectory?: string;
+}
+
 export interface TransformPackageParams {
   artifact: BinaryArtifact;
   metadata: Metadata;
@@ -7,23 +13,21 @@ export interface TransformPackageParams {
   license?: string;
 }
 
-export interface FormatPackageJsonParams {
+export interface FormatPackageJsonParams extends RepositoryParams {
   pkg: PackageDefinition;
   description: string | undefined;
   prefix: string | undefined;
-  repository?: string;
   files: string[];
   keywords: string[];
 }
 
-export interface FormatMainPackageJsonParams {
+export interface FormatMainPackageJsonParams extends RepositoryParams {
   packages: PackageDefinition[];
   metadata: Metadata;
   name?: string;
   bin?: string;
   description: string | undefined;
   prefix: string | undefined;
-  repository?: string;
   files: string[];
   keywords: string[];
   license?: string;

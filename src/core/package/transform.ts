@@ -2,6 +2,7 @@ import { isEmpty, uniq } from 'lodash';
 import { normalizeArch } from './arch';
 import { FormatMainPackageJsonParams, FormatPackageJsonParams, TransformPackageParams } from './models';
 import { normalizeOS } from './os';
+import { formatRepository } from './repository';
 
 export const transformPackage = (params: TransformPackageParams): PackageDefinition => {
   const { artifact, metadata, name, files, keywords, license } = params;
@@ -20,7 +21,7 @@ export const transformPackage = (params: TransformPackageParams): PackageDefinit
 };
 
 export const formatPackageJson = (params: FormatPackageJsonParams): PackageJson => {
-  const { pkg, description, prefix, repository, files, keywords } = params;
+  const { pkg, description, prefix, files, keywords } = params;
   return normalize({
     name: formatPackageName(pkg, prefix),
     description,
@@ -31,7 +32,7 @@ export const formatPackageJson = (params: FormatPackageJsonParams): PackageJson 
     files,
     keywords,
     license: pkg.license,
-    repository: formatRepository(repository),
+    repository: formatRepository(params),
   });
 };
 
@@ -44,7 +45,7 @@ export const formatPackageName = (pkg: PackageDefinition | Metadata, prefix: str
 };
 
 export const formatMainPackageJson = (params: FormatMainPackageJsonParams): PackageJson => {
-  const { packages, metadata, name, bin, description, prefix, repository, files, keywords, license } = params;
+  const { packages, metadata, name, bin, description, prefix, files, keywords, license } = params;
   const packageName = name ?? metadata.project_name;
   return normalize({
     name: isEmpty(prefix) ? packageName : `${prefix}/${packageName}`,
@@ -63,12 +64,8 @@ export const formatMainPackageJson = (params: FormatMainPackageJsonParams): Pack
     files,
     keywords,
     license: license,
-    repository: formatRepository(repository),
+    repository: formatRepository(params),
   });
-};
-
-const formatRepository = (repository: string | undefined): PackageRepository | undefined => {
-  return repository ? { type: 'git', url: repository } : undefined;
 };
 
 const normalize = ({ description, repository, ...other }: PackageJson): PackageJson => {

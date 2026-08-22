@@ -1,7 +1,7 @@
 import { parseArtifactsFile, parseMetadata } from '../core/files';
 import { Context } from '../core/gorealiser';
 import { logger } from '../core/logger';
-import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
+import { formatMainPackageJson, formatPackageJson, pickRepositoryParams, transformPackage } from '../core/package';
 import { binArtifactPredicate } from '../helpers';
 import { ActionType } from './models';
 
@@ -35,6 +35,7 @@ export const listHandler: ActionType<ListParams> = async args => {
   const artifacts = await parseArtifactsFile(context.artifactsPath);
   const builder = args.builder ?? metadata.project_name;
   const keywords = args.keywords ?? [];
+  const repository = pickRepositoryParams(args);
   const descriptions = artifacts.filter(binArtifactPredicate(builder)).map(artifact => {
     const definition = transformPackage({
       artifact,
@@ -50,7 +51,7 @@ export const listHandler: ActionType<ListParams> = async args => {
         pkg: definition,
         description: args.description,
         prefix: args.prefix,
-        repository: args.repository,
+        ...repository,
         files: [],
         keywords,
       }),
@@ -64,7 +65,7 @@ export const listHandler: ActionType<ListParams> = async args => {
     bin: args.bin,
     description: args.description,
     prefix: args.prefix,
-    repository: args.repository,
+    ...repository,
     files: [],
     keywords,
   });

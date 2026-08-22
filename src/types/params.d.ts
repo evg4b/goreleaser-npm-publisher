@@ -4,6 +4,8 @@ interface ListParams {
   name?: string;
   bin?: string;
   repository?: string;
+  repositoryType?: RepositoryType;
+  repositoryDirectory?: string;
   description?: string;
   prefix?: string;
   verbose?: boolean;

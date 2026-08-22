@@ -143,6 +143,25 @@ describe('formatPackageJson', () => {
     expect(withRepo.repository).toEqual({ type: 'git', url: 'git+https://github.com/scope/myapp.git' });
     expect(withoutRepo).not.toHaveProperty('repository');
   });
+
+  it('should pass the repository type and directory to the repository field', () => {
+    const result = formatPackageJson({
+      pkg,
+      description: undefined,
+      prefix: undefined,
+      repository: 'https://svn.example.com/myapp',
+      repositoryType: 'svn',
+      repositoryDirectory: 'packages/cli',
+      files: [],
+      keywords: [],
+    });
+
+    expect(result.repository).toEqual({
+      type: 'svn',
+      url: 'https://svn.example.com/myapp',
+      directory: 'packages/cli',
+    });
+  });
 });
 
 describe('formatMainPackageJson', () => {
@@ -274,6 +293,26 @@ describe('formatMainPackageJson', () => {
     });
 
     expect(result.repository).toEqual({ type: 'git', url: 'git+https://github.com/scope/myapp.git' });
+  });
+
+  it('should include the repository type and directory in the main package.json when provided', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      description: undefined,
+      prefix: undefined,
+      repository: 'https://hg.example.com/myapp',
+      repositoryType: 'hg',
+      repositoryDirectory: 'packages/cli',
+      files: [],
+      keywords: [],
+    });
+
+    expect(result.repository).toEqual({
+      type: 'hg',
+      url: 'https://hg.example.com/myapp',
+      directory: 'packages/cli',
+    });
   });
 
   it('should omit repository when not provided', () => {

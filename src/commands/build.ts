@@ -4,7 +4,7 @@ import { findFiles, parseArtifactsFile, parseMetadata, validateBinaryArtifact, w
 import { Context } from '../core/gorealiser';
 import js from '../core/js';
 import { logger } from '../core/logger';
-import { formatMainPackageJson, formatPackageJson, transformPackage } from '../core/package';
+import { formatMainPackageJson, formatPackageJson, pickRepositoryParams, transformPackage } from '../core/package';
 import { assertNotEmpty, binArtifactPredicate } from '../helpers';
 import { copyFile, mkdir, writeFile } from '../helpers/fs';
 import { ActionType } from './models';
@@ -68,6 +68,7 @@ export const buildHandler: ActionType<BuildParams> = async args => {
   }
 
   const keywords = args.keywords ?? [];
+  const repository = pickRepositoryParams(args);
 
   for (const artifact of binaryArtifacts) {
     const [, pathItem] = artifact.path.split(sep);
@@ -93,7 +94,7 @@ export const buildHandler: ActionType<BuildParams> = async args => {
         pkg: packageDefinition,
         description: args.description,
         prefix: args.prefix,
-        repository: args.repository,
+        ...repository,
         files,
         keywords,
       });
@@ -114,7 +115,7 @@ export const buildHandler: ActionType<BuildParams> = async args => {
     bin: args.bin,
     description: args.description,
     prefix: args.prefix,
-    repository: args.repository,
+    ...repository,
     files,
     keywords,
     license: args.license,

@@ -11,7 +11,9 @@ import {
   otpOption,
   prefixOption,
   projectOption,
+  repositoryDirectoryOption,
   repositoryOption,
+  repositoryTypeOption,
   tokenOption,
   verboseOption,
 } from './cli.options';
@@ -73,6 +75,27 @@ describe('cli options', () => {
       const { builder, mockOption } = createMockBuilder();
       repositoryOption(builder);
       expect(mockOption).toHaveBeenCalledWith('repository', expect.objectContaining({
+        type: 'string',
+      }));
+    });
+  });
+
+  describe('repositoryTypeOption', () => {
+    it('adds repository-type option limited to the supported types', () => {
+      const { builder, mockOption } = createMockBuilder();
+      repositoryTypeOption(builder);
+      expect(mockOption).toHaveBeenCalledWith('repository-type', expect.objectContaining({
+        type: 'string',
+        choices: ['git', 'svn', 'hg', 'bzr'],
+      }));
+    });
+  });
+
+  describe('repositoryDirectoryOption', () => {
+    it('adds repository-directory option', () => {
+      const { builder, mockOption } = createMockBuilder();
+      repositoryDirectoryOption(builder);
+      expect(mockOption).toHaveBeenCalledWith('repository-directory', expect.objectContaining({
         type: 'string',
       }));
     });

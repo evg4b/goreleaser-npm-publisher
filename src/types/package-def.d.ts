@@ -22,6 +22,8 @@ type OS = 'aix'
   | 'cygwin'
   | 'netbsd';
 
+type RepositoryType = 'git' | 'svn' | 'hg' | 'bzr';
+
 interface PackageDefinition {
   name: string;
   version: string;
@@ -50,6 +52,7 @@ interface PackageJson {
 }
 
 interface PackageRepository {
-  type: 'git';
+  type: RepositoryType;
   url: string;
+  directory?: string;
 }
