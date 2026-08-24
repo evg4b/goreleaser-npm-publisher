@@ -165,20 +165,21 @@ try {
 
 const args = process.argv.slice(2);
 
-// On POSIX, replace this process image with the binary. The binary keeps our
-// pid, so exit codes and signals are handled by the kernel rather than relayed
-// by hand, and no node process lingers for the lifetime of the CLI.
-if (typeof process.execve === 'function') {
+// process.execve aborts instead of throwing when the binary cannot be executed.
+let canExec = typeof process.execve === 'function';
+if (canExec) {
   try {
-    process.execve(packagePath, [packagePath, ...args]);
-  } catch (error) {
-    console.error('Failed to exec ' + packagePath + ': ' + error.message);
-    process.exit(1);
+    require('fs').accessSync(packagePath, require('fs').constants.X_OK);
+  } catch {
+    canExec = false;
   }
 }
 
-// Windows has no process replacement, and process.execve landed in node 22.15.
-// Fall back to spawning and relaying exit codes and signals ourselves.
+if (canExec) {
+  process.execve(packagePath, [packagePath, ...args]);
+}
+
+// process.execve is unavailable on Windows and before node 22.15.
 const os = require('os');
 const child_process = require('child_process');
 const signals = ['SIGINT', 'SIGTERM', 'SIGHUP', 'SIGBREAK'];

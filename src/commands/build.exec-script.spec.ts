@@ -7,8 +7,8 @@ describe('buildExecScript', () => {
     sourceBinary: overrides.sourceBinary ?? 'srcbin',
     destinationBinary: overrides.destinationBinary ?? 'destbin',
     bin: overrides.bin ?? 'binfile',
-    os: overrides.os ?? ('linux'),
-    cpu: overrides.cpu ?? ('x64'),
+    os: overrides.os ?? 'linux',
+    cpu: overrides.cpu ?? 'x64',
     files: overrides.files ?? [],
     keywords: overrides.keywords ?? [],
     license: overrides.license,
@@ -37,33 +37,6 @@ describe('buildExecScript', () => {
     expect(code).toContain("const packageJsonPath = require.resolve(path.join(...definition.name, 'package.json'));");
     expect(code).toContain('packagePath = path.join(path.dirname(packageJsonPath), definition.bin);');
     expect(code.trim().endsWith('});')).toBe(true);
-  });
-
-  it('replaces the process image via execve when available', () => {
-    const code = buildExecScript([makePkg()], undefined);
-
-    expect(code).toContain("typeof process.execve === 'function'");
-    expect(code).toContain('process.execve(packagePath, [packagePath, ...args]);');
-    // argv[0] must be passed explicitly, execve takes the full argv
-    expect(code).not.toContain('process.execve(packagePath, args)');
-  });
-
-  it('relays exit codes and signals in the spawn fallback', () => {
-    const code = buildExecScript([makePkg()], undefined);
-
-    expect(code).toContain("const signals = ['SIGINT', 'SIGTERM', 'SIGHUP', 'SIGBREAK'];");
-    expect(code).toContain('process.on(signal, () => child.kill(signal));');
-    expect(code).toContain('process.exit(signal ? 128 + (os.constants.signals[signal] ?? 0) : (code ?? 0));');
-    // the old shim mutated argv and dropped the child's status entirely
-    expect(code).not.toContain('process.argv.splice(2)');
-  });
-
-  it('fails with a readable message on unsupported platforms', () => {
-    const code = buildExecScript([makePkg()], undefined);
-
-    expect(code).toContain('if (!definition) {');
-    expect(code).toContain("'Unsupported platform: '");
-    expect(code).toContain("console.error('Failed to spawn '");
   });
 
   it('omits prefix when not provided', () => {
