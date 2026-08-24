@@ -7,8 +7,8 @@ describe('buildExecScript', () => {
     sourceBinary: overrides.sourceBinary ?? 'srcbin',
     destinationBinary: overrides.destinationBinary ?? 'destbin',
     bin: overrides.bin ?? 'binfile',
-    os: overrides.os ?? ('linux'),
-    cpu: overrides.cpu ?? ('x64'),
+    os: overrides.os ?? 'linux',
+    cpu: overrides.cpu ?? 'x64',
     files: overrides.files ?? [],
     keywords: overrides.keywords ?? [],
     license: overrides.license,
@@ -31,10 +31,11 @@ describe('buildExecScript', () => {
     expect(code).toContain("linux_x64: { name: [ '@acme', 'tool-linux' ], bin: 'tool' }");
     expect(code).toContain("darwin_arm64: { name: [ '@acme', 'tool-darwin' ], bin: 'tool' }");
 
-    // runtime selection and spawn
-    expect(code).toContain("const definition = mapping[process.platform + '_' + process.arch];");
+    // runtime selection
+    expect(code).toContain("const key = process.platform + '_' + process.arch;");
+    expect(code).toContain('const definition = mapping[key];');
     expect(code).toContain("const packageJsonPath = require.resolve(path.join(...definition.name, 'package.json'));");
-    expect(code).toContain('const packagePath = path.join(path.dirname(packageJsonPath), definition.bin);');
+    expect(code).toContain('packagePath = path.join(path.dirname(packageJsonPath), definition.bin);');
     expect(code.trim().endsWith('});')).toBe(true);
   });
 
