@@ -145,7 +145,10 @@ export const buildShimScript = async (packages: PackageDefinition[], prefix: str
 
   const shimPath = require.resolve('./shim.cjs');
   const shimContent = await readFile(shimPath, 'utf8');
-  const updatedShimContent = shimContent.replace('__INLINE_MAPPING__', JSON.stringify(mapping));
+  const updatedShimContent = shimContent.replace(
+    '__INLINE_MAPPING__' satisfies InlineMappingPlaceholder,
+    JSON.stringify(mapping),
+  );
 
   return updatedShimContent;
 };
