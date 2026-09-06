@@ -1,10 +1,6 @@
 import { defineConfig } from 'tsup';
-import { createRequire } from 'node:module';
+import { inlineCompiledPlugin } from './tools/inline-compiled-plugin.js';
 import pkg from './package.json' with { type: 'json' };
-
-// Loaded through `require` so tsup's config bundler leaves the CommonJS tools
-// (and their own `require('esbuild')`) alone instead of inlining them into ESM.
-const { inlineCompiledPlugin } = createRequire(import.meta.url)('./tools/inline-compiled-plugin.js');
 
 const isProd = process.env.NODE_ENV === 'production';
 

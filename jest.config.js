@@ -4,7 +4,7 @@ export default {
   cache: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
-  resolver: './tools/jest.resolver.js',
+  resolver: './tools/jest.resolver.cjs',
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coveragePathIgnorePatterns: ['/node_modules/', '/.yarn/'],
