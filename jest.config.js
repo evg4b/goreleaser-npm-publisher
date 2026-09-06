@@ -4,12 +4,13 @@ export default {
   cache: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
+  resolver: './tools/jest.resolver.cjs',
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coveragePathIgnorePatterns: ['/node_modules/', '/.yarn/'],
   coverageProvider: 'v8',
   coverageReporters: ['lcov'],
-  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/*.d.ts'],
+  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/*.d.ts', '!src/**/models.ts'],
   verbose: true,
   transform: {
     '^.+\\.tsx?$': [

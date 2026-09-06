@@ -165,10 +165,13 @@ describe('buildHandler', () => {
     expect(mockTransformPackage).toHaveBeenCalledWith(expect.objectContaining({ keywords: ['cli', 'tool'] }));
   });
 
-  it('writes index.js exec script for main package', async () => {
+  it('writes index.js shim script for main package', async () => {
     await buildHandler(makeArgs());
 
-    expect(mockWriteFile).toHaveBeenCalledWith(expect.stringContaining('index.js'), expect.any(String));
+    expect(mockWriteFile).toHaveBeenCalledWith(
+      expect.stringContaining('index.js'),
+      expect.stringContaining('mapping = {"linux_x64":{"name":["tool-linux-x64"],"bin":"tool"}}'),
+    );
   });
 
   it('copies extra files to each platform package folder', async () => {

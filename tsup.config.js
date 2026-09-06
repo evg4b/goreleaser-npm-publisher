@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsup';
+import { inlineCompiledPlugin } from './tools/inline-compiled-plugin.js';
 import pkg from './package.json' with { type: 'json' };
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -25,13 +26,11 @@ export default defineConfig(options => ({
   minifySyntax: isProd,
   minifyIdentifiers: isProd,
   minifyWhitespace: isProd,
-  noExternal: [
-    'es-toolkit',
-    'picocolors',
-    'glob',
-  ],
+  external: ['./mapping.json'],
+  noExternal: ['es-toolkit', 'picocolors', 'glob'],
   define: {
     __DEV__: JSON.stringify(!isProd),
     __VERSION__: JSON.stringify(pkg.version),
   },
+  esbuildPlugins: [inlineCompiledPlugin],
 }));
