@@ -3045,6 +3045,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"es-toolkit@npm:^1.52.0":
+  version: 1.52.0
+  resolution: "es-toolkit@npm:1.52.0"
+  dependenciesMeta:
+    "@trivago/prettier-plugin-sort-imports@4.3.0":
+      unplugged: true
+    prettier-plugin-sort-re-exports@0.0.1:
+      unplugged: true
+    vitepress-plugin-sandpack@1.1.4:
+      unplugged: true
+  checksum: 10c0/465988c0a6b84b6d1d171287cbbe40c3247a1f94acea210ae14bc66b7d90c93e6839bd6937cbaf2a1d206669f3179eb26141a89d9125969a4b8e58cb7d86a2ca
+  languageName: node
+  linkType: hard
+
 "esbuild@npm:^0.25.5":
   version: 0.25.12
   resolution: "esbuild@npm:0.25.12"
@@ -3682,6 +3696,7 @@ __metadata:
     "@types/lodash": "npm:^4.17.25"
     "@types/node": "npm:^26.4.1"
     ajv: "npm:^8.20.0"
+    es-toolkit: "npm:^1.52.0"
     eslint: "npm:^10.10.0"
     glob: "npm:^13.0.6"
     globals: "npm:^17.12.0"

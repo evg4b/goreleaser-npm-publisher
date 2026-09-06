@@ -1,6 +1,5 @@
 import { npmExec } from './exec';
 import { BaseOptions, PublishResponse } from './models';
-import { first } from 'lodash';
 
 export const publish = async (path?: string, options?: BaseOptions): Promise<PublishResponse> => {
   const args = ['publish', '--access', 'public'];
@@ -18,12 +17,9 @@ export const publish = async (path?: string, options?: BaseOptions): Promise<Pub
     return result;
   }
 
-  const extracted = first(Object.values(result));
-  if (extracted) {
-    return extracted;
-  }
+  const [extracted] = Object.values(result);
 
-  throw new Error('Unexpected response from npm publish');
+  return extracted;
 };
 
 const isPublishResponse = (value: PublishResponse | Record<string, PublishResponse>): value is PublishResponse => {

@@ -1,4 +1,4 @@
-import { kebabCase } from 'lodash';
+import { kebabCase } from 'es-toolkit/string';
 import { join, resolve } from 'node:path';
 import { cwd } from 'node:process';
 
