@@ -1,10 +1,9 @@
-const readFileMock = jest.fn();
+import '@mocks/helpers/fs';
 
-jest.mock('node:fs/promises', () => ({
-  readFile: readFileMock,
-}));
-
+import { readFile } from '@helpers/fs';
 import { parseArtifactsFile, validateBinaryArtifact } from './artifacts';
+
+const readFileMock = jest.mocked(readFile);
 
 describe('parseArtifactsFile', () => {
   const artifactsContent = `[

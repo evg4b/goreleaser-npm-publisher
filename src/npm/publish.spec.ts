@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-const npmExecMock = jest.fn();
-jest.mock('./exec', () => ({ npmExec: npmExecMock }));
+import '@mocks/npm/exec';
 
+import { npmExec } from '@npm/exec';
 import { publish } from './publish';
+
+const npmExecMock = jest.mocked(npmExec);
 
 const mockResponse = {
   id: 'pkg@1.0.0',
@@ -31,7 +32,7 @@ describe('publish', () => {
 
     it('should publish with --access public', async () => {
       await publish('/some/path');
-      const args = npmExecMock.mock.calls[0][0] as string[];
+      const args = npmExecMock.mock.calls[0][0];
       expect(args).toContain('--access');
       expect(args).toContain('public');
     });
@@ -44,13 +45,13 @@ describe('publish', () => {
 
     it('should not include --otp flag when otp is not provided', async () => {
       await publish('/some/path');
-      const args = npmExecMock.mock.calls[0][0] as string[];
+      const args = npmExecMock.mock.calls[0][0];
       expect(args).not.toContain('--otp');
     });
 
     it('should include --otp flag when otp is provided', async () => {
       await publish('/some/path', { otp: '123456' });
-      const args = npmExecMock.mock.calls[0][0] as string[];
+      const args = npmExecMock.mock.calls[0][0];
       expect(args).toContain('--otp');
       expect(args).toContain('123456');
     });

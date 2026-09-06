@@ -1,16 +1,11 @@
-const statMock = jest.fn();
-const readdirMock = jest.fn();
+import '@mocks/fs-promises';
+import '@mocks/process';
 
-jest.mock('fs/promises', () => ({
-  stat: statMock,
-  readdir: readdirMock,
-}));
-
-jest.mock('node:process', () => ({
-  cwd: () => '/project',
-}));
-
+import { readdir, stat } from 'node:fs/promises';
 import { isDistEmptyCheck } from './is-dist-empty';
+
+const statMock = jest.mocked(stat) as unknown as jest.Mock;
+const readdirMock = jest.mocked(readdir) as unknown as jest.Mock;
 
 describe('isDistEmpty', () => {
   describe('passed --clear flag', () => {

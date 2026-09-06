@@ -1,24 +1,25 @@
 import '@mocks/core/files';
+import '@mocks/core/package';
 import '@mocks/helpers/fs';
 import '@mocks/core/logger';
 import '@mocks/core/gorealiser';
 
-const mockTransformPackage = jest.fn();
-const mockFormatPackageJson = jest.fn();
-const mockFormatMainPackageJson = jest.fn();
-
-jest.mock('@core/package', () => ({
-  ...jest.requireActual<object>('@core/package'),
-  transformPackage: mockTransformPackage,
-  formatPackageJson: mockFormatPackageJson,
-  formatMainPackageJson: mockFormatMainPackageJson,
-}));
-
 import { Context } from '@core/gorealiser';
+import { formatMainPackageJson, formatPackageJson, transformPackage } from '@core/package';
 import { buildHandler } from './build';
 import { findFiles, parseArtifactsFile, parseMetadata, validateBinaryArtifact, writePackage } from '@core/files';
 import { copyFile, mkdir, writeFile } from '@helpers/fs';
 import { logger } from '@core/logger';
+
+const mockTransformPackage = jest.mocked(transformPackage);
+const mockFormatPackageJson = jest.mocked(formatPackageJson);
+const mockFormatMainPackageJson = jest.mocked(formatMainPackageJson);
+
+/* eslint-disable @typescript-eslint/unbound-method */
+const mockLoggerError = jest.mocked(logger.error);
+const mockLoggerDebug = jest.mocked(logger.debug);
+const mockLoggerGroup = jest.mocked(logger.group);
+/* eslint-enable @typescript-eslint/unbound-method */
 
 jest.mocked(Context).mockImplementation(() => ({
   artifactsPath: '/project/dist/artifacts.json',
@@ -89,10 +90,9 @@ describe('buildHandler', () => {
     jest.mocked(mkdir).mockResolvedValue(undefined);
     jest.mocked(writeFile).mockResolvedValue(undefined);
     mockTransformPackage.mockReturnValue(makePackageDef());
-    mockFormatPackageJson.mockReturnValue({});
-    mockFormatMainPackageJson.mockReturnValue({});
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    jest.mocked(logger.group).mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
+    mockFormatPackageJson.mockReturnValue({} as PackageJson);
+    mockFormatMainPackageJson.mockReturnValue({} as PackageJson);
+    mockLoggerGroup.mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
   });
 
   it('builds packages successfully', async () => {
@@ -175,20 +175,20 @@ describe('buildHandler', () => {
 
     await expect(buildHandler(makeArgs())).rejects.toThrow('Invalid binary artifacts');
 
-    expect(jest.mocked(logger.error)).toHaveBeenCalled();
+    expect(mockLoggerError).toHaveBeenCalled();
   });
 
   it.each(['artifact(s)', 'project_name'])('logs details containing "%s" in verbose mode', async substring => {
     await buildHandler(makeArgs({ verbose: true }));
 
-    expect(jest.mocked(logger.debug)).toHaveBeenCalledWith(expect.stringContaining(substring));
+    expect(mockLoggerDebug).toHaveBeenCalledWith(expect.stringContaining(substring));
   });
 
   it('logs file details in verbose mode', async () => {
     jest.mocked(findFiles).mockResolvedValue(['readme.md']);
     await buildHandler(makeArgs({ verbose: true }));
 
-    expect(jest.mocked(logger.debug)).toHaveBeenCalledWith(expect.stringContaining('file'));
+    expect(mockLoggerDebug).toHaveBeenCalledWith(expect.stringContaining('file'));
   });
 
   it('builds main package with formatMainPackageJson', async () => {

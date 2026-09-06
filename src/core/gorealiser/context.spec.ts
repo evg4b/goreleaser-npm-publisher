@@ -1,8 +1,9 @@
+import '@mocks/process';
+
+import { cwd } from 'node:process';
 import { Context } from './context';
 
-jest.mock('node:process', () => ({
-  cwd: () => '/usr/test/desktop/project1',
-}));
+jest.mocked(cwd).mockReturnValue('/usr/test/desktop/project1');
 
 describe('context', () => {
   describe.each([

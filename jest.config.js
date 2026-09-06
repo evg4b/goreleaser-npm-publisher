@@ -10,6 +10,8 @@ export default {
     '^@helpers/(.*)$': '<rootDir>/src/helpers/$1',
     '^@helpers$': '<rootDir>/src/helpers',
     '^@npm$': '<rootDir>/src/npm',
+    '^@npm/(.*)$': '<rootDir>/src/npm/$1',
+    '^@commands/(.*)$': '<rootDir>/src/commands/$1',
     '^@shim$': '<rootDir>/src/shim',
     '^@mocks/(.*)$': '<rootDir>/tests/mocks/$1',
   },

@@ -1,7 +1,9 @@
-const writeFileMock = jest.fn();
-jest.mock('@helpers/fs', () => ({ writeFile: writeFileMock }));
+import '@mocks/helpers/fs';
 
+import { writeFile } from '@helpers/fs';
 import { writePackage } from './package';
+
+const writeFileMock = jest.mocked(writeFile);
 
 describe('writePackage', () => {
   it('should write serialized JSON to the given path', async () => {

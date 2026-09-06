@@ -1,12 +1,10 @@
-const globMock = jest.fn();
-jest.mock('glob', () => ({ glob: globMock }));
+import '@mocks/glob';
+import '@mocks/core/logger';
 
-const debugMock = jest.fn();
-jest.mock('../logger', () => ({
-  logger: { debug: debugMock },
-}));
-
+import { glob } from 'glob';
 import { findFiles } from './find-files';
+
+const globMock = jest.mocked(glob);
 
 describe('findFiles', () => {
   it('should call glob with correct options', async () => {

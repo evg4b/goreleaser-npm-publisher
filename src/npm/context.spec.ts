@@ -1,17 +1,11 @@
-const writeFileMock = jest.fn();
-const rmMock = jest.fn();
+import '@mocks/helpers/fs';
+import '@mocks/core/logger';
 
-jest.mock('@helpers/fs', () => ({
-  writeFile: writeFileMock,
-  rm: rmMock,
-}));
-
-const debugMock = jest.fn();
-jest.mock('@core/logger', () => ({
-  logger: { debug: debugMock },
-}));
-
+import { rm, writeFile } from '@helpers/fs';
 import { execInContext } from './context';
+
+const writeFileMock = jest.mocked(writeFile);
+const rmMock = jest.mocked(rm);
 
 describe('execInContext', () => {
   describe('without token', () => {

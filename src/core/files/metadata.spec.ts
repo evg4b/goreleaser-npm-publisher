@@ -1,8 +1,9 @@
-const readFileMock = jest.fn().mockName('readFileMock');
+import '@mocks/helpers/fs';
 
-jest.mock('node:fs/promises', () => ({
-  readFile: readFileMock,
-}));
+import { readFile } from '@helpers/fs';
+import { parseMetadata } from './metadata';
+
+const readFileMock = jest.mocked(readFile);
 
 const metadataContent = `{
     "project_name": "go_package",
@@ -16,8 +17,6 @@ const metadataContent = `{
         "goarch": "arm64"
     }
 }`;
-
-import { parseMetadata } from './metadata';
 
 describe('parseMetadata', () => {
   it('should return parsed content', async () => {

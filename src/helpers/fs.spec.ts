@@ -1,24 +1,17 @@
-const copyFileFn = jest.fn();
-const mkdirFn = jest.fn();
-const readFileFn = jest.fn();
-const rmFn = jest.fn();
-const writeFileFn = jest.fn();
+import '@mocks/fs-promises';
+import '@mocks/core/logger';
 
-jest.mock('node:fs/promises', () => ({
-  copyFile: copyFileFn,
-  mkdir: mkdirFn,
-  readFile: readFileFn,
-  rm: rmFn,
-  writeFile: writeFileFn,
-}));
-
-const debugMock = jest.fn();
-const errorMock = jest.fn();
-jest.mock('@core/logger', () => ({
-  logger: { debug: debugMock, error: errorMock },
-}));
-
+import * as nodeFs from 'node:fs/promises';
+import { logger } from '@core/logger';
 import { copyFile, mkdir, readFile, rm, writeFile } from './fs';
+
+const copyFileFn = jest.mocked(nodeFs.copyFile);
+const mkdirFn = jest.mocked(nodeFs.mkdir);
+const readFileFn = jest.mocked(nodeFs.readFile) as unknown as jest.Mock;
+const rmFn = jest.mocked(nodeFs.rm);
+const writeFileFn = jest.mocked(nodeFs.writeFile);
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const errorMock = jest.mocked(logger.error);
 
 describe('writeFile', () => {
   it('should write file with utf-8 encoding', async () => {

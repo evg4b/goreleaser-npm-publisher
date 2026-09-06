@@ -1,7 +1,9 @@
-const npmExecMock = jest.fn();
-jest.mock('./exec', () => ({ npmExec: npmExecMock }));
+import '@mocks/npm/exec';
 
+import { npmExec } from '@npm/exec';
 import { whoami } from './whoami';
+
+const npmExecMock = jest.mocked(npmExec);
 
 describe('whoami', () => {
   it('should call npmExec with whoami args', async () => {

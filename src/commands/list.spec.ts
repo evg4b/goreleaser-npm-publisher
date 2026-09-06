@@ -1,33 +1,24 @@
-const mockParseArtifactsFile = jest.fn();
-const mockParseMetadata = jest.fn();
-jest.mock('@core/files', () => ({
-  parseArtifactsFile: mockParseArtifactsFile,
-  parseMetadata: mockParseMetadata,
-}));
+import '@mocks/core/files';
+import '@mocks/core/logger';
+import '@mocks/core/package';
+import '@mocks/core/gorealiser';
 
-const mockLoggerInfo = jest.fn();
-const mockLoggerDebug = jest.fn();
-const mockLoggerGroup = jest.fn();
-jest.mock('@core/logger', () => ({
-  logger: {
-    info: mockLoggerInfo,
-    debug: mockLoggerDebug,
-    error: jest.fn(),
-    warning: jest.fn(),
-    group: mockLoggerGroup,
-  },
-}));
+import { parseArtifactsFile, parseMetadata } from '@core/files';
+import { Context } from '@core/gorealiser';
+import { logger } from '@core/logger';
+import { formatMainPackageJson, formatPackageJson, transformPackage } from '@core/package';
+import { listHandler } from './list';
 
-const mockTransformPackage = jest.fn();
-const mockFormatPackageJson = jest.fn();
-const mockFormatMainPackageJson = jest.fn();
-
-jest.mock('@core/package', () => ({
-  ...jest.requireActual<object>('@core/package'),
-  transformPackage: mockTransformPackage,
-  formatPackageJson: mockFormatPackageJson,
-  formatMainPackageJson: mockFormatMainPackageJson,
-}));
+const mockParseArtifactsFile = jest.mocked(parseArtifactsFile);
+const mockParseMetadata = jest.mocked(parseMetadata);
+/* eslint-disable @typescript-eslint/unbound-method */
+const mockLoggerInfo = jest.mocked(logger.info);
+const mockLoggerDebug = jest.mocked(logger.debug);
+const mockLoggerGroup = jest.mocked(logger.group);
+/* eslint-enable @typescript-eslint/unbound-method */
+const mockTransformPackage = jest.mocked(transformPackage);
+const mockFormatPackageJson = jest.mocked(formatPackageJson);
+const mockFormatMainPackageJson = jest.mocked(formatMainPackageJson);
 
 const mockContextInstance = {
   artifactsPath: '/project/dist/artifacts.json',
@@ -37,11 +28,7 @@ const mockContextInstance = {
   packageFolder: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64'),
   packageJson: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64/package.json'),
 };
-jest.mock('@core/gorealiser', () => ({
-  Context: jest.fn().mockImplementation(() => mockContextInstance),
-}));
-
-import { listHandler } from './list';
+jest.mocked(Context).mockImplementation(() => mockContextInstance as unknown as Context);
 
 const makeArtifact = (overrides: Partial<BinaryArtifact> = {}): BinaryArtifact => ({
   name: 'tool_linux_amd64',

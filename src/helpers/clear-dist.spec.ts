@@ -1,16 +1,11 @@
-const mkdirMock = jest.fn();
-const rmMock = jest.fn();
+import '@mocks/fs-promises';
+import '@mocks/process';
 
-jest.mock('node:fs/promises', () => ({
-  mkdir: mkdirMock,
-  rm: rmMock,
-}));
-
-jest.mock('node:process', () => ({
-  cwd: () => '/project',
-}));
-
+import { mkdir, rm } from 'node:fs/promises';
 import { createDistFolder } from './clear-dist';
+
+const mkdirMock = jest.mocked(mkdir);
+const rmMock = jest.mocked(rm);
 
 describe('createDistFolder', () => {
   beforeEach(() => {

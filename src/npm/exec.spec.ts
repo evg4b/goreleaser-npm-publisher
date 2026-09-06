@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-const spawnMock = jest.fn();
-jest.mock('node:child_process', () => ({ spawn: spawnMock }));
+import '@mocks/child_process';
+import '@mocks/npm/context';
+import '@mocks/os';
 
-const execInContextMock = jest.fn((_, action: (env: unknown) => unknown): unknown => action(process.env));
-jest.mock('./context', () => ({ execInContext: execInContextMock }));
-
-const platformMock = jest.fn(() => 'linux');
-jest.mock('node:os', () => ({ platform: platformMock }));
-
+import { spawn } from 'node:child_process';
+import { platform } from 'node:os';
+import { execInContext } from '@npm/context';
 import { npmExec } from './exec';
+
+const spawnMock = jest.mocked(spawn) as unknown as jest.Mock;
+const execInContextMock = jest.mocked(execInContext) as unknown as jest.Mock;
+const platformMock = jest.mocked(platform) as unknown as jest.Mock;
 
 class FakeStream {
   private callbacks = new Map<string, (...args: unknown[]) => void>();
@@ -41,6 +43,10 @@ const execCommand = (processMock: ProcessMock): Promise<string> => {
 };
 
 describe('exec', () => {
+  beforeEach(() => {
+    execInContextMock.mockImplementation((_: unknown, action: (env: unknown) => unknown) => action(process.env));
+  });
+
   describe('base command', () => {
     let processMock: ProcessMock;
     let execPromise: Promise<string>;

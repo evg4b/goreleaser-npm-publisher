@@ -1,23 +1,23 @@
-const mockBuildHandler = jest.fn();
-jest.mock('./build', () => ({ buildHandler: mockBuildHandler }));
+import '@mocks/commands/build';
+import '@mocks/fs-promises';
+import '@mocks/npm';
+import '@mocks/core/logger';
+import '@mocks/core/gorealiser';
 
-const mockReaddir = jest.fn();
-jest.mock('node:fs/promises', () => ({ readdir: mockReaddir }));
+import { readdir } from 'node:fs/promises';
+import { Context } from '@core/gorealiser';
+import { logger } from '@core/logger';
+import { publish } from '@npm';
+import { buildHandler } from './build';
+import { publishHandler } from './publish';
 
-const mockPublish = jest.fn();
-jest.mock('../npm', () => ({ publish: mockPublish }));
-
-const mockLoggerInfo = jest.fn();
-const mockLoggerGroup = jest.fn();
-jest.mock('@core/logger', () => ({
-  logger: {
-    info: mockLoggerInfo,
-    debug: jest.fn(),
-    error: jest.fn(),
-    warning: jest.fn(),
-    group: mockLoggerGroup,
-  },
-}));
+const mockBuildHandler = jest.mocked(buildHandler);
+const mockReaddir = jest.mocked(readdir) as unknown as jest.Mock;
+const mockPublish = jest.mocked(publish) as unknown as jest.Mock;
+/* eslint-disable @typescript-eslint/unbound-method */
+const mockLoggerInfo = jest.mocked(logger.info);
+const mockLoggerGroup = jest.mocked(logger.group);
+/* eslint-enable @typescript-eslint/unbound-method */
 
 const mockContextInstance = {
   artifactsPath: '/project/dist/artifacts.json',
@@ -25,11 +25,7 @@ const mockContextInstance = {
   distPath: '/project/dist/npm',
   packageFolder: jest.fn().mockImplementation((name: string) => `/project/dist/npm/${name}`),
 };
-jest.mock('@core/gorealiser', () => ({
-  Context: jest.fn().mockImplementation(() => mockContextInstance),
-}));
-
-import { publishHandler } from './publish';
+jest.mocked(Context).mockImplementation(() => mockContextInstance as unknown as Context);
 
 const makePublishResponse = (overrides = {}) => ({
   id: 'tool@1.0.0',

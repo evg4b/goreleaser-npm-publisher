@@ -1,13 +1,11 @@
-const mockError = jest.fn();
+import '@mocks/core/logger';
 
-jest.mock('@core/logger', () => ({
-  logger: {
-    error: mockError,
-  },
-}));
-
+import { logger } from '@core/logger';
 import { NpmExecError } from './npm';
 import { handleCliError } from './cli-error-handler';
+
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const mockError = jest.mocked(logger.error);
 
 describe('handleCliError', () => {
   beforeEach(() => {

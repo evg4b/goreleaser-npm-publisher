@@ -1,8 +1,4 @@
-jest.mock('@helpers/fs', () => ({
-  copyFile: jest.fn(),
-  mkdir: jest.fn(),
-  writeFile: jest.fn(),
-}));
+import '@mocks/helpers/fs';
 
 import { Script } from 'node:vm';
 import { buildShimScript } from './build';

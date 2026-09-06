@@ -30,6 +30,8 @@
       "@helpers/*": ["src/helpers/*"],
       "@helpers": ["src/helpers"],
       "@npm": ["src/npm"],
+      "@npm/*": ["src/npm/*"],
+      "@commands/*": ["src/commands/*"],
       "@shim": ["src/shim"],
       "@mocks/*": ["tests/mocks/*"]
     }

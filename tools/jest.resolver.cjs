@@ -18,6 +18,8 @@ const ALIASES = [
   [/^@helpers\/(.*)$/, 'src/helpers/$1'],
   [/^@helpers$/, 'src/helpers'],
   [/^@npm$/, 'src/npm'],
+  [/^@npm\/(.*)$/, 'src/npm/$1'],
+  [/^@commands\/(.*)$/, 'src/commands/$1'],
   [/^@shim$/, 'src/shim'],
   [/^@mocks\/(.*)$/, 'tests/mocks/$1'],
 ];
