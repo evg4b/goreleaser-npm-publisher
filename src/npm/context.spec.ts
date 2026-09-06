@@ -1,16 +1,7 @@
-const writeFileMock = jest.fn();
-const rmMock = jest.fn();
+import '@mocks/helpers/fs';
+import '@mocks/core/logger';
 
-jest.mock('../helpers/fs', () => ({
-  writeFile: writeFileMock,
-  rm: rmMock,
-}));
-
-const debugMock = jest.fn();
-jest.mock('../core/logger', () => ({
-  logger: { debug: debugMock },
-}));
-
+import { rm, writeFile } from '@helpers/fs';
 import { execInContext } from './context';
 
 describe('execInContext', () => {
@@ -29,14 +20,14 @@ describe('execInContext', () => {
 
       await execInContext({}, action);
 
-      expect(writeFileMock).not.toHaveBeenCalled();
+      expect(writeFile).not.toHaveBeenCalled();
     });
   });
 
   describe('with token', () => {
     beforeEach(() => {
-      writeFileMock.mockResolvedValue(undefined);
-      rmMock.mockResolvedValue(undefined);
+      jest.mocked(writeFile).mockResolvedValue(undefined);
+      jest.mocked(rm).mockResolvedValue(undefined);
     });
 
     it('should call action with NPM_TOKEN in env', async () => {
@@ -52,7 +43,7 @@ describe('execInContext', () => {
 
       await execInContext({ token: 'my-token', pwd: '/tmp/project' }, action);
 
-      expect(writeFileMock).toHaveBeenCalledWith('/tmp/project/.npmrc', expect.stringContaining('my-token'));
+      expect(writeFile).toHaveBeenCalledWith('/tmp/project/.npmrc', expect.stringContaining('my-token'));
     });
 
     it('should remove .npmrc file after action completes', async () => {
@@ -60,7 +51,7 @@ describe('execInContext', () => {
 
       await execInContext({ token: 'my-token', pwd: '/tmp/project' }, action);
 
-      expect(rmMock).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
+      expect(rm).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
     });
 
     it('should remove .npmrc even when action throws', async () => {
@@ -68,7 +59,7 @@ describe('execInContext', () => {
 
       await expect(execInContext({ token: 'my-token', pwd: '/tmp/project' }, action)).rejects.toThrow('action failed');
 
-      expect(rmMock).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
+      expect(rm).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
     });
 
     it('should return action result', async () => {

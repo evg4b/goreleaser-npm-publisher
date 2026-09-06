@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "module": "es2020",
     "target": "ES2022",
@@ -23,7 +24,17 @@
     "noImplicitOverride": true,
     "noUnusedParameters": true,
     "lib": ["esNext"],
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "@core/*": ["src/core/*"],
+      "@helpers/*": ["src/helpers/*"],
+      "@helpers": ["src/helpers"],
+      "@npm": ["src/npm"],
+      "@npm/*": ["src/npm/*"],
+      "@commands/*": ["src/commands/*"],
+      "@shim": ["src/shim"],
+      "@mocks/*": ["tests/mocks/*"]
+    }
   },
   "include": ["src/**/*.ts", "src/types/*.d.ts"],
   "exclude": ["node_modules", "src/**/*.spec.ts"],

@@ -1,39 +1,31 @@
-const mkdirMock = jest.fn();
-const rmMock = jest.fn();
+import '@mocks/fs-promises';
+import '@mocks/process';
 
-jest.mock('node:fs/promises', () => ({
-  mkdir: mkdirMock,
-  rm: rmMock,
-}));
-
-jest.mock('node:process', () => ({
-  cwd: () => '/project',
-}));
-
+import { mkdir, rm } from 'node:fs/promises';
 import { createDistFolder } from './clear-dist';
 
 describe('createDistFolder', () => {
   beforeEach(() => {
-    mkdirMock.mockResolvedValue(undefined);
-    rmMock.mockResolvedValue(undefined);
+    jest.mocked(mkdir).mockResolvedValue(undefined);
+    jest.mocked(rm).mockResolvedValue(undefined);
   });
 
   it('should create the dist folder', async () => {
     await createDistFolder({ project: '.', clear: false, _: [], $0: '' });
 
-    expect(mkdirMock).toHaveBeenCalledWith('/project/dist/npm', { recursive: true });
+    expect(mkdir).toHaveBeenCalledWith('/project/dist/npm', { recursive: true });
   });
 
   it('should remove dist folder first when clear is true', async () => {
     await createDistFolder({ project: '.', clear: true, _: [], $0: '' });
 
-    expect(rmMock).toHaveBeenCalledWith('/project/dist/npm', { recursive: true, force: true });
-    expect(mkdirMock).toHaveBeenCalledWith('/project/dist/npm', { recursive: true });
+    expect(rm).toHaveBeenCalledWith('/project/dist/npm', { recursive: true, force: true });
+    expect(mkdir).toHaveBeenCalledWith('/project/dist/npm', { recursive: true });
   });
 
   it('should not remove dist folder when clear is false', async () => {
     await createDistFolder({ project: '.', clear: false, _: [], $0: '' });
 
-    expect(rmMock).not.toHaveBeenCalled();
+    expect(rm).not.toHaveBeenCalled();
   });
 });

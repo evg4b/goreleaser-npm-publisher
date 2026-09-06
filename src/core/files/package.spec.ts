@@ -1,11 +1,11 @@
-const writeFileMock = jest.fn();
-jest.mock('../../helpers/fs', () => ({ writeFile: writeFileMock }));
+import '@mocks/helpers/fs';
 
+import { writeFile } from '@helpers/fs';
 import { writePackage } from './package';
 
 describe('writePackage', () => {
   it('should write serialized JSON to the given path', async () => {
-    writeFileMock.mockResolvedValue(undefined);
+    jest.mocked(writeFile).mockResolvedValue(undefined);
 
     const pkg: PackageJson = {
       name: 'my-pkg',
@@ -19,6 +19,6 @@ describe('writePackage', () => {
 
     await writePackage('/dist/npm/my-pkg/package.json', pkg);
 
-    expect(writeFileMock).toHaveBeenCalledWith('/dist/npm/my-pkg/package.json', JSON.stringify(pkg, null, 2));
+    expect(writeFile).toHaveBeenCalledWith('/dist/npm/my-pkg/package.json', JSON.stringify(pkg, null, 2));
   });
 });

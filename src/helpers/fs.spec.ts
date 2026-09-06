@@ -1,112 +1,102 @@
-const copyFileFn = jest.fn();
-const mkdirFn = jest.fn();
-const readFileFn = jest.fn();
-const rmFn = jest.fn();
-const writeFileFn = jest.fn();
+import '@mocks/fs-promises';
+import '@mocks/core/logger';
 
-jest.mock('node:fs/promises', () => ({
-  copyFile: copyFileFn,
-  mkdir: mkdirFn,
-  readFile: readFileFn,
-  rm: rmFn,
-  writeFile: writeFileFn,
-}));
-
-const debugMock = jest.fn();
-const errorMock = jest.fn();
-jest.mock('../core/logger', () => ({
-  logger: { debug: debugMock, error: errorMock },
-}));
-
+import * as nodeFs from 'node:fs/promises';
+import { logger } from '@core/logger';
 import { copyFile, mkdir, readFile, rm, writeFile } from './fs';
 
 describe('writeFile', () => {
   it('should write file with utf-8 encoding', async () => {
-    writeFileFn.mockResolvedValue(undefined);
+    jest.mocked(nodeFs.writeFile).mockResolvedValue(undefined);
 
     await writeFile('/tmp/file.txt', 'content');
 
-    expect(writeFileFn).toHaveBeenCalledWith('/tmp/file.txt', 'content', 'utf-8');
+    expect(nodeFs.writeFile).toHaveBeenCalledWith('/tmp/file.txt', 'content', 'utf-8');
   });
 
   it('should log error when write fails', async () => {
-    writeFileFn.mockRejectedValue(new Error('disk full'));
+    jest.mocked(nodeFs.writeFile).mockRejectedValue(new Error('disk full'));
 
     await writeFile('/tmp/file.txt', 'content');
 
-    expect(errorMock).toHaveBeenCalled();
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(logger.error).toHaveBeenCalled();
   });
 });
 
 describe('copyFile', () => {
   it('should copy the file', async () => {
-    copyFileFn.mockResolvedValue(undefined);
+    jest.mocked(nodeFs.copyFile).mockResolvedValue(undefined);
 
     await copyFile('/src/file.txt', '/dst/file.txt');
 
-    expect(copyFileFn).toHaveBeenCalledWith('/src/file.txt', '/dst/file.txt');
+    expect(nodeFs.copyFile).toHaveBeenCalledWith('/src/file.txt', '/dst/file.txt');
   });
 
   it('should log error when copy fails', async () => {
-    copyFileFn.mockRejectedValue(new Error('no such file'));
+    jest.mocked(nodeFs.copyFile).mockRejectedValue(new Error('no such file'));
 
     await copyFile('/src/file.txt', '/dst/file.txt');
 
-    expect(errorMock).toHaveBeenCalled();
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(logger.error).toHaveBeenCalled();
   });
 });
 
 describe('mkdir', () => {
   it('should create directory recursively', async () => {
-    mkdirFn.mockResolvedValue(undefined);
+    jest.mocked(nodeFs.mkdir).mockResolvedValue(undefined);
 
     await mkdir('/tmp/new-dir');
 
-    expect(mkdirFn).toHaveBeenCalledWith('/tmp/new-dir', { recursive: true });
+    expect(nodeFs.mkdir).toHaveBeenCalledWith('/tmp/new-dir', { recursive: true });
   });
 
   it('should log error when mkdir fails', async () => {
-    mkdirFn.mockRejectedValue(new Error('permission denied'));
+    jest.mocked(nodeFs.mkdir).mockRejectedValue(new Error('permission denied'));
 
     await mkdir('/tmp/new-dir');
 
-    expect(errorMock).toHaveBeenCalled();
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(logger.error).toHaveBeenCalled();
   });
 });
 
 describe('readFile', () => {
   it('should read file with utf8 encoding', async () => {
-    readFileFn.mockResolvedValue('file content');
+    jest.mocked(nodeFs.readFile).mockResolvedValue('file content');
 
     const result = await readFile('/tmp/file.txt');
 
-    expect(readFileFn).toHaveBeenCalledWith('/tmp/file.txt', 'utf8');
+    expect(nodeFs.readFile).toHaveBeenCalledWith('/tmp/file.txt', 'utf8');
     expect(result).toBe('file content');
   });
 
   it('should log error when read fails', async () => {
-    readFileFn.mockRejectedValue(new Error('not found'));
+    jest.mocked(nodeFs.readFile).mockRejectedValue(new Error('not found'));
 
     await readFile('/tmp/file.txt');
 
-    expect(errorMock).toHaveBeenCalled();
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(logger.error).toHaveBeenCalled();
   });
 });
 
 describe('rm', () => {
   it('should remove file with given options', async () => {
-    rmFn.mockResolvedValue(undefined);
+    jest.mocked(nodeFs.rm).mockResolvedValue(undefined);
 
     await rm('/tmp/file.txt', { force: true });
 
-    expect(rmFn).toHaveBeenCalledWith('/tmp/file.txt', { force: true });
+    expect(nodeFs.rm).toHaveBeenCalledWith('/tmp/file.txt', { force: true });
   });
 
   it('should log error when rm fails', async () => {
-    rmFn.mockRejectedValue(new Error('busy'));
+    jest.mocked(nodeFs.rm).mockRejectedValue(new Error('busy'));
 
     await rm('/tmp/file.txt', { force: false });
 
-    expect(errorMock).toHaveBeenCalled();
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(logger.error).toHaveBeenCalled();
   });
 });

@@ -7,7 +7,7 @@ const isProd = process.env.NODE_ENV === 'production';
 export default defineConfig(options => ({
   ...options,
   entry: {
-    cli: 'src/cli.ts',
+    bin: 'src/bin.ts',
     index: 'src/index.ts',
   },
   splitting: false,

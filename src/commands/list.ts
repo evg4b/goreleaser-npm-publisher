@@ -1,8 +1,8 @@
-import { parseArtifactsFile, parseMetadata } from '../core/files';
-import { Context } from '../core/gorealiser';
-import { logger } from '../core/logger';
-import { formatMainPackageJson, formatPackageJson, pickRepositoryParams, transformPackage } from '../core/package';
-import { binArtifactPredicate } from '../helpers';
+import { parseArtifactsFile, parseMetadata } from '@core/files';
+import { Context } from '@core/gorealiser';
+import { logger } from '@core/logger';
+import { formatMainPackageJson, formatPackageJson, pickRepositoryParams, transformPackage } from '@core/package';
+import { binArtifactPredicate } from '@helpers';
 import { ActionType } from './models';
 
 const formatPackage = async (context: Context, json: PackageJson, pkg?: PackageDefinition) => {

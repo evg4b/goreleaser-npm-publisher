@@ -1,20 +1,16 @@
-const globMock = jest.fn();
-jest.mock('glob', () => ({ glob: globMock }));
+import '@mocks/glob';
+import '@mocks/core/logger';
 
-const debugMock = jest.fn();
-jest.mock('../logger', () => ({
-  logger: { debug: debugMock },
-}));
-
+import { glob } from 'glob';
 import { findFiles } from './find-files';
 
 describe('findFiles', () => {
   it('should call glob with correct options', async () => {
-    globMock.mockResolvedValue(['LICENSE', 'README.md']);
+    jest.mocked(glob).mockResolvedValue(['LICENSE', 'README.md']);
 
     await findFiles('/project', ['LICENSE', 'README.md']);
 
-    expect(globMock).toHaveBeenCalledWith(['LICENSE', 'README.md'], {
+    expect(glob).toHaveBeenCalledWith(['LICENSE', 'README.md'], {
       cwd: '/project',
       nocase: true,
       ignore: ['node_modules/**', 'dist/'],
@@ -22,7 +18,7 @@ describe('findFiles', () => {
   });
 
   it('should return the list of matched files', async () => {
-    globMock.mockResolvedValue(['LICENSE']);
+    jest.mocked(glob).mockResolvedValue(['LICENSE']);
 
     const result = await findFiles('/project', ['LICENSE']);
 
@@ -30,7 +26,7 @@ describe('findFiles', () => {
   });
 
   it('should return empty array when no files matched', async () => {
-    globMock.mockResolvedValue([]);
+    jest.mocked(glob).mockResolvedValue([]);
 
     const result = await findFiles('/project', ['*.xyz']);
 

@@ -2,15 +2,14 @@
 import yargs, { type Argv } from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { buildHandler, listHandler, publishHandler } from './commands';
-import { ConsoleLogger, setLogger } from './core/logger';
-import { handleCliError } from './cli-error-handler';
-import { createDistFolder, isDistEmptyCheck } from './helpers';
+import { ConsoleLogger, setLogger } from '@core/logger';
 import {
   binOption,
   builderOption,
   clearOption,
   descriptionOption,
   filesOption,
+  handleCliError,
   keywordsOption,
   licenseOption,
   nameOption,
@@ -22,9 +21,10 @@ import {
   repositoryTypeOption,
   tokenOption,
   verboseOption,
-} from './cli.options';
+} from './cli';
+import { createDistFolder, isDistEmptyCheck } from '@helpers';
 
-setLogger(new ConsoleLogger(console, false));
+setLogger(new ConsoleLogger());
 
 const cli = yargs(hideBin(process.argv));
 

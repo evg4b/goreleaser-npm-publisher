@@ -3,8 +3,8 @@ import { Logger } from './logger';
 
 export class ConsoleLogger implements Logger {
   constructor(
-    private readonly output: typeof console,
-    private readonly verbose: boolean,
+    private readonly output: typeof console = console,
+    private readonly verbose = false,
   ) {}
 
   async group<T>(name: string, fn: () => Promise<T>): Promise<T> {

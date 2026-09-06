@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-const npmExecMock = jest.fn();
-jest.mock('./exec', () => ({ npmExec: npmExecMock }));
+import '@mocks/npm/exec';
 
+import { npmExec } from '@npm/exec';
 import { publish } from './publish';
 
 const mockResponse = {
@@ -22,7 +21,7 @@ describe('publish', () => {
   const responses = [mockResponse, { pkg: mockResponse }];
   describe.each(responses)('with response %o', response => {
     beforeEach(() => {
-      npmExecMock.mockResolvedValue(response);
+      jest.mocked(npmExec).mockResolvedValue(response);
     });
 
     afterEach(() => {
@@ -31,45 +30,45 @@ describe('publish', () => {
 
     it('should publish with --access public', async () => {
       await publish('/some/path');
-      const args = npmExecMock.mock.calls[0][0] as string[];
+      const args = jest.mocked(npmExec).mock.calls[0][0];
       expect(args).toContain('--access');
       expect(args).toContain('public');
     });
 
     it('should pass token to exec context', async () => {
       await publish('/some/path', { token: 'mytoken' });
-      const context = npmExecMock.mock.calls[0][1] as { token?: string };
+      const context = jest.mocked(npmExec).mock.calls[0][1] as { token?: string };
       expect(context.token).toBe('mytoken');
     });
 
     it('should not include --otp flag when otp is not provided', async () => {
       await publish('/some/path');
-      const args = npmExecMock.mock.calls[0][0] as string[];
+      const args = jest.mocked(npmExec).mock.calls[0][0];
       expect(args).not.toContain('--otp');
     });
 
     it('should include --otp flag when otp is provided', async () => {
       await publish('/some/path', { otp: '123456' });
-      const args = npmExecMock.mock.calls[0][0] as string[];
+      const args = jest.mocked(npmExec).mock.calls[0][0];
       expect(args).toContain('--otp');
       expect(args).toContain('123456');
     });
 
     it('should pass otp to exec context', async () => {
       await publish('/some/path', { otp: '123456' });
-      const context = npmExecMock.mock.calls[0][1] as { otp?: string };
+      const context = jest.mocked(npmExec).mock.calls[0][1] as { otp?: string };
       expect(context.otp).toBe('123456');
     });
 
     it('should pass pwd to exec context', async () => {
       await publish('/some/path');
-      const context = npmExecMock.mock.calls[0][1] as { pwd?: string };
+      const context = jest.mocked(npmExec).mock.calls[0][1] as { pwd?: string };
       expect(context.pwd).toBe('/some/path');
     });
 
     it('should work without arguments', async () => {
       await publish();
-      const context = npmExecMock.mock.calls[0][1] as { pwd?: string; token?: string };
+      const context = jest.mocked(npmExec).mock.calls[0][1] as { pwd?: string; token?: string };
       expect(context.pwd).toBeUndefined();
       expect(context.token).toBeUndefined();
     });
@@ -81,19 +80,19 @@ describe('publish', () => {
     });
 
     it('should return the response as is when it is a publish response', async () => {
-      npmExecMock.mockResolvedValue(mockResponse);
+      jest.mocked(npmExec).mockResolvedValue(mockResponse);
 
       await expect(publish('/some/path')).resolves.toBe(mockResponse);
     });
 
     it('should extract the first entry from a keyed response', async () => {
-      npmExecMock.mockResolvedValue({ pkg: mockResponse });
+      jest.mocked(npmExec).mockResolvedValue({ pkg: mockResponse });
 
       await expect(publish('/some/path')).resolves.toBe(mockResponse);
     });
 
     it('should throw when the response has no entries', async () => {
-      npmExecMock.mockResolvedValue({});
+      jest.mocked(npmExec).mockResolvedValue({});
 
       await expect(publish('/some/path')).rejects.toThrow('Unexpected response from npm publish');
     });

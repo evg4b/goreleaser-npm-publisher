@@ -37,4 +37,4 @@ export interface NpmExecContext {
   otp?: string;
 }
 
-export type NpmExecAction<T> = (env: Record<string, string>) => Promise<T>;
+export type NpmExecAction<T> = (env: Record<string, string | undefined>) => Promise<T>;

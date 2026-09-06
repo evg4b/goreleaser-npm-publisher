@@ -1,8 +1,7 @@
-const readFileMock = jest.fn().mockName('readFileMock');
+import '@mocks/helpers/fs';
 
-jest.mock('node:fs/promises', () => ({
-  readFile: readFileMock,
-}));
+import { readFile } from '@helpers/fs';
+import { parseMetadata } from './metadata';
 
 const metadataContent = `{
     "project_name": "go_package",
@@ -17,11 +16,9 @@ const metadataContent = `{
     }
 }`;
 
-import { parseMetadata } from './metadata';
-
 describe('parseMetadata', () => {
   it('should return parsed content', async () => {
-    readFileMock.mockResolvedValueOnce(metadataContent);
+    jest.mocked(readFile).mockResolvedValueOnce(metadataContent);
 
     const artifact = await parseMetadata(`/dist/artifacts.json`);
 
@@ -40,7 +37,7 @@ describe('parseMetadata', () => {
   });
 
   it('should throw an error if the given invalid file', async () => {
-    readFileMock.mockResolvedValueOnce(`{ "name": "test" }`);
+    jest.mocked(readFile).mockResolvedValueOnce(`{ "name": "test" }`);
 
     await expect(parseMetadata(`/dist/artifacts.json`)).rejects.toThrow(Error);
   });
