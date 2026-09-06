@@ -108,7 +108,13 @@ describe('formatPackageJson', () => {
   };
 
   it('should format package.json correctly', () => {
-    const result = formatPackageJson({ pkg, description: 'A CLI tool', prefix: '@scope', files: ['LICENSE'], keywords: ['cli'] });
+    const result = formatPackageJson({
+      pkg,
+      description: 'A CLI tool',
+      prefix: '@scope',
+      files: ['LICENSE'],
+      keywords: ['cli'],
+    });
 
     expect(result).toEqual({
       name: '@scope/myapp_linux_amd64',

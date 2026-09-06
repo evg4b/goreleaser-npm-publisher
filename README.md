@@ -72,9 +72,7 @@ You can use `goreleaser-npm-publisher` as a standard npm package.
 ```ts publish.ts
 import { publish } from 'goreleaser-npm-publisher';
 
-publish({ token: process.env.NPM_TOKEN })
-  .then(console.log)
-  .catch(console.error);
+publish({ token: process.env.NPM_TOKEN }).then(console.log).catch(console.error);
 ```
 
 ## Use as a GitHub Action
@@ -102,7 +100,7 @@ Displays a list of packages that can be built in the current project using the s
 #### Options
 
 | Option                   | Type    | Description                                                                                                           |
-|--------------------------|---------|-----------------------------------------------------------------------------------------------------------------------|
+| ------------------------ | ------- | --------------------------------------------------------------------------------------------------------------------- |
 | **project**              | string  | Path to the project root built by GoReleaser (`.` by default).                                                        |
 | **builder**              | string  | Name of the GoReleaser builder whose output is used to build the packages.                                            |
 | **name**                 | string  | Base name for the npm packages (defaults to the GoReleaser project name).                                             |
@@ -122,7 +120,7 @@ found in the `dist/npm` folder.
 #### Options
 
 | Option                   | Type     | Description                                                                                                           |
-|--------------------------|----------|-----------------------------------------------------------------------------------------------------------------------|
+| ------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------- |
 | **project**              | string   | Path to the project root built by GoReleaser (`.` by default).                                                        |
 | **builder**              | string   | Name of the GoReleaser builder whose output is used to build the packages.                                            |
 | **clear**                | boolean  | Clear the `dist/npm` folder before building.                                                                          |
@@ -146,7 +144,7 @@ parameters.
 #### Options
 
 | Option                   | Type     | Description                                                                                                           |
-|--------------------------|----------|-----------------------------------------------------------------------------------------------------------------------|
+| ------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------- |
 | **project**              | string   | Path to the project root built by GoReleaser (`.` by default).                                                        |
 | **builder**              | string   | Name of the GoReleaser builder whose output is used to build the packages.                                            |
 | **clear**                | boolean  | Clear the `dist/npm` folder before building.                                                                          |
@@ -230,7 +228,7 @@ go-package_darwin_arm64@0.0.17
 ### Platforms:
 
 | GOOS    | Node.js Platform |
-|---------|------------------|
+| ------- | ---------------- |
 | darwin  | darwin           |
 | linux   | linux            |
 | windows | win32            |
@@ -244,7 +242,7 @@ go-package_darwin_arm64@0.0.17
 ### Architectures:
 
 | GOARCH  | Node.js Platform |
-|---------|------------------|
+| ------- | ---------------- |
 | amd64   | x64              |
 | 386     | ia32             |
 | arm     | arm              |
@@ -255,4 +253,3 @@ go-package_darwin_arm64@0.0.17
 | ppc64   | ppc64            |
 | ppc     | ppc              |
 | mips    | mips             |
-

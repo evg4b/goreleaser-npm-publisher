@@ -150,44 +150,32 @@ describe('buildHandler', () => {
   it('passes prefix to formatPackageJson', async () => {
     await buildHandler(makeArgs({ prefix: '@scope' }));
 
-    expect(mockFormatPackageJson).toHaveBeenCalledWith(
-      expect.objectContaining({ prefix: '@scope' }),
-    );
+    expect(mockFormatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ prefix: '@scope' }));
   });
 
   it('passes description to formatPackageJson', async () => {
     await buildHandler(makeArgs({ description: 'My tool' }));
 
-    expect(mockFormatPackageJson).toHaveBeenCalledWith(
-      expect.objectContaining({ description: 'My tool' }),
-    );
+    expect(mockFormatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ description: 'My tool' }));
   });
 
   it('passes keywords to transformPackage', async () => {
     await buildHandler(makeArgs({ keywords: ['cli', 'tool'] }));
 
-    expect(mockTransformPackage).toHaveBeenCalledWith(
-      expect.objectContaining({ keywords: ['cli', 'tool'] }),
-    );
+    expect(mockTransformPackage).toHaveBeenCalledWith(expect.objectContaining({ keywords: ['cli', 'tool'] }));
   });
 
   it('writes index.js exec script for main package', async () => {
     await buildHandler(makeArgs());
 
-    expect(mockWriteFile).toHaveBeenCalledWith(
-      expect.stringContaining('index.js'),
-      expect.any(String),
-    );
+    expect(mockWriteFile).toHaveBeenCalledWith(expect.stringContaining('index.js'), expect.any(String));
   });
 
   it('copies extra files to each platform package folder', async () => {
     mockFindFiles.mockResolvedValue(['readme.md', 'license']);
     await buildHandler(makeArgs());
 
-    expect(mockCopyFile).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.any(String),
-    );
+    expect(mockCopyFile).toHaveBeenCalledWith(expect.any(String), expect.any(String));
   });
 
   it('throws when no artifacts are found', async () => {

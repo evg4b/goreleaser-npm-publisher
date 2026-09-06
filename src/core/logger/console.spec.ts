@@ -88,9 +88,7 @@ describe('ConsoleLogger', () => {
       const con = makeConsole();
       const logger = new ConsoleLogger(con as unknown as typeof console, false);
 
-      await expect(
-        logger.group('my-group', async () => Promise.reject(new Error('boom'))),
-      ).rejects.toThrow('boom');
+      await expect(logger.group('my-group', async () => Promise.reject(new Error('boom')))).rejects.toThrow('boom');
 
       expect(con.groupEnd).toHaveBeenCalled();
     });

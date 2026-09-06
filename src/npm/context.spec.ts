@@ -52,10 +52,7 @@ describe('execInContext', () => {
 
       await execInContext({ token: 'my-token', pwd: '/tmp/project' }, action);
 
-      expect(writeFileMock).toHaveBeenCalledWith(
-        '/tmp/project/.npmrc',
-        expect.stringContaining('my-token'),
-      );
+      expect(writeFileMock).toHaveBeenCalledWith('/tmp/project/.npmrc', expect.stringContaining('my-token'));
     });
 
     it('should remove .npmrc file after action completes', async () => {
