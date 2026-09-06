@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { join, dirname } from 'path';
-import { spawn } from 'child_process';
-import { exit, platform, arch, argv, env } from 'process';
+import { join, dirname } from 'node:path';
+import { spawn } from 'node:child_process';
+import { exit, platform, arch, argv, env } from 'node:process';
 
 const mapping: Mapping = __INLINE_MAPPING__;
 const definition = mapping[platform + '_' + arch];

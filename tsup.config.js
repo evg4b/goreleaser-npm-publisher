@@ -26,14 +26,8 @@ export default defineConfig(options => ({
   minifySyntax: isProd,
   minifyIdentifiers: isProd,
   minifyWhitespace: isProd,
-  external: [
-    './mapping.json',
-  ],
-  noExternal: [
-    'es-toolkit',
-    'picocolors',
-    'glob',
-  ],
+  external: ['./mapping.json'],
+  noExternal: ['es-toolkit', 'picocolors', 'glob'],
   define: {
     __DEV__: JSON.stringify(!isProd),
     __VERSION__: JSON.stringify(pkg.version),
