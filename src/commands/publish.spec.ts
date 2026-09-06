@@ -90,19 +90,13 @@ describe('publishHandler', () => {
   it('passes token to publish', async () => {
     await publishHandler(makeArgs({ token: 'my-token' }));
 
-    expect(mockPublish).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({ token: 'my-token' }),
-    );
+    expect(mockPublish).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ token: 'my-token' }));
   });
 
   it('passes otp to publish', async () => {
     await publishHandler(makeArgs({ otp: '123456' }));
 
-    expect(mockPublish).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({ otp: '123456' }),
-    );
+    expect(mockPublish).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ otp: '123456' }));
   });
 
   it('logs package folder path before publishing', async () => {

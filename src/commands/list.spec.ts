@@ -104,10 +104,12 @@ describe('listHandler', () => {
     mockParseMetadata.mockResolvedValue(makeMetadata());
     mockTransformPackage.mockReturnValue(makePackageDef());
     mockFormatPackageJson.mockReturnValue(makePackageJson());
-    mockFormatMainPackageJson.mockReturnValue(makePackageJson({
-      name: 'tool',
-      optionalDependencies: { 'tool-linux-x64': '1.0.0' },
-    }));
+    mockFormatMainPackageJson.mockReturnValue(
+      makePackageJson({
+        name: 'tool',
+        optionalDependencies: { 'tool-linux-x64': '1.0.0' },
+      }),
+    );
     mockLoggerGroup.mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
   });
 
@@ -150,25 +152,19 @@ describe('listHandler', () => {
   it('passes description option to formatPackageJson', async () => {
     await listHandler(makeArgs({ description: 'My tool' }));
 
-    expect(mockFormatPackageJson).toHaveBeenCalledWith(
-      expect.objectContaining({ description: 'My tool' }),
-    );
+    expect(mockFormatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ description: 'My tool' }));
   });
 
   it('passes prefix option to formatPackageJson', async () => {
     await listHandler(makeArgs({ prefix: '@scope' }));
 
-    expect(mockFormatPackageJson).toHaveBeenCalledWith(
-      expect.objectContaining({ prefix: '@scope' }),
-    );
+    expect(mockFormatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ prefix: '@scope' }));
   });
 
   it('passes keywords to formatMainPackageJson', async () => {
     await listHandler(makeArgs({ keywords: ['cli'] }));
 
-    expect(mockFormatMainPackageJson).toHaveBeenCalledWith(
-      expect.objectContaining({ keywords: ['cli'] }),
-    );
+    expect(mockFormatMainPackageJson).toHaveBeenCalledWith(expect.objectContaining({ keywords: ['cli'] }));
   });
 
   it('logs version info for each package', async () => {
@@ -178,15 +174,11 @@ describe('listHandler', () => {
   });
 
   it('logs optional dependencies when present', async () => {
-    mockFormatMainPackageJson.mockReturnValue(
-      makePackageJson({ optionalDependencies: { 'tool-linux-x64': '1.0.0' } }),
-    );
+    mockFormatMainPackageJson.mockReturnValue(makePackageJson({ optionalDependencies: { 'tool-linux-x64': '1.0.0' } }));
 
     await listHandler(makeArgs());
 
-    expect(mockLoggerDebug).toHaveBeenCalledWith(
-      expect.stringContaining('optionalDependencies'),
-    );
+    expect(mockLoggerDebug).toHaveBeenCalledWith(expect.stringContaining('optionalDependencies'));
   });
 
   it('logs description when present', async () => {

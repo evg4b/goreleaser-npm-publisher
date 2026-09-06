@@ -19,9 +19,6 @@ describe('writePackage', () => {
 
     await writePackage('/dist/npm/my-pkg/package.json', pkg);
 
-    expect(writeFileMock).toHaveBeenCalledWith(
-      '/dist/npm/my-pkg/package.json',
-      JSON.stringify(pkg, null, 2),
-    );
+    expect(writeFileMock).toHaveBeenCalledWith('/dist/npm/my-pkg/package.json', JSON.stringify(pkg, null, 2));
   });
 });
