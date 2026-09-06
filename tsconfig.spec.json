@@ -3,6 +3,7 @@
   "include": ["src/**/*.ts", "src/types/*.d.ts"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
+    "composite": true,
     "types": ["jest", "node"]
   }
 }
