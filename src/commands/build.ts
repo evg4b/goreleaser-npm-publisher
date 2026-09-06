@@ -7,6 +7,7 @@ import { formatMainPackageJson, formatPackageJson, pickRepositoryParams, transfo
 import { assertNotEmpty, binArtifactPredicate } from '../helpers';
 import { copyFile, mkdir, writeFile } from '../helpers/fs';
 import { ActionType } from './models';
+import { readFile } from 'fs/promises';
 
 const copyPackageFiles = async (context: Context, name: string, files: string[]) => {
   for (const file of files) {
@@ -125,13 +126,13 @@ export const buildHandler: ActionType<BuildParams> = async args => {
   await writePackage(context.packageJson(mainPackageFolder), packageJsonObject);
   logger.debug(`Written package json file: ${context.packageJson(mainPackageFolder)}`);
   const indexJsFile = join(context.packageFolder(mainPackageFolder), 'index.js');
-  await writeFile(indexJsFile, buildExecScript(packages, args.prefix));
+  await writeFile(indexJsFile, await buildShimScript(packages, args.prefix));
   logger.debug(`Written package index.js file: ${indexJsFile}`);
   await copyPackageFiles(context, mainPackageFolder, files);
   logger.debug(`Copied ${files.length} extra file(s)`);
 };
 
-export const buildExecScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
+export const buildShimScript = async (packages: PackageDefinition[], prefix: string | undefined): Promise<string> => {
   const mapping = Object.fromEntries(
     packages.map(pkg => [
       `${pkg.os}_${pkg.cpu}`,
@@ -142,5 +143,9 @@ export const buildExecScript = (packages: PackageDefinition[], prefix: string | 
     ]),
   );
 
-  throw new Error('Not implemented');
+  const shimPath = require.resolve('./shim.cjs');
+  const shimContent = await readFile(shimPath, 'utf8');
+  const updatedShimContent = shimContent.replace('__INLINE_MAPPING__', JSON.stringify(mapping));
+
+  return updatedShimContent;
 };

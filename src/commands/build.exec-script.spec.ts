@@ -1,6 +1,6 @@
-import { buildExecScript } from './build';
+import { buildShimScript } from './build';
 
-describe('buildExecScript', () => {
+describe('buildShimScript', () => {
   const makePkg = (overrides: Partial<PackageDefinition> = {}): PackageDefinition => ({
     name: overrides.name ?? 'pkg',
     version: overrides.version ?? '1.0.0',
@@ -14,13 +14,13 @@ describe('buildExecScript', () => {
     license: overrides.license,
   });
 
-  it('generates a runnable script with prefix and correct mapping for multiple packages', () => {
+  it('generates a runnable script with prefix and correct mapping for multiple packages', async () => {
     const pkgs: PackageDefinition[] = [
       makePkg({ name: 'tool-linux', bin: 'tool', os: 'linux', cpu: 'x64' }),
       makePkg({ name: 'tool-darwin', bin: 'tool', os: 'darwin', cpu: 'arm64' }),
     ];
 
-    const code = buildExecScript(pkgs, '@acme');
+    const code = await buildShimScript(pkgs, '@acme');
 
     // shebang and required modules
     expect(code.startsWith('#!/usr/bin/env node')).toBe(true);
@@ -38,10 +38,10 @@ describe('buildExecScript', () => {
     expect(code.trim().endsWith('});')).toBe(true);
   });
 
-  it('omits prefix when not provided', () => {
+  it('omits prefix when not provided', async () => {
     const pkgs: PackageDefinition[] = [makePkg({ name: 'cli-linux', bin: 'cli', os: 'linux', cpu: 'x64' })];
 
-    const code = buildExecScript(pkgs, undefined);
+    const code = await buildShimScript(pkgs, undefined);
 
     // name should contain only the package name when prefix is undefined
     expect(code).toContain("linux_x64: { name: [ 'cli-linux' ], bin: 'cli' }");
