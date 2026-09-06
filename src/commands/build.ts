@@ -2,7 +2,6 @@ import { join, sep } from 'node:path';
 import { parse as parsePath } from 'node:path';
 import { findFiles, parseArtifactsFile, parseMetadata, validateBinaryArtifact, writePackage } from '../core/files';
 import { Context } from '../core/gorealiser';
-import js from '../core/js';
 import { logger } from '../core/logger';
 import { formatMainPackageJson, formatPackageJson, pickRepositoryParams, transformPackage } from '../core/package';
 import { assertNotEmpty, binArtifactPredicate } from '../helpers';
@@ -143,17 +142,5 @@ export const buildExecScript = (packages: PackageDefinition[], prefix: string | 
     ]),
   );
 
-  const code = js`#!/usr/bin/env node
-const path = require('path');
-const child_process = require('child_process');
-const mapping = ${mapping};
-const definition = mapping[process.platform + '_' + process.arch];
-const packageJsonPath = require.resolve(path.join(...definition.name, 'package.json'));
-const packagePath = path.join(path.dirname(packageJsonPath), definition.bin);
-child_process.spawn(packagePath, process.argv.splice(2), {
-  stdio: 'inherit',
-  env: process.env,
-});`;
-
-  return code.toString();
+  throw new Error('Not implemented');
 };

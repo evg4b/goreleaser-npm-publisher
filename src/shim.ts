@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { join, dirname } from 'path';
 import { spawn } from 'child_process';
 import { exit, platform, arch, argv, env } from 'process';
