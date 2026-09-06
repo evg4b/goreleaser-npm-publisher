@@ -57,6 +57,7 @@ describe('publishHandler', () => {
     jest.mocked(buildHandler).mockResolvedValue(undefined);
     jest.mocked(readdir).mockResolvedValue(dirs(['tool-linux-x64', 'tool-darwin-arm64', 'tool']));
     jest.mocked(publish).mockResolvedValue(makePublishResponse());
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     jest.mocked(logger.group).mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
   });
 
@@ -93,12 +94,14 @@ describe('publishHandler', () => {
   it('logs package folder path before publishing', async () => {
     await publishHandler(makeArgs());
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('/project/dist/npm/'));
   });
 
   it.each(['Name:', 'Version:', 'Size:', 'Mode:'])('logs published package info containing "%s"', async label => {
     await publishHandler(makeArgs());
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.info).toHaveBeenCalledWith(expect.stringContaining(label));
   });
 
@@ -107,7 +110,7 @@ describe('publishHandler', () => {
 
     await publishHandler(makeArgs());
 
-    const calls = jest.mocked(publish).mock.calls.map(call => call[0] as string);
+    const calls = jest.mocked(publish).mock.calls.map(call => call[0]);
     expect(calls[0]).toContain('tool-darwin-arm64');
     expect(calls[1]).toContain('tool-linux-x64');
     expect(calls[2]).toContain('tool');

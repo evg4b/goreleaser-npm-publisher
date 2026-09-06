@@ -19,6 +19,7 @@ describe('writeFile', () => {
 
     await writeFile('/tmp/file.txt', 'content');
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.error).toHaveBeenCalled();
   });
 });
@@ -37,6 +38,7 @@ describe('copyFile', () => {
 
     await copyFile('/src/file.txt', '/dst/file.txt');
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.error).toHaveBeenCalled();
   });
 });
@@ -55,6 +57,7 @@ describe('mkdir', () => {
 
     await mkdir('/tmp/new-dir');
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.error).toHaveBeenCalled();
   });
 });
@@ -74,6 +77,7 @@ describe('readFile', () => {
 
     await readFile('/tmp/file.txt');
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.error).toHaveBeenCalled();
   });
 });
@@ -92,6 +96,7 @@ describe('rm', () => {
 
     await rm('/tmp/file.txt', { force: false });
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.error).toHaveBeenCalled();
   });
 });

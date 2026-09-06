@@ -87,6 +87,7 @@ describe('listHandler', () => {
         optionalDependencies: { 'tool-linux-x64': '1.0.0' },
       }),
     );
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     jest.mocked(logger.group).mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
   });
 
@@ -146,6 +147,7 @@ describe('listHandler', () => {
   it('logs version info for each package', async () => {
     await listHandler(makeArgs());
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('version'));
   });
 
@@ -156,6 +158,7 @@ describe('listHandler', () => {
 
     await listHandler(makeArgs());
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.debug).toHaveBeenCalledWith(expect.stringContaining('optionalDependencies'));
   });
 
@@ -164,6 +167,7 @@ describe('listHandler', () => {
 
     await listHandler(makeArgs());
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('description'));
   });
 
@@ -172,12 +176,14 @@ describe('listHandler', () => {
 
     await listHandler(makeArgs());
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('keywords'));
   });
 
   it('logs bin path for platform packages', async () => {
     await listHandler(makeArgs());
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('bin'));
   });
 });
