@@ -1,5 +1,5 @@
 const writeFileMock = jest.fn();
-jest.mock('../../helpers/fs', () => ({ writeFile: writeFileMock }));
+jest.mock('@helpers/fs', () => ({ writeFile: writeFileMock }));
 
 import { writePackage } from './package';
 

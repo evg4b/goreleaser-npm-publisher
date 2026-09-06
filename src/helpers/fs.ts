@@ -6,7 +6,7 @@ import {
   rm as rmFn,
   writeFile as writeFileFn,
 } from 'node:fs/promises';
-import { logger } from '../core/logger';
+import { logger } from '@core/logger';
 import { tap } from './promise';
 
 export const writeFile = (path: string, content: string): Promise<void> =>

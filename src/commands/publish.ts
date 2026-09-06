@@ -1,7 +1,7 @@
 import { readdir } from 'node:fs/promises';
-import { Context } from '../core/gorealiser';
-import { logger } from '../core/logger';
-import { publish } from '../npm';
+import { Context } from '@core/gorealiser';
+import { logger } from '@core/logger';
+import { publish } from '@npm';
 import { buildHandler } from './build';
 import { ActionType } from './models';
 

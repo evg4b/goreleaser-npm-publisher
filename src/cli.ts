@@ -2,9 +2,9 @@
 import yargs, { type Argv } from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { buildHandler, listHandler, publishHandler } from './commands';
-import { ConsoleLogger, setLogger } from './core/logger';
+import { ConsoleLogger, setLogger } from '@core/logger';
 import { handleCliError } from './cli-error-handler';
-import { createDistFolder, isDistEmptyCheck } from './helpers';
+import { createDistFolder, isDistEmptyCheck } from '@helpers';
 import {
   binOption,
   builderOption,

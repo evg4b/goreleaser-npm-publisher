@@ -14,7 +14,7 @@ jest.mock('node:fs/promises', () => ({
 
 const debugMock = jest.fn();
 const errorMock = jest.fn();
-jest.mock('../core/logger', () => ({
+jest.mock('@core/logger', () => ({
   logger: { debug: debugMock, error: errorMock },
 }));
 

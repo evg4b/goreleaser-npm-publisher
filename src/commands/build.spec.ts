@@ -3,7 +3,7 @@ const mockParseMetadata = jest.fn();
 const mockFindFiles = jest.fn();
 const mockValidateBinaryArtifact = jest.fn();
 const mockWritePackage = jest.fn();
-jest.mock('../core/files', () => ({
+jest.mock('@core/files', () => ({
   parseArtifactsFile: mockParseArtifactsFile,
   parseMetadata: mockParseMetadata,
   findFiles: mockFindFiles,
@@ -14,7 +14,7 @@ jest.mock('../core/files', () => ({
 const mockCopyFile = jest.fn();
 const mockMkdir = jest.fn();
 const mockWriteFile = jest.fn();
-jest.mock('../helpers/fs', () => ({
+jest.mock('@helpers/fs', () => ({
   copyFile: mockCopyFile,
   mkdir: mockMkdir,
   writeFile: mockWriteFile,
@@ -23,7 +23,7 @@ jest.mock('../helpers/fs', () => ({
 const mockLoggerDebug = jest.fn();
 const mockLoggerError = jest.fn();
 const mockLoggerGroup = jest.fn();
-jest.mock('../core/logger', () => ({
+jest.mock('@core/logger', () => ({
   logger: {
     debug: mockLoggerDebug,
     info: jest.fn(),
@@ -37,8 +37,8 @@ const mockTransformPackage = jest.fn();
 const mockFormatPackageJson = jest.fn();
 const mockFormatMainPackageJson = jest.fn();
 
-jest.mock('../core/package', () => ({
-  ...jest.requireActual<object>('../core/package'),
+jest.mock('@core/package', () => ({
+  ...jest.requireActual<object>('@core/package'),
   transformPackage: mockTransformPackage,
   formatPackageJson: mockFormatPackageJson,
   formatMainPackageJson: mockFormatMainPackageJson,
@@ -52,7 +52,7 @@ const mockContextInstance = {
   packageFolder: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64'),
   packageJson: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64/package.json'),
 };
-jest.mock('../core/gorealiser', () => ({
+jest.mock('@core/gorealiser', () => ({
   Context: jest.fn().mockImplementation(() => mockContextInstance),
 }));
 

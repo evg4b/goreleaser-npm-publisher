@@ -1,5 +1,5 @@
 import { glob } from 'glob';
-import { tap } from '../../helpers';
+import { tap } from '@helpers';
 import { logger } from '../logger';
 
 export const findFiles = (cwd: string, files: string[]) =>

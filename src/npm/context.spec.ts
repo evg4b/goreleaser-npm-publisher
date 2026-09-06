@@ -1,13 +1,13 @@
 const writeFileMock = jest.fn();
 const rmMock = jest.fn();
 
-jest.mock('../helpers/fs', () => ({
+jest.mock('@helpers/fs', () => ({
   writeFile: writeFileMock,
   rm: rmMock,
 }));
 
 const debugMock = jest.fn();
-jest.mock('../core/logger', () => ({
+jest.mock('@core/logger', () => ({
   logger: { debug: debugMock },
 }));
 

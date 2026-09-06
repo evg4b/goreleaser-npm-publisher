@@ -29,7 +29,7 @@
       "@core/*": ["src/core/*"],
       "@helpers/*": ["src/helpers/*"],
       "@helpers": ["src/helpers"],
-      "@npm/*": ["src/npm/*"],
+      "@npm": ["src/npm"],
       "@shim": ["src/shim"],
       "@mocks/*": ["tests/mocks/*"]
     }

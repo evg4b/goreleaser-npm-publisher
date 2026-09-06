@@ -1,5 +1,5 @@
 import { readdir, stat } from 'node:fs/promises';
-import { Context } from '../core/gorealiser';
+import { Context } from '@core/gorealiser';
 
 type IsDistEmptyParams = Pick<ListParams, 'project'> & { clear: boolean };
 

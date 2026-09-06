@@ -1,5 +1,5 @@
 import { Ajv, ValidateFunction } from 'ajv';
-import { readFile } from '../../helpers/fs';
+import { readFile } from '@helpers/fs';
 import { FileFormatError } from './error';
 
 const validate: ValidateFunction<Metadata> = new Ajv().compile({

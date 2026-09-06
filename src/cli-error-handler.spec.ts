@@ -1,6 +1,6 @@
 const mockError = jest.fn();
 
-jest.mock('./core/logger', () => ({
+jest.mock('@core/logger', () => ({
   logger: {
     error: mockError,
   },

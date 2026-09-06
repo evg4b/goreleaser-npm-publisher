@@ -9,7 +9,7 @@ jest.mock('../npm', () => ({ publish: mockPublish }));
 
 const mockLoggerInfo = jest.fn();
 const mockLoggerGroup = jest.fn();
-jest.mock('../core/logger', () => ({
+jest.mock('@core/logger', () => ({
   logger: {
     info: mockLoggerInfo,
     debug: jest.fn(),
@@ -25,7 +25,7 @@ const mockContextInstance = {
   distPath: '/project/dist/npm',
   packageFolder: jest.fn().mockImplementation((name: string) => `/project/dist/npm/${name}`),
 };
-jest.mock('../core/gorealiser', () => ({
+jest.mock('@core/gorealiser', () => ({
   Context: jest.fn().mockImplementation(() => mockContextInstance),
 }));
 

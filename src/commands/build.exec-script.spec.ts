@@ -1,4 +1,4 @@
-jest.mock('../helpers/fs', () => ({
+jest.mock('@helpers/fs', () => ({
   copyFile: jest.fn(),
   mkdir: jest.fn(),
   writeFile: jest.fn(),

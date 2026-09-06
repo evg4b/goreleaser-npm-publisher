@@ -1,5 +1,5 @@
 import type { Argv } from 'yargs';
-import { defaultRepositoryType, repositoryTypes } from './core/package';
+import { defaultRepositoryType, repositoryTypes } from '@core/package';
 
 export const projectOption = <T>(builder: Argv<T>) =>
   builder.option('project', {

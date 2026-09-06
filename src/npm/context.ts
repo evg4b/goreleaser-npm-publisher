@@ -1,8 +1,8 @@
 import { EOL } from 'node:os';
 import { resolve } from 'node:path';
 import { cwd, env } from 'node:process';
-import { logger } from '../core/logger';
-import { rm, writeFile } from '../helpers/fs';
+import { logger } from '@core/logger';
+import { rm, writeFile } from '@helpers/fs';
 import { NpmExecAction, NpmExecContext } from './models';
 
 export const execInContext = async <T>(context: NpmExecContext, action: NpmExecAction<T>): Promise<T> => {

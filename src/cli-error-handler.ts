@@ -1,5 +1,5 @@
-import { logger } from './core/logger';
-import { NpmExecError } from './npm';
+import { logger } from '@core/logger';
+import { NpmExecError } from '@npm';
 
 export const handleCliError = (msg?: string, err?: Error): void => {
   const message = getMessage(err);
