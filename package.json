@@ -2,7 +2,7 @@
   "name": "goreleaser-npm-publisher",
   "version": "1.6.0",
   "description": "Build and publish npm packages based on goreleaser output folder",
-  "bin": "dist/cli.cjs",
+  "bin": "dist/bin.cjs",
   "main": "dist/index.cjs",
   "type": "module",
   "author": {

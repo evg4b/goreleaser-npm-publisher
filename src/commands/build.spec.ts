@@ -11,75 +11,54 @@ import { findFiles, parseArtifactsFile, parseMetadata, validateBinaryArtifact, w
 import { copyFile, mkdir, writeFile } from '@helpers/fs';
 import { logger } from '@core/logger';
 
-const mockTransformPackage = jest.mocked(transformPackage);
-const mockFormatPackageJson = jest.mocked(formatPackageJson);
-const mockFormatMainPackageJson = jest.mocked(formatMainPackageJson);
-
-/* eslint-disable @typescript-eslint/unbound-method */
-const mockLoggerError = jest.mocked(logger.error);
-const mockLoggerDebug = jest.mocked(logger.debug);
-const mockLoggerGroup = jest.mocked(logger.group);
-/* eslint-enable @typescript-eslint/unbound-method */
-
-jest.mocked(Context).mockImplementation(() => ({
-  artifactsPath: '/project/dist/artifacts.json',
-    metadataPath: '/project/dist/metadata.json',
-    distPath: '/project/dist/npm',
-    project: jest.fn().mockReturnValue('/project'),
-    packageFolder: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64'),
-    packageJson: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64/package.json'),
-}) as unknown as Context);
-
-
-
-const makeArtifact = (overrides: Partial<BinaryArtifact> = {}): BinaryArtifact => ({
-  name: 'tool_linux_amd64',
-  path: 'dist/tool_linux_amd64/tool',
-  type: 'Binary',
-  internal_type: 4,
-  goos: 'linux',
-  goarch: 'amd64',
-  extra: { Binary: 'tool', Builder: 'default', Ext: '', ID: 'default' },
-  ...overrides,
-});
-
-const makeMetadata = (): Metadata => ({
-  project_name: 'tool',
-  tag: 'v1.0.0',
-  previous_tag: 'v0.9.0',
-  version: '1.0.0',
-  commit: 'abc123',
-  date: '2024-01-01',
-  runtime: { goos: 'linux', goarch: 'amd64' },
-});
-
-const makePackageDef = (): PackageDefinition => ({
-  name: 'tool-linux-x64',
-  version: '1.0.0',
-  sourceBinary: 'tool',
-  destinationBinary: 'tool',
-  bin: 'tool',
-  os: 'linux',
-  cpu: 'x64',
-  files: [],
-  keywords: [],
-  license: undefined,
-});
-
-const makeArgs = (overrides: Partial<BuildParams> = {}): BuildParams => ({
-  project: '/project',
-  builder: 'default',
-  clear: false,
-  files: [],
-  description: 'A test tool',
-  prefix: undefined,
-  verbose: false,
-  license: 'MIT',
-  keywords: [],
-  ...overrides,
-});
-
 describe('buildHandler', () => {
+  const makeArtifact = (overrides: Partial<BinaryArtifact> = {}): BinaryArtifact => ({
+    name: 'tool_linux_amd64',
+    path: 'dist/tool_linux_amd64/tool',
+    type: 'Binary',
+    internal_type: 4,
+    goos: 'linux',
+    goarch: 'amd64',
+    extra: { Binary: 'tool', Builder: 'default', Ext: '', ID: 'default' },
+    ...overrides,
+  });
+
+  const makeMetadata = (): Metadata => ({
+    project_name: 'tool',
+    tag: 'v1.0.0',
+    previous_tag: 'v0.9.0',
+    version: '1.0.0',
+    commit: 'abc123',
+    date: '2024-01-01',
+    runtime: { goos: 'linux', goarch: 'amd64' },
+  });
+
+  const makePackageDef = (): PackageDefinition => ({
+    name: 'tool-linux-x64',
+    version: '1.0.0',
+    sourceBinary: 'tool',
+    destinationBinary: 'tool',
+    bin: 'tool',
+    os: 'linux',
+    cpu: 'x64',
+    files: [],
+    keywords: [],
+    license: undefined,
+  });
+
+  const makeArgs = (overrides: Partial<BuildParams> = {}): BuildParams => ({
+    project: '/project',
+    builder: 'default',
+    clear: false,
+    files: [],
+    description: 'A test tool',
+    prefix: undefined,
+    verbose: false,
+    license: 'MIT',
+    keywords: [],
+    ...overrides,
+  });
+
   beforeEach(() => {
     jest.mocked(parseArtifactsFile).mockResolvedValue([makeArtifact()]);
     jest.mocked(parseMetadata).mockResolvedValue(makeMetadata());
@@ -89,10 +68,23 @@ describe('buildHandler', () => {
     jest.mocked(copyFile).mockResolvedValue(undefined);
     jest.mocked(mkdir).mockResolvedValue(undefined);
     jest.mocked(writeFile).mockResolvedValue(undefined);
-    mockTransformPackage.mockReturnValue(makePackageDef());
-    mockFormatPackageJson.mockReturnValue({} as PackageJson);
-    mockFormatMainPackageJson.mockReturnValue({} as PackageJson);
-    mockLoggerGroup.mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
+    jest.mocked(transformPackage).mockReturnValue(makePackageDef());
+    jest.mocked(formatPackageJson).mockReturnValue({} as PackageJson);
+    jest.mocked(formatMainPackageJson).mockReturnValue({} as PackageJson);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    jest.mocked(logger.group).mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
+
+    jest.mocked(Context).mockImplementation(
+      () =>
+        ({
+          artifactsPath: '/project/dist/artifacts.json',
+          metadataPath: '/project/dist/metadata.json',
+          distPath: '/project/dist/npm',
+          project: jest.fn().mockReturnValue('/project'),
+          packageFolder: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64'),
+          packageJson: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64/package.json'),
+        }) as unknown as Context,
+    );
   });
 
   it('builds packages successfully', async () => {
@@ -106,13 +98,13 @@ describe('buildHandler', () => {
   });
 
   it('uses project_name as builder when builder arg is not provided', async () => {
-    jest.mocked(parseArtifactsFile).mockResolvedValue([
-      makeArtifact({ extra: { Binary: 'tool', Builder: 'tool', Ext: '', ID: 'tool' } }),
-    ]);
+    jest
+      .mocked(parseArtifactsFile)
+      .mockResolvedValue([makeArtifact({ extra: { Binary: 'tool', Builder: 'tool', Ext: '', ID: 'tool' } })]);
 
     await buildHandler(makeArgs({ builder: undefined }));
 
-    expect(mockTransformPackage).toHaveBeenCalled();
+    expect(jest.mocked(transformPackage)).toHaveBeenCalled();
   });
 
   it('copies source artifact to package folder', async () => {
@@ -124,19 +116,19 @@ describe('buildHandler', () => {
   it('passes prefix to formatPackageJson', async () => {
     await buildHandler(makeArgs({ prefix: '@scope' }));
 
-    expect(mockFormatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ prefix: '@scope' }));
+    expect(jest.mocked(formatPackageJson)).toHaveBeenCalledWith(expect.objectContaining({ prefix: '@scope' }));
   });
 
   it('passes description to formatPackageJson', async () => {
     await buildHandler(makeArgs({ description: 'My tool' }));
 
-    expect(mockFormatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ description: 'My tool' }));
+    expect(jest.mocked(formatPackageJson)).toHaveBeenCalledWith(expect.objectContaining({ description: 'My tool' }));
   });
 
   it('passes keywords to transformPackage', async () => {
     await buildHandler(makeArgs({ keywords: ['cli', 'tool'] }));
 
-    expect(mockTransformPackage).toHaveBeenCalledWith(expect.objectContaining({ keywords: ['cli', 'tool'] }));
+    expect(jest.mocked(transformPackage)).toHaveBeenCalledWith(expect.objectContaining({ keywords: ['cli', 'tool'] }));
   });
 
   it('writes index.js shim script for main package', async () => {
@@ -162,9 +154,9 @@ describe('buildHandler', () => {
   });
 
   it('throws when no binary artifacts match the builder', async () => {
-    jest.mocked(parseArtifactsFile).mockResolvedValue([
-      makeArtifact({ extra: { Binary: 'other', Builder: 'other', Ext: '', ID: 'other' } }),
-    ]);
+    jest
+      .mocked(parseArtifactsFile)
+      .mockResolvedValue([makeArtifact({ extra: { Binary: 'other', Builder: 'other', Ext: '', ID: 'other' } })]);
 
     await expect(buildHandler(makeArgs({ builder: 'default' }))).rejects.toThrow();
   });
@@ -175,26 +167,29 @@ describe('buildHandler', () => {
 
     await expect(buildHandler(makeArgs())).rejects.toThrow('Invalid binary artifacts');
 
-    expect(mockLoggerError).toHaveBeenCalled();
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(jest.mocked(logger.error)).toHaveBeenCalled();
   });
 
   it.each(['artifact(s)', 'project_name'])('logs details containing "%s" in verbose mode', async substring => {
     await buildHandler(makeArgs({ verbose: true }));
 
-    expect(mockLoggerDebug).toHaveBeenCalledWith(expect.stringContaining(substring));
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(jest.mocked(logger.debug)).toHaveBeenCalledWith(expect.stringContaining(substring));
   });
 
   it('logs file details in verbose mode', async () => {
     jest.mocked(findFiles).mockResolvedValue(['readme.md']);
     await buildHandler(makeArgs({ verbose: true }));
 
-    expect(mockLoggerDebug).toHaveBeenCalledWith(expect.stringContaining('file'));
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(jest.mocked(logger.debug)).toHaveBeenCalledWith(expect.stringContaining('file'));
   });
 
   it('builds main package with formatMainPackageJson', async () => {
     await buildHandler(makeArgs());
 
-    expect(mockFormatMainPackageJson).toHaveBeenCalledWith(
+    expect(jest.mocked(formatMainPackageJson)).toHaveBeenCalledWith(
       expect.objectContaining({
         metadata: makeMetadata(),
       }),

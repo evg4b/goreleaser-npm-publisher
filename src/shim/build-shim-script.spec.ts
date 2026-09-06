@@ -1,7 +1,7 @@
 import '@mocks/helpers/fs';
 
 import { Script } from 'node:vm';
-import { buildShimScript } from './build';
+import { buildShimScript } from './build-shim-script';
 
 describe('buildShimScript', () => {
   const makePkg = (overrides: Partial<PackageDefinition> = {}): PackageDefinition => ({

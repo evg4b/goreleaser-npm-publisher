@@ -1,7 +1,7 @@
 import '@mocks/core/logger';
 
 import { logger } from '@core/logger';
-import { NpmExecError } from './npm';
+import { NpmExecError } from '@npm';
 import { handleCliError } from './cli-error-handler';
 
 // eslint-disable-next-line @typescript-eslint/unbound-method
