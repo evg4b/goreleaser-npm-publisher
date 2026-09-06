@@ -9,8 +9,7 @@ export const publishHandler: ActionType<PublishParams> = async args => {
   await buildHandler(args);
   const context = new Context(args.project);
 
-  const packageFolders = (await readdir(context.distPath))
-    .toSorted((a, b) => b.length - a.length);
+  const packageFolders = (await readdir(context.distPath)).toSorted((a, b) => b.length - a.length);
 
   for (const packageFolder of packageFolders) {
     logger.info(context.packageFolder(packageFolder));

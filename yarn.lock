@@ -2031,13 +2031,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.17.25":
-  version: 4.17.25
-  resolution: "@types/lodash@npm:4.17.25"
-  checksum: 10c0/ca2049f16bf527e04d6e27702e3912a484faaff587de77a5c58e0d243b9292a655e1d7f7e5bdf2ffdf49a76da10673097f8dd4901990679058d47ccd99051877
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:*":
   version: 22.7.4
   resolution: "@types/node@npm:22.7.4"
@@ -3693,7 +3686,6 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^10.0.1"
     "@types/jest": "npm:^30.0.0"
-    "@types/lodash": "npm:^4.17.25"
     "@types/node": "npm:^26.4.1"
     ajv: "npm:^8.20.0"
     es-toolkit: "npm:^1.52.0"
@@ -3703,7 +3695,6 @@ __metadata:
     install: "npm:^0.13.0"
     jest: "npm:^30.5.1"
     jest-esbuild: "npm:^0.4.0"
-    lodash: "npm:^4.18.1"
     picocolors: "npm:^1.1.1"
     prettier: "npm:^3.9.6"
     ts-jest: "npm:^29.4.12"
@@ -4666,13 +4657,6 @@ __metadata:
   version: 4.1.2
   resolution: "lodash.memoize@npm:4.1.2"
   checksum: 10c0/c8713e51eccc650422716a14cece1809cfe34bc5ab5e242b7f8b4e2241c2483697b971a604252807689b9dd69bfe3a98852e19a5b89d506b000b4187a1285df8
-  languageName: node
-  linkType: hard
-
-"lodash@npm:^4.18.1":
-  version: 4.18.1
-  resolution: "lodash@npm:4.18.1"
-  checksum: 10c0/757228fc68805c59789e82185135cf85f05d0b2d3d54631d680ca79ec21944ec8314d4533639a14b8bcfbd97a517e78960933041a5af17ecb693ec6eecb99a27
   languageName: node
   linkType: hard
 

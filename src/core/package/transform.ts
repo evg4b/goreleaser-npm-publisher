@@ -38,23 +38,17 @@ export const formatPackageJson = (params: FormatPackageJsonParams): PackageJson 
 
 export const formatPackageName = (pkg: PackageDefinition | Metadata, prefix: string | undefined): string => {
   if ('project_name' in pkg) {
-    return prefix?.length
-      ? `${prefix}/${pkg.project_name}`
-      : pkg.project_name;
+    return prefix?.length ? `${prefix}/${pkg.project_name}` : pkg.project_name;
   }
 
-  return prefix?.length
-    ? `${prefix}/${pkg.name}`
-    : pkg.name;
+  return prefix?.length ? `${prefix}/${pkg.name}` : pkg.name;
 };
 
 export const formatMainPackageJson = (params: FormatMainPackageJsonParams): PackageJson => {
   const { packages, metadata, name, bin, description, prefix, files, keywords, license } = params;
   const packageName = name ?? metadata.project_name;
   return normalize({
-    name: prefix?.length
-      ? `${prefix}/${packageName}`
-      : packageName,
+    name: prefix?.length ? `${prefix}/${packageName}` : packageName,
     description,
     version: metadata.version,
     bin: { [bin ?? packageName]: 'index.js' },
