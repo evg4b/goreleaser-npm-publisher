@@ -3,8 +3,6 @@ import '@mocks/child_process';
 import { spawn } from 'node:child_process';
 import { dirname, join } from 'node:path';
 
-const mockSpawn = jest.mocked(spawn);
-
 const currentPlatform = `${process.platform}_${process.arch}`;
 
 class FakeChildProcess {
@@ -22,7 +20,7 @@ class FakeChildProcess {
 
 const runShim = async (mapping: Mapping): Promise<FakeChildProcess> => {
   const child = new FakeChildProcess();
-  mockSpawn.mockReturnValue(child as unknown as ReturnType<typeof spawn>);
+  jest.mocked(spawn).mockReturnValue(child as unknown as ReturnType<typeof spawn>);
   (globalThis as Record<string, unknown>).__INLINE_MAPPING__ = mapping;
   await jest.isolateModulesAsync(async () => {
     await import('./shim');
@@ -41,25 +39,33 @@ describe('shim', () => {
   it('spawns the binary of the package matching the current platform', async () => {
     await runShim({ [currentPlatform]: { name: ['@types', 'node'], bin: 'tool' } });
 
-    expect(mockSpawn).toHaveBeenCalledWith(binaryIn('@types/node', 'tool'), expect.anything(), expect.anything());
+    expect(jest.mocked(spawn)).toHaveBeenCalledWith(
+      binaryIn('@types/node', 'tool'),
+      expect.anything(),
+      expect.anything(),
+    );
   });
 
   it('resolves an unprefixed package name', async () => {
     await runShim({ [currentPlatform]: { name: ['typescript'], bin: 'bin/tsc' } });
 
-    expect(mockSpawn).toHaveBeenCalledWith(binaryIn('typescript', 'bin/tsc'), expect.anything(), expect.anything());
+    expect(jest.mocked(spawn)).toHaveBeenCalledWith(
+      binaryIn('typescript', 'bin/tsc'),
+      expect.anything(),
+      expect.anything(),
+    );
   });
 
   it('forwards the cli arguments to the binary', async () => {
     await runShim({ [currentPlatform]: { name: ['typescript'], bin: 'tool' } });
 
-    expect(mockSpawn).toHaveBeenCalledWith(expect.any(String), process.argv.slice(2), expect.anything());
+    expect(jest.mocked(spawn)).toHaveBeenCalledWith(expect.any(String), process.argv.slice(2), expect.anything());
   });
 
   it('inherits stdio and the current environment', async () => {
     await runShim({ [currentPlatform]: { name: ['typescript'], bin: 'tool' } });
 
-    expect(mockSpawn).toHaveBeenCalledWith(expect.any(String), expect.anything(), {
+    expect(jest.mocked(spawn)).toHaveBeenCalledWith(expect.any(String), expect.anything(), {
       stdio: 'inherit',
       env: process.env,
     });

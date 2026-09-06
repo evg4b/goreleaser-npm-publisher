@@ -3,8 +3,6 @@ import '@mocks/helpers/fs';
 import { readFile } from '@helpers/fs';
 import { parseArtifactsFile, validateBinaryArtifact } from './artifacts';
 
-const readFileMock = jest.mocked(readFile);
-
 describe('parseArtifactsFile', () => {
   const artifactsContent = `[
     {
@@ -374,7 +372,7 @@ describe('parseArtifactsFile', () => {
 ]`;
 
   it('should return parsed content', async () => {
-    readFileMock.mockResolvedValueOnce(artifactsContent);
+    jest.mocked(readFile).mockResolvedValueOnce(artifactsContent);
 
     const artifact = await parseArtifactsFile(`/dist/artifacts.json`);
 
@@ -731,7 +729,7 @@ describe('parseArtifactsFile', () => {
   });
 
   it('should throw an error if the given invalid file', async () => {
-    readFileMock.mockResolvedValueOnce(`{ "name": "test" }`);
+    jest.mocked(readFile).mockResolvedValueOnce(`{ "name": "test" }`);
 
     await expect(parseArtifactsFile(`/dist/artifacts.json`)).rejects.toThrow(Error);
   });

@@ -9,17 +9,6 @@ import { logger } from '@core/logger';
 import { formatMainPackageJson, formatPackageJson, transformPackage } from '@core/package';
 import { listHandler } from './list';
 
-const mockParseArtifactsFile = jest.mocked(parseArtifactsFile);
-const mockParseMetadata = jest.mocked(parseMetadata);
-/* eslint-disable @typescript-eslint/unbound-method */
-const mockLoggerInfo = jest.mocked(logger.info);
-const mockLoggerDebug = jest.mocked(logger.debug);
-const mockLoggerGroup = jest.mocked(logger.group);
-/* eslint-enable @typescript-eslint/unbound-method */
-const mockTransformPackage = jest.mocked(transformPackage);
-const mockFormatPackageJson = jest.mocked(formatPackageJson);
-const mockFormatMainPackageJson = jest.mocked(formatMainPackageJson);
-
 const mockContextInstance = {
   artifactsPath: '/project/dist/artifacts.json',
   metadataPath: '/project/dist/metadata.json',
@@ -28,6 +17,7 @@ const mockContextInstance = {
   packageFolder: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64'),
   packageJson: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64/package.json'),
 };
+
 jest.mocked(Context).mockImplementation(() => mockContextInstance as unknown as Context);
 
 const makeArtifact = (overrides: Partial<BinaryArtifact> = {}): BinaryArtifact => ({
@@ -87,106 +77,107 @@ const makeArgs = (overrides: Partial<ListParams> = {}): ListParams => ({
 
 describe('listHandler', () => {
   beforeEach(() => {
-    mockParseArtifactsFile.mockResolvedValue([makeArtifact()]);
-    mockParseMetadata.mockResolvedValue(makeMetadata());
-    mockTransformPackage.mockReturnValue(makePackageDef());
-    mockFormatPackageJson.mockReturnValue(makePackageJson());
-    mockFormatMainPackageJson.mockReturnValue(
+    jest.mocked(parseArtifactsFile).mockResolvedValue([makeArtifact()]);
+    jest.mocked(parseMetadata).mockResolvedValue(makeMetadata());
+    jest.mocked(transformPackage).mockReturnValue(makePackageDef());
+    jest.mocked(formatPackageJson).mockReturnValue(makePackageJson());
+    jest.mocked(formatMainPackageJson).mockReturnValue(
       makePackageJson({
         name: 'tool',
         optionalDependencies: { 'tool-linux-x64': '1.0.0' },
       }),
     );
-    mockLoggerGroup.mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
+    jest.mocked(logger.group).mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
   });
 
   it('loads metadata and artifacts', async () => {
     await listHandler(makeArgs());
 
-    expect(mockParseMetadata).toHaveBeenCalled();
-    expect(mockParseArtifactsFile).toHaveBeenCalled();
+    expect(jest.mocked(parseMetadata)).toHaveBeenCalled();
+    expect(jest.mocked(parseArtifactsFile)).toHaveBeenCalled();
   });
 
   it('transforms artifacts into package definitions', async () => {
     await listHandler(makeArgs());
 
-    expect(mockTransformPackage).toHaveBeenCalledWith(
+    expect(jest.mocked(transformPackage)).toHaveBeenCalledWith(
       expect.objectContaining({ artifact: makeArtifact(), metadata: makeMetadata() }),
     );
   });
 
   it('uses project_name as builder when builder is not provided', async () => {
-    mockParseArtifactsFile.mockResolvedValue([
-      makeArtifact({ extra: { Binary: 'tool', Builder: 'tool', Ext: '', ID: 'tool' } }),
-    ]);
+    jest
+      .mocked(parseArtifactsFile)
+      .mockResolvedValue([makeArtifact({ extra: { Binary: 'tool', Builder: 'tool', Ext: '', ID: 'tool' } })]);
 
     await listHandler(makeArgs({ builder: undefined }));
 
-    expect(mockTransformPackage).toHaveBeenCalled();
+    expect(jest.mocked(transformPackage)).toHaveBeenCalled();
   });
 
   it('filters artifacts by builder', async () => {
-    mockParseArtifactsFile.mockResolvedValue([
-      makeArtifact({ extra: { Binary: 'other', Ext: '', ID: 'other' } }),
-      makeArtifact(),
-    ]);
+    jest
+      .mocked(parseArtifactsFile)
+      .mockResolvedValue([makeArtifact({ extra: { Binary: 'other', Ext: '', ID: 'other' } }), makeArtifact()]);
 
     await listHandler(makeArgs({ builder: 'default' }));
 
-    expect(mockTransformPackage).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(transformPackage)).toHaveBeenCalledTimes(1);
   });
 
   it('passes description option to formatPackageJson', async () => {
     await listHandler(makeArgs({ description: 'My tool' }));
 
-    expect(mockFormatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ description: 'My tool' }));
+    expect(jest.mocked(formatPackageJson)).toHaveBeenCalledWith(expect.objectContaining({ description: 'My tool' }));
   });
 
   it('passes prefix option to formatPackageJson', async () => {
     await listHandler(makeArgs({ prefix: '@scope' }));
 
-    expect(mockFormatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ prefix: '@scope' }));
+    expect(jest.mocked(formatPackageJson)).toHaveBeenCalledWith(expect.objectContaining({ prefix: '@scope' }));
   });
 
   it('passes keywords to formatMainPackageJson', async () => {
     await listHandler(makeArgs({ keywords: ['cli'] }));
 
-    expect(mockFormatMainPackageJson).toHaveBeenCalledWith(expect.objectContaining({ keywords: ['cli'] }));
+    expect(jest.mocked(formatMainPackageJson)).toHaveBeenCalledWith(expect.objectContaining({ keywords: ['cli'] }));
   });
 
   it('logs version info for each package', async () => {
     await listHandler(makeArgs());
 
-    expect(mockLoggerInfo).toHaveBeenCalledWith(expect.stringContaining('version'));
+    expect(jest.mocked(logger.info)).toHaveBeenCalledWith(expect.stringContaining('version'));
   });
 
   it('logs optional dependencies when present', async () => {
-    mockFormatMainPackageJson.mockReturnValue(makePackageJson({ optionalDependencies: { 'tool-linux-x64': '1.0.0' } }));
+    jest
+      .mocked(formatMainPackageJson)
+      .mockReturnValue(makePackageJson({ optionalDependencies: { 'tool-linux-x64': '1.0.0' } }));
 
     await listHandler(makeArgs());
 
-    expect(mockLoggerDebug).toHaveBeenCalledWith(expect.stringContaining('optionalDependencies'));
+    expect(jest.mocked(logger.debug)).toHaveBeenCalledWith(expect.stringContaining('optionalDependencies'));
   });
 
   it('logs description when present', async () => {
-    mockFormatPackageJson.mockReturnValue(makePackageJson({ description: 'A tool' }));
+    jest.mocked(formatPackageJson).mockReturnValue(makePackageJson({ description: 'A tool' }));
 
     await listHandler(makeArgs());
 
-    expect(mockLoggerInfo).toHaveBeenCalledWith(expect.stringContaining('description'));
+    expect(jest.mocked(logger.info)).toHaveBeenCalledWith(expect.stringContaining('description'));
   });
 
   it('logs keywords when present', async () => {
-    mockFormatPackageJson.mockReturnValue(makePackageJson({ keywords: ['cli', 'tool'] }));
+    jest.mocked(formatPackageJson).mockReturnValue(makePackageJson({ keywords: ['cli', 'tool'] }));
 
     await listHandler(makeArgs());
 
-    expect(mockLoggerInfo).toHaveBeenCalledWith(expect.stringContaining('keywords'));
+    expect(jest.mocked(logger.info)).toHaveBeenCalledWith(expect.stringContaining('keywords'));
   });
 
   it('logs bin path for platform packages', async () => {
     await listHandler(makeArgs());
 
-    expect(mockLoggerInfo).toHaveBeenCalledWith(expect.stringContaining('bin'));
+    expect(jest.mocked(logger.info)).toHaveBeenCalledWith(expect.stringContaining('bin'));
   });
 });

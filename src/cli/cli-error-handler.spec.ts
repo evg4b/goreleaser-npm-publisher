@@ -4,12 +4,9 @@ import { logger } from '@core/logger';
 import { NpmExecError } from '@npm';
 import { handleCliError } from './cli-error-handler';
 
-// eslint-disable-next-line @typescript-eslint/unbound-method
-const mockError = jest.mocked(logger.error);
-
 describe('handleCliError', () => {
   beforeEach(() => {
-    mockError.mockClear();
+    jest.mocked(logger.error).mockClear();
     jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
   });
 
@@ -48,7 +45,7 @@ describe('handleCliError', () => {
     ] as const)('%s', (_name, err, message, expectedLog) => {
       handleCliError(message, err);
 
-      expect(mockError).toHaveBeenCalledWith(expectedLog);
+      expect(jest.mocked(logger.error)).toHaveBeenCalledWith(expectedLog);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(jest.mocked(process.exit)).toHaveBeenCalledWith(1);
     });
@@ -58,7 +55,7 @@ describe('handleCliError', () => {
     it('should log message with ERROR prefix', () => {
       handleCliError('Command failed');
 
-      expect(mockError).toHaveBeenCalledWith('ERROR: Command failed');
+      expect(jest.mocked(logger.error)).toHaveBeenCalledWith('ERROR: Command failed');
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(jest.mocked(process.exit)).toHaveBeenCalledWith(1);
     });

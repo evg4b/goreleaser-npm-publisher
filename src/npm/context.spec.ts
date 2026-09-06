@@ -4,9 +4,6 @@ import '@mocks/core/logger';
 import { rm, writeFile } from '@helpers/fs';
 import { execInContext } from './context';
 
-const writeFileMock = jest.mocked(writeFile);
-const rmMock = jest.mocked(rm);
-
 describe('execInContext', () => {
   describe('without token', () => {
     it('should call action with process env', async () => {
@@ -23,14 +20,14 @@ describe('execInContext', () => {
 
       await execInContext({}, action);
 
-      expect(writeFileMock).not.toHaveBeenCalled();
+      expect(jest.mocked(writeFile)).not.toHaveBeenCalled();
     });
   });
 
   describe('with token', () => {
     beforeEach(() => {
-      writeFileMock.mockResolvedValue(undefined);
-      rmMock.mockResolvedValue(undefined);
+      jest.mocked(writeFile).mockResolvedValue(undefined);
+      jest.mocked(rm).mockResolvedValue(undefined);
     });
 
     it('should call action with NPM_TOKEN in env', async () => {
@@ -46,7 +43,7 @@ describe('execInContext', () => {
 
       await execInContext({ token: 'my-token', pwd: '/tmp/project' }, action);
 
-      expect(writeFileMock).toHaveBeenCalledWith('/tmp/project/.npmrc', expect.stringContaining('my-token'));
+      expect(jest.mocked(writeFile)).toHaveBeenCalledWith('/tmp/project/.npmrc', expect.stringContaining('my-token'));
     });
 
     it('should remove .npmrc file after action completes', async () => {
@@ -54,7 +51,7 @@ describe('execInContext', () => {
 
       await execInContext({ token: 'my-token', pwd: '/tmp/project' }, action);
 
-      expect(rmMock).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
+      expect(jest.mocked(rm)).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
     });
 
     it('should remove .npmrc even when action throws', async () => {
@@ -62,7 +59,7 @@ describe('execInContext', () => {
 
       await expect(execInContext({ token: 'my-token', pwd: '/tmp/project' }, action)).rejects.toThrow('action failed');
 
-      expect(rmMock).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
+      expect(jest.mocked(rm)).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
     });
 
     it('should return action result', async () => {
