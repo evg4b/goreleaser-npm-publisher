@@ -74,4 +74,28 @@ describe('publish', () => {
       expect(context.token).toBeUndefined();
     });
   });
+
+  describe('response extraction', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should return the response as is when it is a publish response', async () => {
+      npmExecMock.mockResolvedValue(mockResponse);
+
+      await expect(publish('/some/path')).resolves.toBe(mockResponse);
+    });
+
+    it('should extract the first entry from a keyed response', async () => {
+      npmExecMock.mockResolvedValue({ pkg: mockResponse });
+
+      await expect(publish('/some/path')).resolves.toBe(mockResponse);
+    });
+
+    it('should throw when the response has no entries', async () => {
+      npmExecMock.mockResolvedValue({});
+
+      await expect(publish('/some/path')).rejects.toThrow('Unexpected response from npm publish');
+    });
+  });
 });

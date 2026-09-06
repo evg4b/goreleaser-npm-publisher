@@ -17,9 +17,12 @@ export const publish = async (path?: string, options?: BaseOptions): Promise<Pub
     return result;
   }
 
-  const [extracted] = Object.values(result);
+  const values = Object.values(result);
+  if (!values.length) {
+    throw new Error('Unexpected response from npm publish');
+  }
 
-  return extracted;
+  return values[0];
 };
 
 const isPublishResponse = (value: PublishResponse | Record<string, PublishResponse>): value is PublishResponse => {
