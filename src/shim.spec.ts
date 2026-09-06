@@ -1,5 +1,5 @@
 const mockSpawn = jest.fn();
-jest.mock('child_process', () => ({ spawn: mockSpawn }));
+jest.mock('node:child_process', () => ({ spawn: mockSpawn }));
 
 import { dirname, join } from 'node:path';
 
