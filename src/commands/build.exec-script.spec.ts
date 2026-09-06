@@ -1,16 +1,11 @@
-const mockReadFile = jest.fn();
 jest.mock('../helpers/fs', () => ({
   copyFile: jest.fn(),
   mkdir: jest.fn(),
   writeFile: jest.fn(),
-  readFile: mockReadFile,
 }));
 
-import { readFile } from 'node:fs/promises';
-import { join, sep } from 'node:path';
+import { Script } from 'node:vm';
 import { buildShimScript } from './build';
-
-const SHIM_TEMPLATE = 'var mapping = __INLINE_MAPPING__;\nconsole.log(mapping);';
 
 describe('buildShimScript', () => {
   const makePkg = (overrides: Partial<PackageDefinition> = {}): PackageDefinition => ({
@@ -26,25 +21,30 @@ describe('buildShimScript', () => {
     license: overrides.license,
   });
 
-  const inlinedMapping = (code: string): unknown => JSON.parse(code.slice('var mapping = '.length, -';'.length));
+  const inlinedMapping = (code: string): unknown => {
+    const match = /mapping = (\{.*?\});/.exec(code);
+    if (!match) {
+      throw new Error(`No inlined mapping found in:\n${code}`);
+    }
 
-  beforeEach(() => {
-    mockReadFile.mockResolvedValue('var mapping = __INLINE_MAPPING__;');
+    return JSON.parse(match[1]);
+  };
+
+  it('inlines the compiled shim rather than reading it from disk', () => {
+    const code = buildShimScript([makePkg()], undefined);
+
+    expect(code).toContain('#!/usr/bin/env node');
+    expect(code).toContain('node:child_process');
+    expect(code).not.toContain('__INLINE_MAPPING__');
   });
 
-  it('reads the prebundled shim sitting next to the current bundle', async () => {
-    await buildShimScript([makePkg()], undefined);
-
-    expect(mockReadFile).toHaveBeenCalledWith(expect.stringContaining(`${sep}shim.cjs`));
-  });
-
-  it('replaces the placeholder with the mapping for multiple packages', async () => {
+  it('replaces the placeholder with the mapping for multiple packages', () => {
     const pkgs = [
       makePkg({ name: 'tool-linux', bin: 'tool', os: 'linux', cpu: 'x64' }),
       makePkg({ name: 'tool-darwin', bin: 'tool', os: 'darwin', cpu: 'arm64' }),
     ];
 
-    const code = await buildShimScript(pkgs, '@acme');
+    const code = buildShimScript(pkgs, '@acme');
 
     expect(inlinedMapping(code)).toEqual({
       linux_x64: { name: ['@acme', 'tool-linux'], bin: 'tool' },
@@ -52,32 +52,23 @@ describe('buildShimScript', () => {
     });
   });
 
-  it('omits prefix when not provided', async () => {
+  it('omits prefix when not provided', () => {
     const pkgs = [makePkg({ name: 'cli-linux', bin: 'cli', os: 'linux', cpu: 'x64' })];
 
-    const code = await buildShimScript(pkgs, undefined);
+    const code = buildShimScript(pkgs, undefined);
 
     expect(inlinedMapping(code)).toEqual({ linux_x64: { name: ['cli-linux'], bin: 'cli' } });
   });
 
-  it('keeps the rest of the shim untouched', async () => {
-    mockReadFile.mockResolvedValue(SHIM_TEMPLATE);
-
-    const code = await buildShimScript([makePkg()], undefined);
-
-    expect(code).not.toContain('__INLINE_MAPPING__');
-    expect(code).toContain('console.log(mapping);');
-  });
-
-  it('produces an empty mapping when there are no packages', async () => {
-    const code = await buildShimScript([], undefined);
+  it('produces an empty mapping when there are no packages', () => {
+    const code = buildShimScript([], undefined);
 
     expect(inlinedMapping(code)).toEqual({});
   });
 
-  it('substitutes the placeholder that the real shim source declares', async () => {
-    const shimSource = await readFile(join(__dirname, '..', 'shim.ts'), 'utf8');
+  it('produces a syntactically valid script', () => {
+    const code = buildShimScript([makePkg()], undefined);
 
-    expect(shimSource).toContain('__INLINE_MAPPING__');
+    expect(() => new Script(code.replace('#!/usr/bin/env node', ''))).not.toThrow();
   });
 });

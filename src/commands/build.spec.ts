@@ -14,12 +14,10 @@ jest.mock('../core/files', () => ({
 const mockCopyFile = jest.fn();
 const mockMkdir = jest.fn();
 const mockWriteFile = jest.fn();
-const mockReadFile = jest.fn();
 jest.mock('../helpers/fs', () => ({
   copyFile: mockCopyFile,
   mkdir: mockMkdir,
   writeFile: mockWriteFile,
-  readFile: mockReadFile,
 }));
 
 const mockLoggerDebug = jest.fn();
@@ -58,7 +56,6 @@ jest.mock('../core/gorealiser', () => ({
   Context: jest.fn().mockImplementation(() => mockContextInstance),
 }));
 
-import { sep } from 'node:path';
 import { buildHandler } from './build';
 
 const makeArtifact = (overrides: Partial<BinaryArtifact> = {}): BinaryArtifact => ({
@@ -118,7 +115,6 @@ describe('buildHandler', () => {
     mockCopyFile.mockResolvedValue(undefined);
     mockMkdir.mockResolvedValue(undefined);
     mockWriteFile.mockResolvedValue(undefined);
-    mockReadFile.mockResolvedValue('var mapping = __INLINE_MAPPING__;');
     mockTransformPackage.mockReturnValue(makePackageDef());
     mockFormatPackageJson.mockReturnValue({});
     mockFormatMainPackageJson.mockReturnValue({});
@@ -174,14 +170,8 @@ describe('buildHandler', () => {
 
     expect(mockWriteFile).toHaveBeenCalledWith(
       expect.stringContaining('index.js'),
-      'var mapping = {"linux_x64":{"name":["tool-linux-x64"],"bin":"tool"}};',
+      expect.stringContaining('mapping = {"linux_x64":{"name":["tool-linux-x64"],"bin":"tool"}}'),
     );
-  });
-
-  it('reads the prebundled shim from the bundle folder', async () => {
-    await buildHandler(makeArgs());
-
-    expect(mockReadFile).toHaveBeenCalledWith(expect.stringContaining(`${sep}shim.cjs`));
   });
 
   it('copies extra files to each platform package folder', async () => {

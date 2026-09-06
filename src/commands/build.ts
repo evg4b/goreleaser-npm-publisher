@@ -5,8 +5,9 @@ import { Context } from '../core/gorealiser';
 import { logger } from '../core/logger';
 import { formatMainPackageJson, formatPackageJson, pickRepositoryParams, transformPackage } from '../core/package';
 import { assertNotEmpty, binArtifactPredicate } from '../helpers';
-import { copyFile, mkdir, readFile, writeFile } from '../helpers/fs';
+import { copyFile, mkdir, writeFile } from '../helpers/fs';
 import { ActionType } from './models';
+import shimContent from 'inline-compiled:../shim';
 
 const copyPackageFiles = async (context: Context, name: string, files: string[]) => {
   for (const file of files) {
@@ -125,13 +126,13 @@ export const buildHandler: ActionType<BuildParams> = async args => {
   await writePackage(context.packageJson(mainPackageFolder), packageJsonObject);
   logger.debug(`Written package json file: ${context.packageJson(mainPackageFolder)}`);
   const indexJsFile = join(context.packageFolder(mainPackageFolder), 'index.js');
-  await writeFile(indexJsFile, await buildShimScript(packages, args.prefix));
+  await writeFile(indexJsFile, buildShimScript(packages, args.prefix));
   logger.debug(`Written package index.js file: ${indexJsFile}`);
   await copyPackageFiles(context, mainPackageFolder, files);
   logger.debug(`Copied ${files.length} extra file(s)`);
 };
 
-export const buildShimScript = async (packages: PackageDefinition[], prefix: string | undefined): Promise<string> => {
+export const buildShimScript = (packages: PackageDefinition[], prefix: string | undefined): string => {
   const mapping = Object.fromEntries(
     packages.map(pkg => [
       `${pkg.os}_${pkg.cpu}`,
@@ -141,8 +142,6 @@ export const buildShimScript = async (packages: PackageDefinition[], prefix: str
       },
     ]),
   );
-
-  const shimContent = await readFile(join(__dirname, 'shim.cjs'));
 
   return shimContent.replace('__INLINE_MAPPING__' satisfies InlineMappingPlaceholder, JSON.stringify(mapping));
 };

@@ -3144,7 +3144,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.27.0":
+"esbuild@npm:^0.27.0, esbuild@npm:^0.27.7":
   version: 0.27.7
   resolution: "esbuild@npm:0.27.7"
   dependencies:
@@ -3692,6 +3692,7 @@ __metadata:
     "@types/node": "npm:^26.4.1"
     ajv: "npm:^8.20.0"
     es-toolkit: "npm:^1.52.0"
+    esbuild: "npm:^0.27.7"
     eslint: "npm:^10.10.0"
     glob: "npm:^13.0.6"
     globals: "npm:^17.12.0"
