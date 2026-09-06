@@ -1,4 +1,16 @@
+const mockReadFile = jest.fn();
+jest.mock('../helpers/fs', () => ({
+  copyFile: jest.fn(),
+  mkdir: jest.fn(),
+  writeFile: jest.fn(),
+  readFile: mockReadFile,
+}));
+
+import { readFile } from 'node:fs/promises';
+import { join, sep } from 'node:path';
 import { buildShimScript } from './build';
+
+const SHIM_TEMPLATE = 'var mapping = __INLINE_MAPPING__;\nconsole.log(mapping);';
 
 describe('buildShimScript', () => {
   const makePkg = (overrides: Partial<PackageDefinition> = {}): PackageDefinition => ({
@@ -14,36 +26,58 @@ describe('buildShimScript', () => {
     license: overrides.license,
   });
 
-  it('generates a runnable script with prefix and correct mapping for multiple packages', async () => {
-    const pkgs: PackageDefinition[] = [
+  const inlinedMapping = (code: string): unknown => JSON.parse(code.slice('var mapping = '.length, -';'.length));
+
+  beforeEach(() => {
+    mockReadFile.mockResolvedValue('var mapping = __INLINE_MAPPING__;');
+  });
+
+  it('reads the prebundled shim sitting next to the current bundle', async () => {
+    await buildShimScript([makePkg()], undefined);
+
+    expect(mockReadFile).toHaveBeenCalledWith(expect.stringContaining(`${sep}shim.cjs`));
+  });
+
+  it('replaces the placeholder with the mapping for multiple packages', async () => {
+    const pkgs = [
       makePkg({ name: 'tool-linux', bin: 'tool', os: 'linux', cpu: 'x64' }),
       makePkg({ name: 'tool-darwin', bin: 'tool', os: 'darwin', cpu: 'arm64' }),
     ];
 
     const code = await buildShimScript(pkgs, '@acme');
 
-    // shebang and required modules
-    expect(code.startsWith('#!/usr/bin/env node')).toBe(true);
-    expect(code).toContain("const path = require('path');");
-    expect(code).toContain("const child_process = require('child_process');");
-
-    // mapping must include both platforms with prefix in name array
-    expect(code).toContain("linux_x64: { name: [ '@acme', 'tool-linux' ], bin: 'tool' }");
-    expect(code).toContain("darwin_arm64: { name: [ '@acme', 'tool-darwin' ], bin: 'tool' }");
-
-    // runtime selection and spawn
-    expect(code).toContain("const definition = mapping[process.platform + '_' + process.arch];");
-    expect(code).toContain("const packageJsonPath = require.resolve(path.join(...definition.name, 'package.json'));");
-    expect(code).toContain('const packagePath = path.join(path.dirname(packageJsonPath), definition.bin);');
-    expect(code.trim().endsWith('});')).toBe(true);
+    expect(inlinedMapping(code)).toEqual({
+      linux_x64: { name: ['@acme', 'tool-linux'], bin: 'tool' },
+      darwin_arm64: { name: ['@acme', 'tool-darwin'], bin: 'tool' },
+    });
   });
 
   it('omits prefix when not provided', async () => {
-    const pkgs: PackageDefinition[] = [makePkg({ name: 'cli-linux', bin: 'cli', os: 'linux', cpu: 'x64' })];
+    const pkgs = [makePkg({ name: 'cli-linux', bin: 'cli', os: 'linux', cpu: 'x64' })];
 
     const code = await buildShimScript(pkgs, undefined);
 
-    // name should contain only the package name when prefix is undefined
-    expect(code).toContain("linux_x64: { name: [ 'cli-linux' ], bin: 'cli' }");
+    expect(inlinedMapping(code)).toEqual({ linux_x64: { name: ['cli-linux'], bin: 'cli' } });
+  });
+
+  it('keeps the rest of the shim untouched', async () => {
+    mockReadFile.mockResolvedValue(SHIM_TEMPLATE);
+
+    const code = await buildShimScript([makePkg()], undefined);
+
+    expect(code).not.toContain('__INLINE_MAPPING__');
+    expect(code).toContain('console.log(mapping);');
+  });
+
+  it('produces an empty mapping when there are no packages', async () => {
+    const code = await buildShimScript([], undefined);
+
+    expect(inlinedMapping(code)).toEqual({});
+  });
+
+  it('substitutes the placeholder that the real shim source declares', async () => {
+    const shimSource = await readFile(join(__dirname, '..', 'shim.ts'), 'utf8');
+
+    expect(shimSource).toContain('__INLINE_MAPPING__');
   });
 });

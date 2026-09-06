@@ -9,7 +9,7 @@ export default {
   coveragePathIgnorePatterns: ['/node_modules/', '/.yarn/'],
   coverageProvider: 'v8',
   coverageReporters: ['lcov'],
-  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/*.d.ts'],
+  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/*.d.ts', '!src/**/models.ts'],
   verbose: true,
   transform: {
     '^.+\\.tsx?$': [

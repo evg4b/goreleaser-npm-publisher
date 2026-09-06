@@ -5,9 +5,8 @@ import { Context } from '../core/gorealiser';
 import { logger } from '../core/logger';
 import { formatMainPackageJson, formatPackageJson, pickRepositoryParams, transformPackage } from '../core/package';
 import { assertNotEmpty, binArtifactPredicate } from '../helpers';
-import { copyFile, mkdir, writeFile } from '../helpers/fs';
+import { copyFile, mkdir, readFile, writeFile } from '../helpers/fs';
 import { ActionType } from './models';
-import { readFile } from 'fs/promises';
 
 const copyPackageFiles = async (context: Context, name: string, files: string[]) => {
   for (const file of files) {
@@ -143,12 +142,7 @@ export const buildShimScript = async (packages: PackageDefinition[], prefix: str
     ]),
   );
 
-  const shimPath = require.resolve('./shim.cjs');
-  const shimContent = await readFile(shimPath, 'utf8');
-  const updatedShimContent = shimContent.replace(
-    '__INLINE_MAPPING__' satisfies InlineMappingPlaceholder,
-    JSON.stringify(mapping),
-  );
+  const shimContent = await readFile(join(__dirname, 'shim.cjs'));
 
-  return updatedShimContent;
+  return shimContent.replace('__INLINE_MAPPING__' satisfies InlineMappingPlaceholder, JSON.stringify(mapping));
 };
