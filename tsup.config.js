@@ -8,6 +8,7 @@ export default defineConfig(options => ({
   entry: {
     cli: 'src/cli.ts',
     index: 'src/index.ts',
+    shim: 'src/shim.ts',
   },
   splitting: false,
   sourcemap: !isProd,
@@ -25,6 +26,9 @@ export default defineConfig(options => ({
   minifySyntax: isProd,
   minifyIdentifiers: isProd,
   minifyWhitespace: isProd,
+  external: [
+    './mapping.json',
+  ],
   noExternal: [
     'es-toolkit',
     'picocolors',
