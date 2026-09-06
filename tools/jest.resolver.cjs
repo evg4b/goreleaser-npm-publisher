@@ -9,6 +9,28 @@ const { compile, PREFIX } = require('./inline-compiled.js');
 
 const CACHE_DIR = join(__dirname, '..', 'node_modules', '.cache', 'inline-compiled');
 
+// Mirrors the `paths` aliases from tsconfig.json / moduleNameMapper in
+// jest.config.js. `options.defaultResolver` does not apply those, so the inner
+// path of an `inline-compiled:<path>` request has to be de-aliased by hand.
+const ROOT = join(__dirname, '..');
+const ALIASES = [
+  [/^@core\/(.*)$/, 'src/core/$1'],
+  [/^@helpers\/(.*)$/, 'src/helpers/$1'],
+  [/^@helpers$/, 'src/helpers'],
+  [/^@npm$/, 'src/npm'],
+  [/^@shim$/, 'src/shim'],
+  [/^@mocks\/(.*)$/, 'tests/mocks/$1'],
+];
+
+const dealias = request => {
+  for (const [pattern, replacement] of ALIASES) {
+    if (pattern.test(request)) {
+      return join(ROOT, request.replace(pattern, replacement));
+    }
+  }
+  return request;
+};
+
 /**
  * Jest counterpart of the `inline-compiled` tsup plugin: resolves
  * `inline-compiled:<path>` to a generated module exporting the compiled source
@@ -19,7 +41,7 @@ module.exports = (request, options) => {
     return options.defaultResolver(request, options);
   }
 
-  const entryPoint = options.defaultResolver(request.slice(PREFIX.length), options);
+  const entryPoint = options.defaultResolver(dealias(request.slice(PREFIX.length)), options);
   const { code } = compile(entryPoint);
 
   mkdirSync(CACHE_DIR, { recursive: true });

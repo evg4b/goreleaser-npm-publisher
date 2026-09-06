@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/**/*.ts", "src/types/*.d.ts"],
+  "include": ["src/**/*.ts", "tests/**/*.ts", "src/types/*.d.ts"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "composite": true,

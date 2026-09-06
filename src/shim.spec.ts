@@ -1,7 +1,9 @@
-const mockSpawn = jest.fn();
-jest.mock('node:child_process', () => ({ spawn: mockSpawn }));
+import '@mocks/child_process';
 
+import { spawn } from 'node:child_process';
 import { dirname, join } from 'node:path';
+
+const mockSpawn = jest.mocked(spawn);
 
 const currentPlatform = `${process.platform}_${process.arch}`;
 
@@ -20,7 +22,7 @@ class FakeChildProcess {
 
 const runShim = async (mapping: Mapping): Promise<FakeChildProcess> => {
   const child = new FakeChildProcess();
-  mockSpawn.mockReturnValue(child);
+  mockSpawn.mockReturnValue(child as unknown as ReturnType<typeof spawn>);
   (globalThis as Record<string, unknown>).__INLINE_MAPPING__ = mapping;
   await jest.isolateModulesAsync(async () => {
     await import('./shim');

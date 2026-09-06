@@ -1,37 +1,7 @@
-const mockParseArtifactsFile = jest.fn();
-const mockParseMetadata = jest.fn();
-const mockFindFiles = jest.fn();
-const mockValidateBinaryArtifact = jest.fn();
-const mockWritePackage = jest.fn();
-jest.mock('@core/files', () => ({
-  parseArtifactsFile: mockParseArtifactsFile,
-  parseMetadata: mockParseMetadata,
-  findFiles: mockFindFiles,
-  validateBinaryArtifact: mockValidateBinaryArtifact,
-  writePackage: mockWritePackage,
-}));
-
-const mockCopyFile = jest.fn();
-const mockMkdir = jest.fn();
-const mockWriteFile = jest.fn();
-jest.mock('@helpers/fs', () => ({
-  copyFile: mockCopyFile,
-  mkdir: mockMkdir,
-  writeFile: mockWriteFile,
-}));
-
-const mockLoggerDebug = jest.fn();
-const mockLoggerError = jest.fn();
-const mockLoggerGroup = jest.fn();
-jest.mock('@core/logger', () => ({
-  logger: {
-    debug: mockLoggerDebug,
-    info: jest.fn(),
-    error: mockLoggerError,
-    warning: jest.fn(),
-    group: mockLoggerGroup,
-  },
-}));
+import '@mocks/core/files';
+import '@mocks/helpers/fs';
+import '@mocks/core/logger';
+import '@mocks/core/gorealiser';
 
 const mockTransformPackage = jest.fn();
 const mockFormatPackageJson = jest.fn();
@@ -44,19 +14,22 @@ jest.mock('@core/package', () => ({
   formatMainPackageJson: mockFormatMainPackageJson,
 }));
 
-const mockContextInstance = {
-  artifactsPath: '/project/dist/artifacts.json',
-  metadataPath: '/project/dist/metadata.json',
-  distPath: '/project/dist/npm',
-  project: jest.fn().mockReturnValue('/project'),
-  packageFolder: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64'),
-  packageJson: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64/package.json'),
-};
-jest.mock('@core/gorealiser', () => ({
-  Context: jest.fn().mockImplementation(() => mockContextInstance),
-}));
-
+import { Context } from '@core/gorealiser';
 import { buildHandler } from './build';
+import { findFiles, parseArtifactsFile, parseMetadata, validateBinaryArtifact, writePackage } from '@core/files';
+import { copyFile, mkdir, writeFile } from '@helpers/fs';
+import { logger } from '@core/logger';
+
+jest.mocked(Context).mockImplementation(() => ({
+  artifactsPath: '/project/dist/artifacts.json',
+    metadataPath: '/project/dist/metadata.json',
+    distPath: '/project/dist/npm',
+    project: jest.fn().mockReturnValue('/project'),
+    packageFolder: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64'),
+    packageJson: jest.fn().mockReturnValue('/project/dist/npm/tool-linux-amd64/package.json'),
+}) as unknown as Context);
+
+
 
 const makeArtifact = (overrides: Partial<BinaryArtifact> = {}): BinaryArtifact => ({
   name: 'tool_linux_amd64',
@@ -107,32 +80,33 @@ const makeArgs = (overrides: Partial<BuildParams> = {}): BuildParams => ({
 
 describe('buildHandler', () => {
   beforeEach(() => {
-    mockParseArtifactsFile.mockResolvedValue([makeArtifact()]);
-    mockParseMetadata.mockResolvedValue(makeMetadata());
-    mockFindFiles.mockResolvedValue([]);
-    mockValidateBinaryArtifact.mockReturnValue(true);
-    mockWritePackage.mockResolvedValue(undefined);
-    mockCopyFile.mockResolvedValue(undefined);
-    mockMkdir.mockResolvedValue(undefined);
-    mockWriteFile.mockResolvedValue(undefined);
+    jest.mocked(parseArtifactsFile).mockResolvedValue([makeArtifact()]);
+    jest.mocked(parseMetadata).mockResolvedValue(makeMetadata());
+    jest.mocked(findFiles).mockResolvedValue([]);
+    jest.mocked(validateBinaryArtifact).mockReturnValue(true);
+    jest.mocked(writePackage).mockResolvedValue(undefined);
+    jest.mocked(copyFile).mockResolvedValue(undefined);
+    jest.mocked(mkdir).mockResolvedValue(undefined);
+    jest.mocked(writeFile).mockResolvedValue(undefined);
     mockTransformPackage.mockReturnValue(makePackageDef());
     mockFormatPackageJson.mockReturnValue({});
     mockFormatMainPackageJson.mockReturnValue({});
-    mockLoggerGroup.mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    jest.mocked(logger.group).mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
   });
 
   it('builds packages successfully', async () => {
     await buildHandler(makeArgs());
 
-    expect(mockParseArtifactsFile).toHaveBeenCalled();
-    expect(mockParseMetadata).toHaveBeenCalled();
-    expect(mockMkdir).toHaveBeenCalled();
-    expect(mockWritePackage).toHaveBeenCalled();
-    expect(mockWriteFile).toHaveBeenCalled();
+    expect(jest.mocked(parseArtifactsFile)).toHaveBeenCalled();
+    expect(jest.mocked(parseMetadata)).toHaveBeenCalled();
+    expect(jest.mocked(mkdir)).toHaveBeenCalled();
+    expect(jest.mocked(writePackage)).toHaveBeenCalled();
+    expect(jest.mocked(writeFile)).toHaveBeenCalled();
   });
 
   it('uses project_name as builder when builder arg is not provided', async () => {
-    mockParseArtifactsFile.mockResolvedValue([
+    jest.mocked(parseArtifactsFile).mockResolvedValue([
       makeArtifact({ extra: { Binary: 'tool', Builder: 'tool', Ext: '', ID: 'tool' } }),
     ]);
 
@@ -144,7 +118,7 @@ describe('buildHandler', () => {
   it('copies source artifact to package folder', async () => {
     await buildHandler(makeArgs());
 
-    expect(mockCopyFile).toHaveBeenCalled();
+    expect(jest.mocked(copyFile)).toHaveBeenCalled();
   });
 
   it('passes prefix to formatPackageJson', async () => {
@@ -168,27 +142,27 @@ describe('buildHandler', () => {
   it('writes index.js shim script for main package', async () => {
     await buildHandler(makeArgs());
 
-    expect(mockWriteFile).toHaveBeenCalledWith(
+    expect(jest.mocked(writeFile)).toHaveBeenCalledWith(
       expect.stringContaining('index.js'),
       expect.stringContaining('mapping = {"linux_x64":{"name":["tool-linux-x64"],"bin":"tool"}}'),
     );
   });
 
   it('copies extra files to each platform package folder', async () => {
-    mockFindFiles.mockResolvedValue(['readme.md', 'license']);
+    jest.mocked(findFiles).mockResolvedValue(['readme.md', 'license']);
     await buildHandler(makeArgs());
 
-    expect(mockCopyFile).toHaveBeenCalledWith(expect.any(String), expect.any(String));
+    expect(jest.mocked(copyFile)).toHaveBeenCalledWith(expect.any(String), expect.any(String));
   });
 
   it('throws when no artifacts are found', async () => {
-    mockParseArtifactsFile.mockResolvedValue([]);
+    jest.mocked(parseArtifactsFile).mockResolvedValue([]);
 
     await expect(buildHandler(makeArgs())).rejects.toThrow();
   });
 
   it('throws when no binary artifacts match the builder', async () => {
-    mockParseArtifactsFile.mockResolvedValue([
+    jest.mocked(parseArtifactsFile).mockResolvedValue([
       makeArtifact({ extra: { Binary: 'other', Builder: 'other', Ext: '', ID: 'other' } }),
     ]);
 
@@ -196,25 +170,25 @@ describe('buildHandler', () => {
   });
 
   it('throws when validateBinaryArtifact fails', async () => {
-    mockValidateBinaryArtifact.mockReturnValue(false);
-    Object.assign(mockValidateBinaryArtifact, { errors: [{ message: 'validation error' }] });
+    jest.mocked(validateBinaryArtifact).mockReturnValue(false);
+    Object.assign(jest.mocked(validateBinaryArtifact), { errors: [{ message: 'validation error' }] });
 
     await expect(buildHandler(makeArgs())).rejects.toThrow('Invalid binary artifacts');
 
-    expect(mockLoggerError).toHaveBeenCalled();
+    expect(jest.mocked(logger.error)).toHaveBeenCalled();
   });
 
   it.each(['artifact(s)', 'project_name'])('logs details containing "%s" in verbose mode', async substring => {
     await buildHandler(makeArgs({ verbose: true }));
 
-    expect(mockLoggerDebug).toHaveBeenCalledWith(expect.stringContaining(substring));
+    expect(jest.mocked(logger.debug)).toHaveBeenCalledWith(expect.stringContaining(substring));
   });
 
   it('logs file details in verbose mode', async () => {
-    mockFindFiles.mockResolvedValue(['readme.md']);
+    jest.mocked(findFiles).mockResolvedValue(['readme.md']);
     await buildHandler(makeArgs({ verbose: true }));
 
-    expect(mockLoggerDebug).toHaveBeenCalledWith(expect.stringContaining('file'));
+    expect(jest.mocked(logger.debug)).toHaveBeenCalledWith(expect.stringContaining('file'));
   });
 
   it('builds main package with formatMainPackageJson', async () => {
