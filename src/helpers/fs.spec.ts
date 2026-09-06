@@ -11,7 +11,7 @@ describe('writeFile', () => {
 
     await writeFile('/tmp/file.txt', 'content');
 
-    expect(jest.mocked(nodeFs.writeFile)).toHaveBeenCalledWith('/tmp/file.txt', 'content', 'utf-8');
+    expect(nodeFs.writeFile).toHaveBeenCalledWith('/tmp/file.txt', 'content', 'utf-8');
   });
 
   it('should log error when write fails', async () => {
@@ -19,7 +19,7 @@ describe('writeFile', () => {
 
     await writeFile('/tmp/file.txt', 'content');
 
-    expect(jest.mocked(logger.error)).toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalled();
   });
 });
 
@@ -29,7 +29,7 @@ describe('copyFile', () => {
 
     await copyFile('/src/file.txt', '/dst/file.txt');
 
-    expect(jest.mocked(nodeFs.copyFile)).toHaveBeenCalledWith('/src/file.txt', '/dst/file.txt');
+    expect(nodeFs.copyFile).toHaveBeenCalledWith('/src/file.txt', '/dst/file.txt');
   });
 
   it('should log error when copy fails', async () => {
@@ -37,7 +37,7 @@ describe('copyFile', () => {
 
     await copyFile('/src/file.txt', '/dst/file.txt');
 
-    expect(jest.mocked(logger.error)).toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalled();
   });
 });
 
@@ -47,7 +47,7 @@ describe('mkdir', () => {
 
     await mkdir('/tmp/new-dir');
 
-    expect(jest.mocked(nodeFs.mkdir)).toHaveBeenCalledWith('/tmp/new-dir', { recursive: true });
+    expect(nodeFs.mkdir).toHaveBeenCalledWith('/tmp/new-dir', { recursive: true });
   });
 
   it('should log error when mkdir fails', async () => {
@@ -55,26 +55,26 @@ describe('mkdir', () => {
 
     await mkdir('/tmp/new-dir');
 
-    expect(jest.mocked(logger.error)).toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalled();
   });
 });
 
 describe('readFile', () => {
   it('should read file with utf8 encoding', async () => {
-    (jest.mocked(nodeFs.readFile) as unknown as jest.Mock).mockResolvedValue('file content');
+    jest.mocked(nodeFs.readFile).mockResolvedValue('file content');
 
     const result = await readFile('/tmp/file.txt');
 
-    expect(jest.mocked(nodeFs.readFile) as unknown as jest.Mock).toHaveBeenCalledWith('/tmp/file.txt', 'utf8');
+    expect(nodeFs.readFile).toHaveBeenCalledWith('/tmp/file.txt', 'utf8');
     expect(result).toBe('file content');
   });
 
   it('should log error when read fails', async () => {
-    (jest.mocked(nodeFs.readFile) as unknown as jest.Mock).mockRejectedValue(new Error('not found'));
+    jest.mocked(nodeFs.readFile).mockRejectedValue(new Error('not found'));
 
     await readFile('/tmp/file.txt');
 
-    expect(jest.mocked(logger.error)).toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalled();
   });
 });
 
@@ -84,7 +84,7 @@ describe('rm', () => {
 
     await rm('/tmp/file.txt', { force: true });
 
-    expect(jest.mocked(nodeFs.rm)).toHaveBeenCalledWith('/tmp/file.txt', { force: true });
+    expect(nodeFs.rm).toHaveBeenCalledWith('/tmp/file.txt', { force: true });
   });
 
   it('should log error when rm fails', async () => {
@@ -92,6 +92,6 @@ describe('rm', () => {
 
     await rm('/tmp/file.txt', { force: false });
 
-    expect(jest.mocked(logger.error)).toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalled();
   });
 });

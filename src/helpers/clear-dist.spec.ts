@@ -13,7 +13,7 @@ describe('createDistFolder', () => {
   it('should create the dist folder', async () => {
     await createDistFolder({ project: '.', clear: false, _: [], $0: '' });
 
-    expect(jest.mocked(mkdir)).toHaveBeenCalledWith('/project/dist/npm', { recursive: true });
+    expect(mkdir).toHaveBeenCalledWith('/project/dist/npm', { recursive: true });
   });
 
   it('should remove dist folder first when clear is true', async () => {

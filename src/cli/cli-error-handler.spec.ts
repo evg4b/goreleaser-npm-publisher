@@ -45,9 +45,9 @@ describe('handleCliError', () => {
     ] as const)('%s', (_name, err, message, expectedLog) => {
       handleCliError(message, err);
 
-      expect(jest.mocked(logger.error)).toHaveBeenCalledWith(expectedLog);
+      expect(logger.error).toHaveBeenCalledWith(expectedLog);
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(jest.mocked(process.exit)).toHaveBeenCalledWith(1);
+      expect(process.exit).toHaveBeenCalledWith(1);
     });
   });
 
@@ -55,9 +55,9 @@ describe('handleCliError', () => {
     it('should log message with ERROR prefix', () => {
       handleCliError('Command failed');
 
-      expect(jest.mocked(logger.error)).toHaveBeenCalledWith('ERROR: Command failed');
+      expect(logger.error).toHaveBeenCalledWith('ERROR: Command failed');
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(jest.mocked(process.exit)).toHaveBeenCalledWith(1);
+      expect(process.exit).toHaveBeenCalledWith(1);
     });
   });
 });

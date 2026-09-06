@@ -90,11 +90,11 @@ describe('buildHandler', () => {
   it('builds packages successfully', async () => {
     await buildHandler(makeArgs());
 
-    expect(jest.mocked(parseArtifactsFile)).toHaveBeenCalled();
-    expect(jest.mocked(parseMetadata)).toHaveBeenCalled();
-    expect(jest.mocked(mkdir)).toHaveBeenCalled();
-    expect(jest.mocked(writePackage)).toHaveBeenCalled();
-    expect(jest.mocked(writeFile)).toHaveBeenCalled();
+    expect(parseArtifactsFile).toHaveBeenCalled();
+    expect(parseMetadata).toHaveBeenCalled();
+    expect(mkdir).toHaveBeenCalled();
+    expect(writePackage).toHaveBeenCalled();
+    expect(writeFile).toHaveBeenCalled();
   });
 
   it('uses project_name as builder when builder arg is not provided', async () => {
@@ -104,37 +104,37 @@ describe('buildHandler', () => {
 
     await buildHandler(makeArgs({ builder: undefined }));
 
-    expect(jest.mocked(transformPackage)).toHaveBeenCalled();
+    expect(transformPackage).toHaveBeenCalled();
   });
 
   it('copies source artifact to package folder', async () => {
     await buildHandler(makeArgs());
 
-    expect(jest.mocked(copyFile)).toHaveBeenCalled();
+    expect(copyFile).toHaveBeenCalled();
   });
 
   it('passes prefix to formatPackageJson', async () => {
     await buildHandler(makeArgs({ prefix: '@scope' }));
 
-    expect(jest.mocked(formatPackageJson)).toHaveBeenCalledWith(expect.objectContaining({ prefix: '@scope' }));
+    expect(formatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ prefix: '@scope' }));
   });
 
   it('passes description to formatPackageJson', async () => {
     await buildHandler(makeArgs({ description: 'My tool' }));
 
-    expect(jest.mocked(formatPackageJson)).toHaveBeenCalledWith(expect.objectContaining({ description: 'My tool' }));
+    expect(formatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ description: 'My tool' }));
   });
 
   it('passes keywords to transformPackage', async () => {
     await buildHandler(makeArgs({ keywords: ['cli', 'tool'] }));
 
-    expect(jest.mocked(transformPackage)).toHaveBeenCalledWith(expect.objectContaining({ keywords: ['cli', 'tool'] }));
+    expect(transformPackage).toHaveBeenCalledWith(expect.objectContaining({ keywords: ['cli', 'tool'] }));
   });
 
   it('writes index.js shim script for main package', async () => {
     await buildHandler(makeArgs());
 
-    expect(jest.mocked(writeFile)).toHaveBeenCalledWith(
+    expect(writeFile).toHaveBeenCalledWith(
       expect.stringContaining('index.js'),
       expect.stringContaining('mapping = {"linux_x64":{"name":["tool-linux-x64"],"bin":"tool"}}'),
     );
@@ -144,7 +144,7 @@ describe('buildHandler', () => {
     jest.mocked(findFiles).mockResolvedValue(['readme.md', 'license']);
     await buildHandler(makeArgs());
 
-    expect(jest.mocked(copyFile)).toHaveBeenCalledWith(expect.any(String), expect.any(String));
+    expect(copyFile).toHaveBeenCalledWith(expect.any(String), expect.any(String));
   });
 
   it('throws when no artifacts are found', async () => {
@@ -168,14 +168,14 @@ describe('buildHandler', () => {
     await expect(buildHandler(makeArgs())).rejects.toThrow('Invalid binary artifacts');
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(jest.mocked(logger.error)).toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalled();
   });
 
   it.each(['artifact(s)', 'project_name'])('logs details containing "%s" in verbose mode', async substring => {
     await buildHandler(makeArgs({ verbose: true }));
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(jest.mocked(logger.debug)).toHaveBeenCalledWith(expect.stringContaining(substring));
+    expect(logger.debug).toHaveBeenCalledWith(expect.stringContaining(substring));
   });
 
   it('logs file details in verbose mode', async () => {
@@ -183,13 +183,13 @@ describe('buildHandler', () => {
     await buildHandler(makeArgs({ verbose: true }));
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(jest.mocked(logger.debug)).toHaveBeenCalledWith(expect.stringContaining('file'));
+    expect(logger.debug).toHaveBeenCalledWith(expect.stringContaining('file'));
   });
 
   it('builds main package with formatMainPackageJson', async () => {
     await buildHandler(makeArgs());
 
-    expect(jest.mocked(formatMainPackageJson)).toHaveBeenCalledWith(
+    expect(formatMainPackageJson).toHaveBeenCalledWith(
       expect.objectContaining({
         metadata: makeMetadata(),
       }),

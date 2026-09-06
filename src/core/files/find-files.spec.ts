@@ -10,7 +10,7 @@ describe('findFiles', () => {
 
     await findFiles('/project', ['LICENSE', 'README.md']);
 
-    expect(jest.mocked(glob)).toHaveBeenCalledWith(['LICENSE', 'README.md'], {
+    expect(glob).toHaveBeenCalledWith(['LICENSE', 'README.md'], {
       cwd: '/project',
       nocase: true,
       ignore: ['node_modules/**', 'dist/'],

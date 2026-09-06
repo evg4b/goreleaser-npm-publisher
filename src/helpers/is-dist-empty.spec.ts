@@ -3,6 +3,7 @@ import '@mocks/process';
 
 import { readdir, stat } from 'node:fs/promises';
 import { isDistEmptyCheck } from './is-dist-empty';
+import { Stats } from 'node:fs';
 
 describe('isDistEmpty', () => {
   describe('passed --clear flag', () => {
@@ -10,15 +11,13 @@ describe('isDistEmpty', () => {
       const result = await isDistEmptyCheck({ project: '.', clear: true });
 
       expect(result).toBe(true);
-      expect(jest.mocked(stat) as unknown as jest.Mock).not.toHaveBeenCalled();
+      expect(stat).not.toHaveBeenCalled();
     });
   });
 
   describe('dist folder does not exist (ENOENT)', () => {
     it('should return true', async () => {
-      (jest.mocked(stat) as unknown as jest.Mock).mockRejectedValue(
-        Object.assign(new Error('ENOENT'), { code: 'ENOENT' }),
-      );
+      jest.mocked(stat).mockRejectedValue(Object.assign(new Error('ENOENT'), { code: 'ENOENT' }));
 
       const result = await isDistEmptyCheck({ project: '.', clear: false });
 
@@ -28,11 +27,11 @@ describe('isDistEmpty', () => {
 
   describe('dist folder exists and is a directory', () => {
     beforeEach(() => {
-      (jest.mocked(stat) as unknown as jest.Mock).mockResolvedValue({ isDirectory: () => true });
+      jest.mocked(stat).mockResolvedValue({ isDirectory: () => true } as unknown as Stats);
     });
 
     it('should return true when folder is empty', async () => {
-      (jest.mocked(readdir) as unknown as jest.Mock).mockResolvedValue([]);
+      jest.mocked(readdir).mockResolvedValue([]);
 
       const result = await isDistEmptyCheck({ project: '.', clear: false });
 
@@ -40,7 +39,7 @@ describe('isDistEmpty', () => {
     });
 
     it('should return an error when folder has contents', async () => {
-      (jest.mocked(readdir) as unknown as jest.Mock).mockResolvedValue(['some-package']);
+      jest.mocked(readdir).mockResolvedValue(['some-package'] as unknown as Awaited<ReturnType<typeof readdir>>);
 
       const result = await isDistEmptyCheck({ project: '.', clear: false });
 
@@ -51,7 +50,7 @@ describe('isDistEmpty', () => {
 
   describe('dist path is not a directory', () => {
     it('should return an error', async () => {
-      (jest.mocked(stat) as unknown as jest.Mock).mockResolvedValue({ isDirectory: () => false });
+      jest.mocked(stat).mockResolvedValue({ isDirectory: () => false } as unknown as Stats);
 
       const result = await isDistEmptyCheck({ project: '.', clear: false });
 
@@ -62,7 +61,7 @@ describe('isDistEmpty', () => {
 
   describe('unexpected stat error', () => {
     it('should rethrow the error', async () => {
-      (jest.mocked(stat) as unknown as jest.Mock).mockRejectedValue(new Error('Permission denied'));
+      jest.mocked(stat).mockRejectedValue(new Error('Permission denied'));
 
       await expect(isDistEmptyCheck({ project: '.', clear: false })).rejects.toThrow('Permission denied');
     });

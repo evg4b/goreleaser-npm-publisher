@@ -9,7 +9,7 @@ describe('whoami', () => {
 
     await whoami('/tmp/pkg', { token: 'abc' });
 
-    expect(jest.mocked(npmExec)).toHaveBeenCalledWith(['whoami'], {
+    expect(npmExec).toHaveBeenCalledWith(['whoami'], {
       pwd: '/tmp/pkg',
       token: 'abc',
     });
@@ -20,7 +20,7 @@ describe('whoami', () => {
 
     await whoami();
 
-    expect(jest.mocked(npmExec)).toHaveBeenCalledWith(['whoami'], {
+    expect(npmExec).toHaveBeenCalledWith(['whoami'], {
       pwd: undefined,
       token: undefined,
     });

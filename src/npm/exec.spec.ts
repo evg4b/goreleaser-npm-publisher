@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import '@mocks/child_process';
 import '@mocks/npm/context';
 import '@mocks/os';
 
-import { spawn } from 'node:child_process';
+import { ChildProcess, spawn } from 'node:child_process';
 import { platform } from 'node:os';
 import { execInContext } from '@npm/context';
 import { npmExec } from './exec';
@@ -31,7 +30,10 @@ class ProcessMock extends FakeStream {
 }
 
 const execCommand = (processMock: ProcessMock): Promise<string> => {
-  (jest.mocked(spawn) as unknown as jest.Mock).mockReturnValue(processMock);
+  jest.mocked(spawn).mockReturnValue(processMock as unknown as ChildProcess);
+  jest.mocked(execInContext).mockImplementation(
+    (_, action) => action(process.env),
+  )
   const responsePromise = npmExec<string>(['whoami']);
   processMock.stdout.emit('data', JSON.stringify('evg4b'));
   processMock.emit('close', 0);
@@ -40,9 +42,9 @@ const execCommand = (processMock: ProcessMock): Promise<string> => {
 
 describe('exec', () => {
   beforeEach(() => {
-    (jest.mocked(execInContext) as unknown as jest.Mock).mockImplementation(
-      (_: unknown, action: (env: unknown) => unknown) => action(process.env),
-    );
+    jest
+      .mocked(execInContext)
+      .mockImplementation((_, action) => action(process.env));
   });
 
   describe('base command', () => {
@@ -66,18 +68,18 @@ describe('exec', () => {
     });
 
     it('Should executed in context', () => {
-      expect(jest.mocked(execInContext) as unknown as jest.Mock).toHaveBeenCalled();
+      expect(execInContext).toHaveBeenCalled();
     });
 
     it('Should execute with json param', () => {
-      expect((jest.mocked(spawn) as unknown as jest.Mock).mock.calls[0][1]).toContain('--json');
+      expect(jest.mocked(spawn).mock.calls[0][1]).toContain('--json');
     });
   });
 
   describe('non-zero exit code', () => {
     it('should reject with NpmExecError', async () => {
       const processMock = new ProcessMock();
-      (jest.mocked(spawn) as unknown as jest.Mock).mockReturnValue(processMock);
+      jest.mocked(spawn).mockReturnValue(processMock as unknown as ChildProcess);
       const errorBody = JSON.stringify({ error: { code: 'E403', summary: 'Forbidden', detail: 'No access' } });
       const responsePromise = npmExec<string>(['publish']);
       processMock.stdout.emit('data', errorBody);
@@ -90,22 +92,22 @@ describe('exec', () => {
   describe('depends on platform', () => {
     const platforms = ['darwin', 'linux', 'android', 'aix', 'freebsd', 'openbsd', 'sunos', 'netbsd'];
 
-    it.each(platforms)(`should use npm for %s`, platform => {
-      (jest.mocked(platform1) as unknown as jest.Mock).mockReturnValue(platform);
+    it.each(platforms)(`should use npm for %s`, platformName => {
+      jest.mocked(platform).mockReturnValue(platformName as NodeJS.Platform);
 
       const processMock = new ProcessMock();
       void execCommand(processMock);
 
-      expect((jest.mocked(spawn) as unknown as jest.Mock).mock.calls[0][0]).toEqual('npm');
+      expect(jest.mocked(spawn).mock.calls[0][0]).toEqual('npm');
     });
 
     it('should use npm.cmd', () => {
-      (jest.mocked(platform) as unknown as jest.Mock).mockReturnValue('win32');
+      jest.mocked(platform).mockReturnValue('win32');
 
       const processMock = new ProcessMock();
       void execCommand(processMock);
 
-      expect((jest.mocked(spawn) as unknown as jest.Mock).mock.calls[0][0]).toEqual('npm.cmd');
+      expect(jest.mocked(spawn).mock.calls[0][0]).toEqual('npm.cmd');
     });
   });
 });

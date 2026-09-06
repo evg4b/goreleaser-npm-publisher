@@ -93,14 +93,14 @@ describe('listHandler', () => {
   it('loads metadata and artifacts', async () => {
     await listHandler(makeArgs());
 
-    expect(jest.mocked(parseMetadata)).toHaveBeenCalled();
-    expect(jest.mocked(parseArtifactsFile)).toHaveBeenCalled();
+    expect(parseMetadata).toHaveBeenCalled();
+    expect(parseArtifactsFile).toHaveBeenCalled();
   });
 
   it('transforms artifacts into package definitions', async () => {
     await listHandler(makeArgs());
 
-    expect(jest.mocked(transformPackage)).toHaveBeenCalledWith(
+    expect(transformPackage).toHaveBeenCalledWith(
       expect.objectContaining({ artifact: makeArtifact(), metadata: makeMetadata() }),
     );
   });
@@ -112,7 +112,7 @@ describe('listHandler', () => {
 
     await listHandler(makeArgs({ builder: undefined }));
 
-    expect(jest.mocked(transformPackage)).toHaveBeenCalled();
+    expect(transformPackage).toHaveBeenCalled();
   });
 
   it('filters artifacts by builder', async () => {
@@ -122,31 +122,31 @@ describe('listHandler', () => {
 
     await listHandler(makeArgs({ builder: 'default' }));
 
-    expect(jest.mocked(transformPackage)).toHaveBeenCalledTimes(1);
+    expect(transformPackage).toHaveBeenCalledTimes(1);
   });
 
   it('passes description option to formatPackageJson', async () => {
     await listHandler(makeArgs({ description: 'My tool' }));
 
-    expect(jest.mocked(formatPackageJson)).toHaveBeenCalledWith(expect.objectContaining({ description: 'My tool' }));
+    expect(formatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ description: 'My tool' }));
   });
 
   it('passes prefix option to formatPackageJson', async () => {
     await listHandler(makeArgs({ prefix: '@scope' }));
 
-    expect(jest.mocked(formatPackageJson)).toHaveBeenCalledWith(expect.objectContaining({ prefix: '@scope' }));
+    expect(formatPackageJson).toHaveBeenCalledWith(expect.objectContaining({ prefix: '@scope' }));
   });
 
   it('passes keywords to formatMainPackageJson', async () => {
     await listHandler(makeArgs({ keywords: ['cli'] }));
 
-    expect(jest.mocked(formatMainPackageJson)).toHaveBeenCalledWith(expect.objectContaining({ keywords: ['cli'] }));
+    expect(formatMainPackageJson).toHaveBeenCalledWith(expect.objectContaining({ keywords: ['cli'] }));
   });
 
   it('logs version info for each package', async () => {
     await listHandler(makeArgs());
 
-    expect(jest.mocked(logger.info)).toHaveBeenCalledWith(expect.stringContaining('version'));
+    expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('version'));
   });
 
   it('logs optional dependencies when present', async () => {
@@ -156,7 +156,7 @@ describe('listHandler', () => {
 
     await listHandler(makeArgs());
 
-    expect(jest.mocked(logger.debug)).toHaveBeenCalledWith(expect.stringContaining('optionalDependencies'));
+    expect(logger.debug).toHaveBeenCalledWith(expect.stringContaining('optionalDependencies'));
   });
 
   it('logs description when present', async () => {
@@ -164,7 +164,7 @@ describe('listHandler', () => {
 
     await listHandler(makeArgs());
 
-    expect(jest.mocked(logger.info)).toHaveBeenCalledWith(expect.stringContaining('description'));
+    expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('description'));
   });
 
   it('logs keywords when present', async () => {
@@ -172,12 +172,12 @@ describe('listHandler', () => {
 
     await listHandler(makeArgs());
 
-    expect(jest.mocked(logger.info)).toHaveBeenCalledWith(expect.stringContaining('keywords'));
+    expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('keywords'));
   });
 
   it('logs bin path for platform packages', async () => {
     await listHandler(makeArgs());
 
-    expect(jest.mocked(logger.info)).toHaveBeenCalledWith(expect.stringContaining('bin'));
+    expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('bin'));
   });
 });

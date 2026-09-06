@@ -51,68 +51,63 @@ const makeArgs = (overrides: Partial<PublishParams> = {}): PublishParams => ({
 });
 
 describe('publishHandler', () => {
+  const dirs = (values: string[]) => values as unknown as Awaited<ReturnType<typeof readdir>>;
+
   beforeEach(() => {
     jest.mocked(buildHandler).mockResolvedValue(undefined);
-    (jest.mocked(readdir) as unknown as jest.Mock).mockResolvedValue(['tool-linux-x64', 'tool-darwin-arm64', 'tool']);
-    (jest.mocked(publish) as unknown as jest.Mock).mockResolvedValue(makePublishResponse());
+    jest.mocked(readdir).mockResolvedValue(dirs(['tool-linux-x64', 'tool-darwin-arm64', 'tool']));
+    jest.mocked(publish).mockResolvedValue(makePublishResponse());
     jest.mocked(logger.group).mockImplementation(async (_name: string, fn: () => Promise<unknown>) => fn());
   });
 
   it('calls buildHandler before publishing', async () => {
     await publishHandler(makeArgs());
 
-    expect(jest.mocked(buildHandler)).toHaveBeenCalledWith(makeArgs());
+    expect(buildHandler).toHaveBeenCalledWith(makeArgs());
   });
 
   it('reads dist directory for packages to publish', async () => {
     await publishHandler(makeArgs());
 
-    expect(jest.mocked(readdir) as unknown as jest.Mock).toHaveBeenCalledWith(mockContextInstance.distPath);
+    expect(readdir).toHaveBeenCalledWith(mockContextInstance.distPath);
   });
 
   it('publishes each package folder', async () => {
     await publishHandler(makeArgs());
 
-    expect(jest.mocked(publish) as unknown as jest.Mock).toHaveBeenCalledTimes(3);
+    expect(publish).toHaveBeenCalledTimes(3);
   });
 
   it('passes token to publish', async () => {
     await publishHandler(makeArgs({ token: 'my-token' }));
 
-    expect(jest.mocked(publish) as unknown as jest.Mock).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({ token: 'my-token' }),
-    );
+    expect(publish).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ token: 'my-token' }));
   });
 
   it('passes otp to publish', async () => {
     await publishHandler(makeArgs({ otp: '123456' }));
 
-    expect(jest.mocked(publish) as unknown as jest.Mock).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({ otp: '123456' }),
-    );
+    expect(publish).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ otp: '123456' }));
   });
 
   it('logs package folder path before publishing', async () => {
     await publishHandler(makeArgs());
 
-    expect(jest.mocked(logger.info)).toHaveBeenCalledWith(expect.stringContaining('/project/dist/npm/'));
+    expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('/project/dist/npm/'));
   });
 
   it.each(['Name:', 'Version:', 'Size:', 'Mode:'])('logs published package info containing "%s"', async label => {
     await publishHandler(makeArgs());
 
-    expect(jest.mocked(logger.info)).toHaveBeenCalledWith(expect.stringContaining(label));
+    expect(logger.info).toHaveBeenCalledWith(expect.stringContaining(label));
   });
 
   it('publishes packages sorted by name length descending', async () => {
-    (jest.mocked(readdir) as unknown as jest.Mock).mockResolvedValue(['tool', 'tool-linux-x64', 'tool-darwin-arm64']);
+    jest.mocked(readdir).mockResolvedValue(dirs(['tool', 'tool-linux-x64', 'tool-darwin-arm64']));
 
     await publishHandler(makeArgs());
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const calls = (jest.mocked(publish) as unknown as jest.Mock).mock.calls.map(call => call[0] as string);
+    const calls = jest.mocked(publish).mock.calls.map(call => call[0] as string);
     expect(calls[0]).toContain('tool-darwin-arm64');
     expect(calls[1]).toContain('tool-linux-x64');
     expect(calls[2]).toContain('tool');

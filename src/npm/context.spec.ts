@@ -20,7 +20,7 @@ describe('execInContext', () => {
 
       await execInContext({}, action);
 
-      expect(jest.mocked(writeFile)).not.toHaveBeenCalled();
+      expect(writeFile).not.toHaveBeenCalled();
     });
   });
 
@@ -43,7 +43,7 @@ describe('execInContext', () => {
 
       await execInContext({ token: 'my-token', pwd: '/tmp/project' }, action);
 
-      expect(jest.mocked(writeFile)).toHaveBeenCalledWith('/tmp/project/.npmrc', expect.stringContaining('my-token'));
+      expect(writeFile).toHaveBeenCalledWith('/tmp/project/.npmrc', expect.stringContaining('my-token'));
     });
 
     it('should remove .npmrc file after action completes', async () => {
@@ -51,7 +51,7 @@ describe('execInContext', () => {
 
       await execInContext({ token: 'my-token', pwd: '/tmp/project' }, action);
 
-      expect(jest.mocked(rm)).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
+      expect(rm).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
     });
 
     it('should remove .npmrc even when action throws', async () => {
@@ -59,7 +59,7 @@ describe('execInContext', () => {
 
       await expect(execInContext({ token: 'my-token', pwd: '/tmp/project' }, action)).rejects.toThrow('action failed');
 
-      expect(jest.mocked(rm)).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
+      expect(rm).toHaveBeenCalledWith('/tmp/project/.npmrc', { force: true });
     });
 
     it('should return action result', async () => {
