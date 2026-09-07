@@ -1,6 +1,6 @@
 import '@mocks/helpers/fs';
 
-import { readFile } from '@helpers/fs';
+import { readJson } from '@helpers/fs';
 import { parseMetadata } from './metadata';
 
 const metadataContent = `{
@@ -18,7 +18,7 @@ const metadataContent = `{
 
 describe('parseMetadata', () => {
   it('should return parsed content', async () => {
-    jest.mocked(readFile).mockResolvedValueOnce(metadataContent);
+    jest.mocked(readJson).mockResolvedValueOnce(JSON.parse(metadataContent));
 
     const artifact = await parseMetadata(`/dist/artifacts.json`);
 
@@ -37,7 +37,7 @@ describe('parseMetadata', () => {
   });
 
   it('should throw an error if the given invalid file', async () => {
-    jest.mocked(readFile).mockResolvedValueOnce(`{ "name": "test" }`);
+    jest.mocked(readJson).mockResolvedValueOnce({ name: 'test' });
 
     await expect(parseMetadata(`/dist/artifacts.json`)).rejects.toThrow(Error);
   });

@@ -14,14 +14,14 @@ interface Delivery {
   to: 'group' | 'process';
 }
 
-const signalApp = (app: RunningProcess, signal: NodeJS.Signals, to: Delivery['to']): void =>
-  to === 'group' ? app.killGroup(signal) : app.kill(signal);
-
-const itPosix = isWindows ? it.skip : it;
-
 describe('signals sent to the installed command', () => {
   const packageName = 'test-app-signals';
   let consumer: NpmProject;
+
+  const signalApp = (app: RunningProcess, signal: NodeJS.Signals, to: Delivery['to']): void =>
+    to === 'group' ? app.killGroup(signal) : app.kill(signal);
+
+  const itPosix = isWindows ? it.skip : it;
 
   const deliveries: Delivery[] = isWindows
     ? [

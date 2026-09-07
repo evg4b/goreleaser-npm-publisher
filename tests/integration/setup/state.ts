@@ -1,4 +1,4 @@
-import type { VerdaccioServer } from '../support/verdaccio';
+import type { VerdaccioServer } from '../support';
 
 export interface SetupState {
   server: VerdaccioServer;

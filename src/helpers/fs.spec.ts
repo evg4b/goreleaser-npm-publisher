@@ -3,7 +3,7 @@ import '@mocks/core/logger';
 
 import * as nodeFs from 'node:fs/promises';
 import { logger } from '@core/logger';
-import { copyFile, mkdir, readFile, rm, writeFile } from './fs';
+import { copyFile, mkdir, readFile, readJson, rm, writeFile } from './fs';
 
 describe('writeFile', () => {
   it('should write file with utf-8 encoding', async () => {
@@ -79,6 +79,20 @@ describe('readFile', () => {
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(logger.error).toHaveBeenCalled();
+  });
+});
+
+describe('readJson', () => {
+  it('should parse the file contents', async () => {
+    jest.mocked(nodeFs.readFile).mockResolvedValue('{ "name": "pkg" }');
+
+    await expect(readJson('/tmp/package.json')).resolves.toEqual({ name: 'pkg' });
+  });
+
+  it('should reject when the file is not valid json', async () => {
+    jest.mocked(nodeFs.readFile).mockResolvedValue('not json');
+
+    await expect(readJson('/tmp/package.json')).rejects.toThrow();
   });
 });
 

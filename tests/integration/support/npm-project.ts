@@ -1,9 +1,10 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { execPath } from 'node:process';
 import type { ExecResult } from './exec';
 import { runInstalledBin, runNpm } from './npm';
 import { startProcess, type RunningProcess, type StartOptions } from './running-process';
+import { readJson } from './json';
 import { createSandbox } from './workspace';
 
 export interface NpmProject {
@@ -46,7 +47,7 @@ const startInstalled = async (
 
 const readManifest = async (packagePath: string): Promise<PackageJson | undefined> => {
   try {
-    return JSON.parse(await readFile(join(packagePath, 'package.json'), 'utf8')) as PackageJson;
+    return await readJson<PackageJson>(join(packagePath, 'package.json'));
   } catch {
     return undefined;
   }

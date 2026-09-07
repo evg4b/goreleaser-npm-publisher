@@ -1,5 +1,5 @@
 import { Ajv, ValidateFunction } from 'ajv';
-import { readFile } from '@helpers/fs';
+import { readJson } from '@helpers/fs';
 import { FileFormatError } from './error';
 
 const ajv = new Ajv();
@@ -91,7 +91,7 @@ export const validateBinaryArtifact: ValidateFunction<BinaryArtifact[]> = ajv.co
 });
 
 export const parseArtifactsFile = async (path: string): Promise<Artifact[]> => {
-  const artifacts: unknown = JSON.parse(await readFile(path));
+  const artifacts = await readJson(path);
 
   if (validate(artifacts)) {
     return artifacts;

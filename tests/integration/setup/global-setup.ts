@@ -1,11 +1,7 @@
+import { exportEnvironment, cliPath, createUser, writeNpmrc, startVerdaccio, createWorkspace } from '../support';
 import { access } from 'node:fs/promises';
-import { join } from 'node:path';
-import { exportEnvironment } from '../support/environment';
-import { cliPath } from '../support/paths';
-import { createUser, writeNpmrc } from '../support/registry';
-import { startVerdaccio } from '../support/verdaccio';
-import { createWorkspace } from '../support/workspace';
 import { rememberSetup } from './state';
+import { join } from 'node:path';
 
 export default async (): Promise<void> => {
   await assertCliIsBuilt();

@@ -2,6 +2,7 @@ export * from './environment';
 export * from './exec';
 export * from './goreleaser-project';
 export * from './http';
+export * from './json';
 export * from './npm';
 export * from './npm-project';
 export * from './paths';

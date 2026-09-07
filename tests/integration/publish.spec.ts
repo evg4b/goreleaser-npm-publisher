@@ -1,18 +1,18 @@
 import {
   createGoreleaserProject,
+  type ExecResult,
   fixtureTargets,
   getManifest,
   getPackument,
+  type GoreleaserProject,
   integrationEnvironment,
   publishProject,
   targetPackageName,
-  type ExecResult,
-  type GoreleaserProject,
 } from '@integration/support';
 
-const packageName = 'test-app-publish';
-
 describe('publish command', () => {
+  const packageName = 'test-app-publish';
+
   const { registryUrl } = integrationEnvironment();
   let project: GoreleaserProject;
   let result: ExecResult;

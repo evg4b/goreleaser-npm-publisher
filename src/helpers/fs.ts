@@ -29,6 +29,8 @@ export const readFile = (path: string): Promise<string> =>
     .then(tap(() => logger.debug(`Read file ${path}`)))
     .catch(logAndRethrow(`Error while reading file ${path}`));
 
+export const readJson = async <T = unknown>(path: string): Promise<T> => JSON.parse(await readFile(path)) as T;
+
 export const rm = (path: string, options: RmOptions): Promise<void> =>
   rmFn(path, options)
     .then(tap(() => logger.debug(`Removed ${path}`)))

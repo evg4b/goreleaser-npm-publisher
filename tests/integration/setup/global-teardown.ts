@@ -1,5 +1,5 @@
 import { env } from 'node:process';
-import { removeWorkspace } from '../support/workspace';
+import { removeWorkspace } from '../support';
 import { takeSetup } from './state';
 
 const KEEP_WORKSPACE = 'INTEGRATION_KEEP_WORKSPACE';

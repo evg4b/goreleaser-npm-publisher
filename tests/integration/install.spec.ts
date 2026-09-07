@@ -2,21 +2,22 @@ import {
   createGoreleaserProject,
   createNpmProject,
   currentFixtureTarget,
+  type ExecResult,
   foreignFixtureTarget,
+  type GoreleaserProject,
+  type NpmProject,
   output,
   publishProject,
   targetPackageName,
-  type ExecResult,
-  type GoreleaserProject,
-  type NpmProject,
 } from '@integration/support';
 
-const packageName = 'test-app-install';
-const expectedGreeting = 'Ba dum, tss!';
-
 describe('installing a published package', () => {
+  const packageName = 'test-app-install';
+  const expectedGreeting = 'Ba dum, tss!';
+
   const currentTarget = currentFixtureTarget();
   const foreignTarget = foreignFixtureTarget();
+
   let project: GoreleaserProject;
   let consumer: NpmProject;
   let installation: ExecResult;

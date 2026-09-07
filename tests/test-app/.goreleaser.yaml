@@ -26,7 +26,7 @@ builds:
     goarch:
       - arm64
       - amd64
-      - "386"
+      - '386'
 
 archives:
   - formats: [tar.gz]
@@ -47,8 +47,8 @@ changelog:
   sort: asc
   filters:
     exclude:
-      - "^docs:"
-      - "^test:"
+      - '^docs:'
+      - '^test:'
 
 release:
   footer: >-

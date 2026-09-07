@@ -1,9 +1,9 @@
-import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import {
   createGoreleaserProject,
   createSandbox,
   listProject,
+  readJson,
   repositoryRoot,
   runPublisher,
   type GoreleaserProject,
@@ -31,7 +31,7 @@ describe('command line interface', () => {
   });
 
   it('prints the version of the package', async () => {
-    const manifest = JSON.parse(await readFile(join(repositoryRoot, 'package.json'), 'utf8')) as PackageJson;
+    const manifest = await readJson<PackageJson>(join(repositoryRoot, 'package.json'));
 
     const result = await runPublisher(['--version']);
 
