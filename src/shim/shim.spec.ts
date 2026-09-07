@@ -6,6 +6,8 @@ import { dirname, join } from 'node:path';
 const currentPlatform = `${process.platform}_${process.arch}`;
 
 class FakeChildProcess {
+  public readonly kill = jest.fn();
+
   private readonly handlers = new Map<string, (...args: unknown[]) => void>();
 
   public on(event: string, callback: (...args: unknown[]) => void): this {
@@ -71,6 +73,46 @@ describe('shim', () => {
       child.emit('exit', 42);
 
       expect(exitSpy).toHaveBeenCalledWith(42);
+    } finally {
+      exitSpy.mockRestore();
+    }
+  });
+
+  it.each<NodeJS.Signals>(['SIGTERM', 'SIGHUP'])('forwards %s to the binary', async signal => {
+    const onSpy = jest.spyOn(process, 'on');
+    try {
+      const child = await runShim({ [currentPlatform]: { name: ['typescript'], bin: 'tool' } });
+      const handler = onSpy.mock.calls.find(([event]) => event === signal)?.[1];
+      handler?.(signal);
+
+      expect(child.kill).toHaveBeenCalledWith(signal);
+    } finally {
+      onSpy.mockRestore();
+    }
+  });
+
+  // The terminal raises it for the binary too, and a second copy would look like a second Ctrl+C.
+  it('listens for SIGINT without passing it on', async () => {
+    const onSpy = jest.spyOn(process, 'on');
+    try {
+      const child = await runShim({ [currentPlatform]: { name: ['typescript'], bin: 'tool' } });
+      const handler = onSpy.mock.calls.find(([event]) => event === 'SIGINT')?.[1];
+      handler?.('SIGINT');
+
+      expect(child.kill).not.toHaveBeenCalled();
+    } finally {
+      onSpy.mockRestore();
+    }
+  });
+
+  it('reports a binary killed by a signal as 128 + the signal number', async () => {
+    const exitSpy = jest.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
+    try {
+      const child = await runShim({ [currentPlatform]: { name: ['typescript'], bin: 'tool' } });
+
+      child.emit('exit', null, 'SIGINT');
+
+      expect(exitSpy).toHaveBeenCalledWith(130);
     } finally {
       exitSpy.mockRestore();
     }
