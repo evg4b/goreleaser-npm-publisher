@@ -12,7 +12,6 @@ export interface ProcessExit {
 }
 
 export interface StartOptions {
-  /** Puts the process in its own group, so a test can signal the group the way a terminal does. */
   ownProcessGroup?: boolean;
 }
 
@@ -20,7 +19,6 @@ export interface RunningProcess {
   readonly output: () => string;
   readonly waitForOutput: (text: string) => Promise<void>;
   readonly kill: (signal: NodeJS.Signals) => void;
-  /** Signals every process in the group, as pressing Ctrl+C in a terminal does. */
   readonly killGroup: (signal: NodeJS.Signals) => void;
   readonly exited: () => Promise<ProcessExit>;
 }
@@ -47,7 +45,6 @@ export const startProcess = (
   const exited = new Promise<ProcessExit>(resolve => {
     child.once('exit', (code, signal) => {
       finished = true;
-      // Waiting for 'close' would hang whenever a surviving grandchild still holds the pipes.
       void Promise.race([once(child, 'close'), delay(CLOSE_GRACE_MS)]).then(() => resolve({ code, signal }));
     });
   });

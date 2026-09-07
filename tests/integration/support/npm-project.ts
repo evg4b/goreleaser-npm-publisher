@@ -28,8 +28,6 @@ export const createNpmProject = async (name: string): Promise<NpmProject> => {
   };
 };
 
-// Runs the package bin through node rather than the .bin shim, so the signals a test sends reach
-// the shim itself instead of a cmd.exe wrapper on Windows.
 const startInstalled = async (
   path: string,
   name: string,

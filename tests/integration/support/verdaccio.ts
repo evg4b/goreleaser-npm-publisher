@@ -45,7 +45,6 @@ const writeConfig = async (root: string): Promise<string> => {
   return configPath;
 };
 
-// Without uplinks the registry never reaches npmjs.org, so a test can only install what it published.
 const config = (root: string): string => `
 storage: ${JSON.stringify(join(root, 'storage'))}
 auth:
@@ -109,7 +108,6 @@ const stop = async (server: ChildProcess): Promise<void> => {
 
   const exited = new Promise<void>(resolve => server.once('exit', () => resolve()));
   server.kill();
-  // A pending timer would keep Jest alive for as long, so it goes as soon as the registry is gone.
   const forceKill = setTimeout(() => server.kill('SIGKILL'), STOP_TIMEOUT_MS);
   try {
     await exited;

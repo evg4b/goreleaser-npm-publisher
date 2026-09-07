@@ -36,8 +36,6 @@ export const npmExec = async <T>(args: string[], options?: NpmExecContext): Prom
   );
 };
 
-// Windows needs a shell to run npm.cmd, and an args array alongside it is deprecated (DEP0190):
-// Node would hand them to cmd.exe concatenated and unescaped, so they are quoted here.
 const commandLine = (bin: string, args: string[]): string => [bin, ...args.map(quoteArg)].join(' ');
 
 const quoteArg = (arg: string): string => (/[\s"]/.test(arg) ? `"${arg.replaceAll('"', '""')}"` : arg);

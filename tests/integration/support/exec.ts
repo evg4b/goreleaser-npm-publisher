@@ -49,7 +49,6 @@ const formatFailure = (result: ExecResult): string =>
     .filter(part => part.trim().length > 0)
     .join('\n');
 
-// An args array alongside `shell` is deprecated (DEP0190): it reaches cmd.exe unescaped.
 const commandLine = (command: string, args: string[]): string => [command, ...args].map(quote).join(' ');
 
 const quote = (value: string): string => (/[\s"]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value);

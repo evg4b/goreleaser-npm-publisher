@@ -91,7 +91,6 @@ describe('shim', () => {
     }
   });
 
-  // The terminal raises it for the binary too, and a second copy would look like a second Ctrl+C.
   it('listens for SIGINT without passing it on', async () => {
     const onSpy = jest.spyOn(process, 'on');
     try {

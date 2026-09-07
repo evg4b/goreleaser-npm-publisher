@@ -5,7 +5,6 @@ export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
   resolver: './tools/jest.resolver.cjs',
-  // Integration tests have their own config: they need a built CLI and a registry.
   testPathIgnorePatterns: ['/node_modules/', '<rootDir>/tests/integration/'],
   moduleNameMapper: {
     '^@core/(.*)$': '<rootDir>/src/core/$1',

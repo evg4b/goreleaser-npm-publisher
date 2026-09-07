@@ -103,7 +103,6 @@ describe('exec', () => {
       const processMock = new ProcessMock();
       void execCommand(processMock);
 
-      // An args array alongside `shell` is deprecated (DEP0190), so everything is one command line.
       expect(jest.mocked(spawn).mock.calls[0][0]).toEqual('npm.cmd --json whoami');
       expect(jest.mocked(spawn).mock.calls[0][1]).toMatchObject({ shell: true });
     });

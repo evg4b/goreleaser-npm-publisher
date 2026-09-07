@@ -9,9 +9,7 @@ export const PREFIX = 'inline-compiled:';
  * together with every file that went into it (for watch mode invalidation).
  *
  * `options` may override the defaults below, but never the ones that make the
- * result inlineable: a single in-memory output with no sourcemap alongside it,
- * and a CJS script, as the inlined shim ships as a bare `.js` file that calls
- * `require.resolve`.
+ * result inlineable: a single in-memory output with no sourcemap alongside it.
  */
 export const compile = (entryPoint, options = {}) => {
   const result = buildSync({

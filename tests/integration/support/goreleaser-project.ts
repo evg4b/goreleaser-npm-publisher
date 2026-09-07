@@ -7,13 +7,9 @@ export interface GoreleaserProject {
   readonly path: string;
   readonly packageName: string;
   readonly version: string;
-  /** Folders the build wrote into dist/npm, sorted. */
   readonly builtPackages: () => Promise<string[]>;
-  /** Manifest the build generated for one of those folders. */
   readonly builtManifest: (folder: string) => Promise<PackageJson>;
-  /** Reads any file of a built package, e.g. its shim or a file copied into it. */
   readonly builtFile: (folder: string, ...parts: string[]) => Promise<string>;
-  /** Adds a file to the project root, for the --files globs to pick up. */
   readonly addFile: (name: string, content: string) => Promise<void>;
 }
 

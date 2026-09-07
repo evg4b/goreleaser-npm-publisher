@@ -23,10 +23,6 @@ describe('signals sent to the installed command', () => {
   const packageName = 'test-app-signals';
   let consumer: NpmProject;
 
-  // Windows cannot deliver a signal to another process: kill() is TerminateProcess there, so the
-  // binary traps nothing and only the signals node can actually send are worth sending. Elsewhere
-  // each signal is delivered the way it really arrives: a terminal signals the whole process group,
-  // anything else names one process.
   const deliveries: Delivery[] = isWindows
     ? [
         { signal: 'SIGINT', to: 'process' },
@@ -55,7 +51,6 @@ describe('signals sent to the installed command', () => {
     }
   });
 
-  // Registering a signal libuv cannot handle throws, which would break the command on startup.
   it('runs the binary with the signal handlers installed', async () => {
     const execution = await consumer.run(packageName);
 
@@ -70,18 +65,15 @@ describe('signals sent to the installed command', () => {
     const exit = await app.exited();
 
     if (isWindows) {
-      // kill() is TerminateProcess: node records the signal it asked for, the binary never sees it.
       expect(exit).toEqual({ code: null, signal });
       expect(app.output()).not.toContain('received');
       return;
     }
 
-    // The binary traps the signal, reports it by number and exits 7, which the wrapper passes on.
     expect(exit).toEqual({ code: 7, signal: null });
     expect(app.output()).toContain(`received ${constants.signals[signal]}`);
   });
 
-  // A terminal signals the wrapper and the binary at once, so forwarding lands a second copy.
   itPosix.each<NodeJS.Signals>(['SIGINT', 'SIGQUIT'])('delivers %s to the binary exactly once', async signal => {
     const app = await consumer.start(packageName, ['wait'], { ownProcessGroup: true });
     await app.waitForOutput('ready');

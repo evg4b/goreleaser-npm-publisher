@@ -12,7 +12,6 @@ import {
 } from '@integration/support';
 
 const packageName = 'test-app-install';
-// `tests/test-app` greets through Go's builtin `println`, which writes to stderr.
 const expectedGreeting = 'Ba dum, tss!';
 
 describe('installing a published package', () => {

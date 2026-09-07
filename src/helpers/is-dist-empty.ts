@@ -3,8 +3,6 @@ import { Context } from '@core/gorealiser';
 
 type IsDistEmptyParams = Pick<ListParams, 'project'> & { clear: boolean };
 
-// Throws rather than returns: as a yargs middleware a returned error was merged into argv, so a
-// build silently wrote over the previous one and publish then pushed whatever it found.
 export const assertDistIsEmpty = async (argv: IsDistEmptyParams): Promise<void> => {
   if (argv.clear) {
     return;

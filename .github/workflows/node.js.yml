@@ -45,7 +45,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        # 22.14.0 is the last release without process.execve, which arrived in 22.15.0 and 23.11.0.
         node: ['latest', '22.14.0']
     steps:
       - uses: actions/checkout@v7

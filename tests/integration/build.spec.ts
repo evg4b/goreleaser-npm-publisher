@@ -3,7 +3,6 @@ import { buildProject, createGoreleaserProject, fixtureTargets, type GoreleaserP
 describe('build command', () => {
   const packageName = 'test-app-build';
   const mainPackage = packageName;
-  // Platform folders keep the goreleaser target, kebab-cased; only the main package follows --name.
   const platformPackage = 'test-app-linux-amd-64-v-1';
 
   const buildFixture = async (args: string[] = []): Promise<GoreleaserProject> => {
@@ -157,7 +156,6 @@ describe('build command', () => {
       expect(result.code).toBe(0);
       expect((await project.builtFile(mainPackage, 'README.md')).trim()).toBe('# test-app');
       expect((await project.builtFile(platformPackage, 'LICENSE')).trim()).toBe('MIT');
-      // Case follows the glob or the filesystem entry, depending on how the platform matches.
       const files = (await project.builtManifest(mainPackage)).files.map(file => file.toLowerCase());
       expect(files.toSorted()).toEqual(['license', 'readme.md']);
     });

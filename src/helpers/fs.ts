@@ -34,7 +34,6 @@ export const rm = (path: string, options: RmOptions): Promise<void> =>
     .then(tap(() => logger.debug(`Removed ${path}`)))
     .catch(logAndRethrow(`Error while removing ${path}`));
 
-// Logging alone would resolve the promise with the error, handing it on as if it were the content.
 const logAndRethrow =
   (message: string) =>
   (error: unknown): never => {

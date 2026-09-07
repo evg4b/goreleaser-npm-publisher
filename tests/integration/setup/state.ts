@@ -9,7 +9,6 @@ interface IntegrationGlobals {
   __integrationSetup__?: SetupState;
 }
 
-// Global setup and teardown share the Jest main process, but not a module registry.
 const globals = globalThis as typeof globalThis & IntegrationGlobals;
 
 export const rememberSetup = (state: SetupState): void => {

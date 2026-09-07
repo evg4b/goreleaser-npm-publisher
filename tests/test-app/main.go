@@ -8,10 +8,8 @@ import (
 	"time"
 )
 
-// Bounds the lifetime of the waiting modes: on Windows a terminated wrapper orphans its binary.
 const idleTimeout = 2 * time.Minute
 
-// Long enough for a second delivery of the same signal to show up, short enough not to drag.
 const settleDelay = 300 * time.Millisecond
 
 func main() {
@@ -34,8 +32,6 @@ func command() string {
 	return os.Args[1]
 }
 
-// Reports every signal it is sent by number, so a test can compare them with os.constants.signals
-// and see whether one arrived twice.
 func waitForSignal() {
 	received := make(chan os.Signal, 8)
 	signal.Notify(received, trappedSignals...)
