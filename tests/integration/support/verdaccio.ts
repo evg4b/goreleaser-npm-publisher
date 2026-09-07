@@ -1,16 +1,16 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { execPath } from 'node:process';
 import { setTimeout as delay } from 'node:timers/promises';
 import { httpRequest } from './http';
-import { verdaccioBinPath } from './paths';
 
 const READY_TIMEOUT_MS = 60_000;
 const POLL_INTERVAL_MS = 250;
 const STOP_TIMEOUT_MS = 10_000;
-const LOG_TAIL_LINES = 40;
+
+const verdaccioBinPath = join(dirname(require.resolve('verdaccio/package.json')), 'bin', 'verdaccio');
 
 export interface VerdaccioServer {
   readonly url: string;
@@ -68,16 +68,13 @@ log:
 `;
 
 const collectLog = (server: ChildProcess): (() => string) => {
-  const lines: string[] = [];
-  const append = (chunk: Buffer) => {
-    lines.push(...chunk.toString('utf8').split(/\r?\n/));
-    lines.splice(0, Math.max(0, lines.length - LOG_TAIL_LINES));
-  };
+  let log = '';
+  const append = (chunk: Buffer) => (log += chunk.toString('utf8'));
 
   server.stdout?.on('data', append);
   server.stderr?.on('data', append);
 
-  return () => lines.join('\n').trim();
+  return () => log.trim();
 };
 
 const waitForReady = async (url: string, server: ChildProcess, log: () => string): Promise<void> => {

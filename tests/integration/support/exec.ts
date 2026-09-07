@@ -44,7 +44,7 @@ export const execOrFail = async (command: string, args: string[], options: ExecO
 
 export const output = (result: ExecResult): string => `${result.stdout}${result.stderr}`;
 
-export const formatFailure = (result: ExecResult): string =>
+const formatFailure = (result: ExecResult): string =>
   [`Command failed (exit code ${result.code ?? 'null'}): ${result.command}`, result.stdout, result.stderr]
     .filter(part => part.trim().length > 0)
     .join('\n');

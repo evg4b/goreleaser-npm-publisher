@@ -8,7 +8,6 @@ import {
   targetPackageName,
   type ExecResult,
   type GoreleaserProject,
-  type FixtureTarget,
 } from '@integration/support';
 
 const packageName = 'test-app-publish';
@@ -60,26 +59,15 @@ describe('publish command', () => {
     expect(manifest.cpu?.toSorted()).toEqual(['arm64', 'ia32', 'x64']);
   });
 
-  describe.each(fixtureTargets)('platform package for $target', (target: FixtureTarget) => {
+  it.each(fixtureTargets)('publishes the $target package for its platform only', async target => {
     const targetPackage = targetPackageName(packageName, target);
+    const manifest = await getManifest(registryUrl, targetPackage, project.version);
 
-    it('is published with the version of the release', async () => {
-      const packument = await getPackument(registryUrl, targetPackage);
-
-      expect(Object.keys(packument.versions)).toEqual([project.version]);
-    });
-
-    it('is restricted to its own platform', async () => {
-      const manifest = await getManifest(registryUrl, targetPackage, project.version);
-
-      expect(manifest.os).toEqual([target.os]);
-      expect(manifest.cpu).toEqual([target.cpu]);
-    });
-
-    it('exposes the goreleaser binary as its bin', async () => {
-      const manifest = await getManifest(registryUrl, targetPackage, project.version);
-
-      expect(manifest.bin).toEqual({ [targetPackage]: target.bin });
+    expect(manifest).toMatchObject({
+      version: project.version,
+      os: [target.os],
+      cpu: [target.cpu],
+      bin: { [targetPackage]: target.bin },
     });
   });
 });

@@ -7,7 +7,7 @@ const npmCommand = isWindows ? 'npm.cmd' : 'npm';
 export const runNpm = (args: string[], cwd: string): Promise<ExecResult> =>
   execOrFail(npmCommand, args, { cwd, env: npmEnvironment(), shell: isWindows });
 
-export const installedBinPath = (name: string, cwd: string): string =>
+const installedBinPath = (name: string, cwd: string): string =>
   join(cwd, 'node_modules', '.bin', isWindows ? `${name}.cmd` : name);
 
 export const runInstalledBin = (name: string, args: string[], cwd: string): Promise<ExecResult> =>
