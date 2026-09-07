@@ -1,10 +1,10 @@
-import { join, sep } from 'node:path';
+import { join } from 'node:path';
 import { parse as parsePath } from 'node:path';
 import { findFiles, parseArtifactsFile, parseMetadata, validateBinaryArtifact, writePackage } from '@core/files';
 import { Context } from '@core/gorealiser';
 import { logger } from '@core/logger';
 import { formatMainPackageJson, formatPackageJson, pickRepositoryParams, transformPackage } from '@core/package';
-import { assertNotEmpty, binArtifactPredicate } from '@helpers';
+import { artifactFolder, assertDistIsEmpty, assertNotEmpty, binArtifactPredicate } from '@helpers';
 import { copyFile, mkdir, writeFile } from '@helpers/fs';
 import { ActionType } from './models';
 import { buildShimScript } from '@shim';
@@ -18,6 +18,7 @@ const copyPackageFiles = async (context: Context, name: string, files: string[])
 };
 
 export const buildHandler: ActionType<BuildParams> = async args => {
+  await assertDistIsEmpty(args);
   const context = new Context(args.project);
   logger.debug(`Start build package in ${context.project()}`);
 
@@ -71,7 +72,7 @@ export const buildHandler: ActionType<BuildParams> = async args => {
   const repository = pickRepositoryParams(args);
 
   for (const artifact of binaryArtifacts) {
-    const [, pathItem] = artifact.path.split(sep);
+    const pathItem = artifactFolder(artifact.path);
     await logger.group(`Built package ${pathItem}`, async () => {
       const sourceArtifactPath = join(args.project, artifact.path);
       const { base } = parsePath(artifact.path);

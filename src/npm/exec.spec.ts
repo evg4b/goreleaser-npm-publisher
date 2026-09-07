@@ -31,9 +31,7 @@ class ProcessMock extends FakeStream {
 
 const execCommand = (processMock: ProcessMock): Promise<string> => {
   jest.mocked(spawn).mockReturnValue(processMock as unknown as ChildProcess);
-  jest.mocked(execInContext).mockImplementation(
-    (_, action) => action(process.env),
-  )
+  jest.mocked(execInContext).mockImplementation((_, action) => action(process.env));
   const responsePromise = npmExec<string>(['whoami']);
   processMock.stdout.emit('data', JSON.stringify('evg4b'));
   processMock.emit('close', 0);
@@ -42,9 +40,7 @@ const execCommand = (processMock: ProcessMock): Promise<string> => {
 
 describe('exec', () => {
   beforeEach(() => {
-    jest
-      .mocked(execInContext)
-      .mockImplementation((_, action) => action(process.env));
+    jest.mocked(execInContext).mockImplementation((_, action) => action(process.env));
   });
 
   describe('base command', () => {
@@ -101,13 +97,25 @@ describe('exec', () => {
       expect(jest.mocked(spawn).mock.calls[0][0]).toEqual('npm');
     });
 
-    it('should use npm.cmd', () => {
+    it('should use a quoted npm.cmd command line', () => {
       jest.mocked(platform).mockReturnValue('win32');
 
       const processMock = new ProcessMock();
       void execCommand(processMock);
 
-      expect(jest.mocked(spawn).mock.calls[0][0]).toEqual('npm.cmd');
+      // An args array alongside `shell` is deprecated (DEP0190), so everything is one command line.
+      expect(jest.mocked(spawn).mock.calls[0][0]).toEqual('npm.cmd --json whoami');
+      expect(jest.mocked(spawn).mock.calls[0][1]).toMatchObject({ shell: true });
+    });
+
+    it('should quote arguments passed through the windows shell', () => {
+      jest.mocked(platform).mockReturnValue('win32');
+
+      const processMock = new ProcessMock();
+      jest.mocked(spawn).mockReturnValue(processMock as unknown as ChildProcess);
+      void npmExec<string>(['publish', '--otp', 'one time pass']);
+
+      expect(jest.mocked(spawn).mock.calls[0][0]).toEqual('npm.cmd --json publish --otp "one time pass"');
     });
   });
 });
