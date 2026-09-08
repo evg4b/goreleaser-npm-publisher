@@ -1,12 +1,11 @@
 import {
-  createGoreleaserProject,
+  createProject,
   type ExecResult,
   fixtureTargets,
   getManifest,
   getPackument,
   type GoreleaserProject,
   integrationEnvironment,
-  publishProject,
   targetPackageName,
 } from '@integration/support';
 
@@ -18,8 +17,8 @@ describe('publish command', () => {
   let result: ExecResult;
 
   beforeAll(async () => {
-    project = await createGoreleaserProject(packageName);
-    result = await publishProject(project);
+    project = await createProject(packageName);
+    result = await project.publish();
   });
 
   it('exits successfully', () => {

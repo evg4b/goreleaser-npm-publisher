@@ -19,11 +19,15 @@ the test itself.
 
 ## Layout
 
-| Path        | Contents                                                              |
-| ----------- | --------------------------------------------------------------------- |
-| `setup/`    | Jest global setup and teardown: the registry shared by all test files |
-| `support/`  | Harness: registry, project fixture, CLI runner, npm sandbox           |
-| `*.spec.ts` | The flows under test                                                  |
+| Path                     | Contents                                                       |
+| ------------------------ | -------------------------------------------------------------- |
+| `setup/`                 | Jest global setup and teardown: the registry every file shares |
+| `support/environment.ts` | Paths, and the configuration the workers inherit               |
+| `support/process.ts`     | Running commands: one-shot, long-lived, and npm                |
+| `support/registry.ts`    | The private registry: starting it, and talking to it           |
+| `support/project.ts`     | The sandboxes a test works in, and the CLI it runs on them     |
+| `support/targets.ts`     | The goreleaser targets the fixture was built for               |
+| `*.spec.ts`              | The flows under test                                           |
 
 Each test publishes under its own package name into its own sandbox, so test files stay independent.
 

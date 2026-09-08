@@ -1,11 +1,10 @@
 import { join } from 'node:path';
 import {
-  createGoreleaserProject,
+  createProject,
   createSandbox,
-  listProject,
   readJson,
+  runCli,
   repositoryRoot,
-  runPublisher,
   type GoreleaserProject,
 } from '@integration/support';
 
@@ -13,18 +12,18 @@ describe('command line interface', () => {
   let project: GoreleaserProject;
 
   beforeAll(async () => {
-    project = await createGoreleaserProject('test-app-cli');
+    project = await createProject('test-app-cli');
   });
 
   it('asks for a command when invoked without arguments', async () => {
-    const result = await runPublisher([]);
+    const result = await runCli([]);
 
     expect(result.code).toBe(1);
     expect(result.stderr).toContain('You need at least one command');
   });
 
   it('rejects an unknown command', async () => {
-    const result = await runPublisher(['bogus']);
+    const result = await runCli(['bogus']);
 
     expect(result.code).toBe(1);
     expect(result.stderr).toContain('Unknown command: bogus');
@@ -33,13 +32,13 @@ describe('command line interface', () => {
   it('prints the version of the package', async () => {
     const manifest = await readJson<PackageJson>(join(repositoryRoot, 'package.json'));
 
-    const result = await runPublisher(['--version']);
+    const result = await runCli(['--version']);
 
     expect({ code: result.code, version: result.stdout.trim() }).toEqual({ code: 0, version: manifest.version });
   });
 
   it('documents every command in the help', async () => {
-    const result = await runPublisher(['--help']);
+    const result = await runCli(['--help']);
 
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('list');
@@ -50,14 +49,14 @@ describe('command line interface', () => {
   it('reports the file it could not read when the project has no goreleaser output', async () => {
     const empty = await createSandbox('not-a-project');
 
-    const result = await runPublisher(['build', '--project', empty]);
+    const result = await runCli(['build', '--project', empty]);
 
     expect(result.code).toBe(1);
     expect(result.stderr).toContain('artifacts.json');
   });
 
   it('reports a builder that produced no binaries', async () => {
-    const result = await runPublisher(['build', '--project', project.path, '--builder', 'missing-builder']);
+    const result = await runCli(['build', '--project', project.path, '--builder', 'missing-builder']);
 
     expect(result.code).toBe(1);
     expect(result.stderr).toContain('missing-builder');
@@ -65,7 +64,7 @@ describe('command line interface', () => {
 
   describe('list', () => {
     it('describes the main package and every platform package', async () => {
-      const result = await listProject(project);
+      const result = await project.list();
 
       expect(result.code).toBe(0);
       expect(result.stdout).toContain(`test-app@${project.version}`);
@@ -75,24 +74,24 @@ describe('command line interface', () => {
     });
 
     it('points at the binary each platform package would ship', async () => {
-      const result = await listProject(project);
+      const result = await project.list();
 
       expect(result.stdout).toContain(join(project.path, 'dist', 'test-app_linux_amd64_v1', 'test-app'));
     });
 
     it('applies the name and prefix the packages would be published under', async () => {
-      const result = await listProject(project, ['--name', 'renamed', '--prefix', '@scope']);
+      const result = await project.list(['--name', 'renamed', '--prefix', '@scope']);
 
       expect(result.stdout).toContain(`@scope/renamed@${project.version}`);
       expect(result.stdout).toContain(`@scope/renamed_darwin_arm64@${project.version}`);
     });
 
     it('writes nothing into the project', async () => {
-      const untouched = await createGoreleaserProject('test-app-list');
+      const untouched = await createProject('test-app-list');
 
-      await listProject(untouched);
+      await untouched.list();
 
-      await expect(untouched.builtPackages()).rejects.toThrow();
+      await expect(untouched.packages()).rejects.toThrow();
     });
   });
 });

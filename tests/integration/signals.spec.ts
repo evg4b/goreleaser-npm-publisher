@@ -1,11 +1,10 @@
 import { constants } from 'node:os';
 import {
-  createGoreleaserProject,
-  createNpmProject,
+  createProject,
+  createConsumer,
   isWindows,
   type NpmProject,
   output,
-  publishProject,
   type RunningProcess,
 } from '@integration/support';
 
@@ -38,13 +37,13 @@ describe('signals sent to the installed command', () => {
       ];
 
   beforeAll(async () => {
-    const project = await createGoreleaserProject(packageName);
-    const publication = await publishProject(project);
+    const project = await createProject(packageName);
+    const publication = await project.publish();
     if (publication.code !== 0) {
       throw new Error(`Publishing the fixture failed:\n${publication.stdout}\n${publication.stderr}`);
     }
 
-    consumer = await createNpmProject('signal-consumer');
+    consumer = await createConsumer('signal-consumer');
     const installation = await consumer.install(`${packageName}@${project.version}`);
     if (installation.code !== 0) {
       throw new Error(`Installing the fixture failed:\n${installation.stdout}\n${installation.stderr}`);

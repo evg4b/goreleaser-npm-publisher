@@ -1,13 +1,12 @@
 import {
-  createGoreleaserProject,
-  createNpmProject,
+  createProject,
+  createConsumer,
   currentFixtureTarget,
   type ExecResult,
   foreignFixtureTarget,
   type GoreleaserProject,
   type NpmProject,
   output,
-  publishProject,
   targetPackageName,
 } from '@integration/support';
 
@@ -23,13 +22,13 @@ describe('installing a published package', () => {
   let installation: ExecResult;
 
   beforeAll(async () => {
-    project = await createGoreleaserProject(packageName);
-    const publication = await publishProject(project);
+    project = await createProject(packageName);
+    const publication = await project.publish();
     if (publication.code !== 0) {
       throw new Error(`Publishing the fixture failed:\n${publication.stdout}\n${publication.stderr}`);
     }
 
-    consumer = await createNpmProject('consumer');
+    consumer = await createConsumer('consumer');
     installation = await consumer.install(`${packageName}@${project.version}`);
   });
 
@@ -38,19 +37,19 @@ describe('installing a published package', () => {
   });
 
   it('installs the main package', async () => {
-    const manifest = await consumer.installedManifest(packageName);
+    const manifest = await consumer.manifest(packageName);
 
     expect(manifest?.version).toBe(project.version);
   });
 
   it('installs the platform package of the current machine', async () => {
-    const manifest = await consumer.installedManifest(targetPackageName(packageName, currentTarget));
+    const manifest = await consumer.manifest(targetPackageName(packageName, currentTarget));
 
     expect(manifest?.version).toBe(project.version);
   });
 
   it('skips platform packages of other operating systems', async () => {
-    const manifest = await consumer.installedManifest(targetPackageName(packageName, foreignTarget));
+    const manifest = await consumer.manifest(targetPackageName(packageName, foreignTarget));
 
     expect(manifest).toBeUndefined();
   });
