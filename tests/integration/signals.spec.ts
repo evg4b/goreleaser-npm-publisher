@@ -5,6 +5,7 @@ import {
   isWindows,
   type NpmProject,
   output,
+  type ProcessExit,
   type RunningProcess,
 } from '@integration/support';
 
@@ -13,7 +14,13 @@ interface Delivery {
   to: 'group' | 'process';
 }
 
-describe.skip('signals sent to the installed command', () => {
+/** With execve the binary owns the pid, so it dies by the signal itself; the fallback relays the shell convention. */
+const killedBy = (signal: NodeJS.Signals): ProcessExit =>
+  typeof process.execve === 'function'
+    ? { code: null, signal }
+    : { code: 128 + constants.signals[signal], signal: null };
+
+describe('signals sent to the installed command', () => {
   const packageName = 'test-app-signals';
   let consumer: NpmProject;
 
@@ -83,12 +90,12 @@ describe.skip('signals sent to the installed command', () => {
     expect(app.output()).toContain('total 1');
   });
 
-  itPosix('exits with 128 + the signal the binary was killed by', async () => {
+  itPosix('reports the signal an untrapped binary was killed by', async () => {
     const app = await consumer.start(packageName, ['sleep']);
     await app.waitForOutput('ready');
 
     app.kill('SIGTERM');
 
-    expect(await app.exited()).toEqual({ code: 128 + constants.signals.SIGTERM, signal: null });
+    expect(await app.exited()).toEqual(killedBy('SIGTERM'));
   });
 });
