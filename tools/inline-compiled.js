@@ -8,7 +8,7 @@ export const PREFIX = 'inline-compiled:';
  * The inlined module runs on the machines the published packages are installed on, not on the one that builds them,
  * so it is compiled for the node the generated package.json asks for rather than for the node this build targets.
  */
-export const TARGET = 'node18.4';
+export const TARGET = 'node14.18';
 
 /**
  * Bundles `entryPoint` into a standalone CJS script and returns its source

@@ -5,10 +5,10 @@ import { normalizeOS } from './os';
 import { formatRepository } from './repository';
 
 /**
- * The oldest node the shim of the main package runs on: it needs the `constants` of `node:fs/promises`, everything
- * else it uses is older. The publisher itself asks for more, see the `engines` of its own package.json.
+ * The oldest node the shim of the main package runs on: the release that added the `node:` import prefix, which is
+ * the newest thing left in it. The publisher itself asks for more, see the `engines` of its own package.json.
  */
-export const SHIM_ENGINES: Record<string, string> = { node: '>=18.4.0' };
+export const SHIM_ENGINES: Record<string, string> = { node: '>=14.18.0' };
 
 export const transformPackage = (params: TransformPackageParams): PackageDefinition => {
   const { artifact, metadata, name, files, keywords, license } = params;

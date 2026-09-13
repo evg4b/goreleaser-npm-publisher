@@ -13,6 +13,10 @@ describe('canExecve', () => {
     expect(access).toHaveBeenCalledWith('/bin/tool', constants.X_OK);
   });
 
+  it('asks for the executable bit with the value node gives it', () => {
+    expect(constants.X_OK).toBe(1);
+  });
+
   it('is false on node versions and platforms without process.execve', async () => {
     withoutExecve();
 

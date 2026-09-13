@@ -41,7 +41,7 @@ describe('build command', () => {
     });
 
     it('states the node the shim needs on the main package only', async () => {
-      expect((await project.manifest(mainPackage)).engines).toEqual({ node: '>=18.4.0' });
+      expect((await project.manifest(mainPackage)).engines).toEqual({ node: '>=14.18.0' });
       expect((await project.manifest(platformPackage)).engines).toBeUndefined();
     });
 
