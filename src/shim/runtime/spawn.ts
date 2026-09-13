@@ -1,6 +1,7 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { constants, platform } from 'node:os';
 import process from 'node:process';
+import { fail } from './fail';
 
 /** Sent to the whole process group by the terminal, so the binary already got them. */
 const GROUP_SIGNALS: NodeJS.Signals[] = ['SIGINT', 'SIGQUIT'];
@@ -11,6 +12,7 @@ const RELAYED_SIGNALS: NodeJS.Signals[] = ['SIGTERM', 'SIGHUP', 'SIGUSR1', 'SIGU
 export const runWithSpawn = (binary: string, args: string[], env: NodeJS.ProcessEnv): void => {
   const child = spawn(binary, args, { stdio: 'inherit', env });
 
+  child.on('error', error => fail(`Failed to spawn ${binary}: ${error.message}`));
   trapSignals(child);
   child.on('exit', (code, signal) => process.exit(exitCode(code, signal)));
 };

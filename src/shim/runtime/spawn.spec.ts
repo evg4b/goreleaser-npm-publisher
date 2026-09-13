@@ -1,33 +1,48 @@
+jest.mock('./fail', () => ({
+  fail: jest.fn().mockName('fail'),
+}));
+
 import '@mocks/os';
 import { FakeChildProcess, mockChildProcess } from '@mocks/child_process';
+import { mockExit, ProcessExited } from '@mocks/exit';
 
 import { spawn } from 'node:child_process';
 import { platform } from 'node:os';
 import process from 'node:process';
+import { fail } from './fail';
 import { runWithSpawn } from './spawn';
 
-const spyOnExit = () => jest.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
 const spyOnOn = () => jest.spyOn(process, 'on').mockReturnValue(process);
 
 describe('runWithSpawn', () => {
   const env = { PATH: '/usr/bin' };
 
   let child: FakeChildProcess;
-  let exit: ReturnType<typeof spyOnExit>;
   let on: ReturnType<typeof spyOnOn>;
 
   beforeEach(() => {
     child = mockChildProcess();
-    exit = spyOnExit();
+    mockExit();
     on = spyOnOn();
   });
 
-  afterEach(() => {
-    exit.mockRestore();
-    on.mockRestore();
-  });
+  afterEach(() => on.mockRestore());
 
   const run = (): void => runWithSpawn('/bin/tool', [], env);
+
+  const exitWith = (code: number | null, signal: NodeJS.Signals | null): number => {
+    try {
+      child.emit('exit', code, signal);
+    } catch (error) {
+      if (error instanceof ProcessExited) {
+        return error.code;
+      }
+
+      throw error;
+    }
+
+    throw new Error('The shim kept running after the binary exited');
+  };
 
   const raise = (signal: NodeJS.Signals): void => {
     const handler = on.mock.calls.find(([event]) => event === signal)?.[1];
@@ -47,25 +62,19 @@ describe('runWithSpawn', () => {
   it('propagates the exit code of the binary', () => {
     run();
 
-    child.emit('exit', 42, null);
-
-    expect(exit).toHaveBeenCalledWith(42);
+    expect(exitWith(42, null)).toBe(42);
   });
 
   it('exits with 0 when the binary reports no exit code', () => {
     run();
 
-    child.emit('exit', null, null);
-
-    expect(exit).toHaveBeenCalledWith(0);
+    expect(exitWith(null, null)).toBe(0);
   });
 
   it('reports a binary killed by a signal as 128 + the signal number', () => {
     run();
 
-    child.emit('exit', null, 'SIGINT');
-
-    expect(exit).toHaveBeenCalledWith(130);
+    expect(exitWith(null, 'SIGINT')).toBe(130);
   });
 
   it.each<NodeJS.Signals>(['SIGTERM', 'SIGHUP', 'SIGUSR1', 'SIGUSR2'])('relays %s to the binary', signal => {
@@ -82,6 +91,14 @@ describe('runWithSpawn', () => {
     raise(signal);
 
     expect(child.kill).not.toHaveBeenCalled();
+  });
+
+  it('reports a binary that cannot be started', () => {
+    run();
+
+    child.emit('error', new Error('spawn EACCES'));
+
+    expect(fail).toHaveBeenCalledWith('Failed to spawn /bin/tool: spawn EACCES');
   });
 
   it('traps no signals on windows, where the shim cannot relay them', () => {

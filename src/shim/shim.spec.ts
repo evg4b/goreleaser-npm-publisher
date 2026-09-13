@@ -1,5 +1,7 @@
+import '@mocks/fs';
 import { mockChildProcess } from '@mocks/child_process';
 import { mockExecve, withoutExecve } from '@mocks/execve';
+import { mockExit, ProcessExited } from '@mocks/exit';
 
 import { spawn } from 'node:child_process';
 import { dirname, join } from 'node:path';
@@ -31,12 +33,19 @@ const spyOnOn = () => jest.spyOn(process, 'on').mockReturnValue(process);
 
 describe('shim', () => {
   let on: ReturnType<typeof spyOnOn>;
+  let error: jest.SpyInstance;
 
-  beforeEach(() => (on = spyOnOn()));
+  beforeEach(() => {
+    on = spyOnOn();
+    error = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+  });
 
-  afterEach(() => on.mockRestore());
+  afterEach(() => {
+    on.mockRestore();
+    error.mockRestore();
+  });
 
-  describe('where execve is supported', () => {
+  describe('where execve can run the binary', () => {
     it('replaces itself with the binary of the package matching the current platform', () => {
       const execve = mockExecve();
 
@@ -55,7 +64,7 @@ describe('shim', () => {
     });
   });
 
-  describe('where execve is not supported', () => {
+  describe('where execve is not available', () => {
     beforeEach(withoutExecve);
 
     it('runs the binary as a child process', () => {
@@ -70,7 +79,11 @@ describe('shim', () => {
 
   it('fails when no package matches the current platform', () => {
     const foreign = { ...packageFor('typescript', 'tool'), os: 'sunos' as OS };
+    const exit = mockExit();
 
-    expect(() => runShim([foreign])).toThrow();
+    expect(() => runShim([foreign])).toThrow(ProcessExited);
+
+    expect(error).toHaveBeenCalledWith(`Unsupported platform: ${platform}_${arch}. Supported: sunos_${arch}`);
+    expect(exit).toHaveBeenCalledWith(1);
   });
 });
