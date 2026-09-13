@@ -5,16 +5,22 @@ import { resolve } from 'node:path';
 export const PREFIX = 'inline-compiled:';
 
 /**
+ * The inlined module runs on the machines the published packages are installed on, not on the one that builds them,
+ * so it is compiled for the node the generated package.json asks for rather than for the node this build targets.
+ */
+export const TARGET = 'node18.4';
+
+/**
  * Bundles `entryPoint` into a standalone CJS script and returns its source
  * together with every file that went into it (for watch mode invalidation).
  *
- * `options` may override the defaults below, but never the ones that make the
+ * `options` may not override the node target, nor the settings that make the
  * result inlineable: a single in-memory output with no sourcemap alongside it.
  */
 export const compile = (entryPoint, options = {}) => {
   const result = buildSync({
-    target: 'node16',
     ...options,
+    target: TARGET,
     format: 'cjs',
     platform: 'node',
     entryPoints: [entryPoint],
