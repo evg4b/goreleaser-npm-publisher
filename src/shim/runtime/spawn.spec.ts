@@ -96,6 +96,12 @@ describe('runWithSpawn', () => {
     expect(exitWith(null, 'SIGINT')).toBe(130);
   });
 
+  it('exits with 128 when the platform does not know the signal the binary died of', () => {
+    run();
+
+    expect(exitWith(null, 'SIGUNKNOWN' as NodeJS.Signals)).toBe(128);
+  });
+
   it.each<NodeJS.Signals>(['SIGTERM', 'SIGHUP', 'SIGUSR1', 'SIGUSR2', 'SIGALRM', 'SIGABRT'])(
     'relays %s to the binary',
     signal => {

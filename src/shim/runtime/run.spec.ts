@@ -1,6 +1,6 @@
 jest.mock('./execve', () => ({
   canExecve: jest.fn().mockName('canExecve'),
-  runWithExecve: jest.fn().mockName('runWithExecve'),
+  runWithExecve: jest.fn().mockName('runWithExecve').mockReturnValue(true),
 }));
 
 jest.mock('./spawn', () => ({
@@ -21,6 +21,15 @@ describe('run', () => {
 
     expect(runWithExecve).toHaveBeenCalledWith('/bin/tool', ['--flag'], env);
     expect(runWithSpawn).not.toHaveBeenCalled();
+  });
+
+  it('falls back to a child process when the platform refuses the handover', async () => {
+    jest.mocked(canExecve).mockResolvedValue(true);
+    jest.mocked(runWithExecve).mockReturnValue(false);
+
+    await run('/bin/tool', ['--flag'], env);
+
+    expect(runWithSpawn).toHaveBeenCalledWith('/bin/tool', ['--flag'], env);
   });
 
   it('falls back to a child process when execve cannot', async () => {
