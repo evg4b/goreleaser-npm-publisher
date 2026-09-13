@@ -12,7 +12,7 @@ export default defineConfig(options => ({
   },
   splitting: false,
   sourcemap: !isProd,
-  target: 'node14',
+  target: 'node20.19',
   minify: isProd,
   outDir: 'dist',
   format: 'cjs',
