@@ -33,7 +33,8 @@
       "@npm/*": ["src/npm/*"],
       "@commands/*": ["src/commands/*"],
       "@shim": ["src/shim"],
-      "@mocks/*": ["tests/mocks/*"]
+      "@mocks/*": ["tests/mocks/*"],
+      "@integration/*": ["tests/integration/*"]
     }
   },
   "include": ["src/**/*.ts", "src/types/*.d.ts"],

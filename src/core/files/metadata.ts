@@ -1,5 +1,5 @@
 import { Ajv, ValidateFunction } from 'ajv';
-import { readFile } from '@helpers/fs';
+import { readJson } from '@helpers/fs';
 import { FileFormatError } from './error';
 
 const validate: ValidateFunction<Metadata> = new Ajv().compile({
@@ -40,7 +40,7 @@ const validate: ValidateFunction<Metadata> = new Ajv().compile({
 });
 
 export const parseMetadata = async (path: string): Promise<Metadata> => {
-  const metadata: unknown = JSON.parse(await readFile(path));
+  const metadata = await readJson(path);
 
   if (validate(metadata)) {
     return metadata;

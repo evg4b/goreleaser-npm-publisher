@@ -7,18 +7,17 @@ import { type ErrorResponse, type NpmExecContext } from './models';
 
 export const npmExec = async <T>(args: string[], options?: NpmExecContext): Promise<T> => {
   const isWindows = platform() === 'win32';
-  const npmBin = isWindows ? 'npm.cmd' : 'npm';
   const context = options ?? {};
+  const command = ['--json', ...args];
 
   return execInContext<T>(
     context,
     env =>
       new Promise((resolve, reject) => {
-        const npmProcess = spawn(npmBin, ['--json', ...args], {
-          cwd: options?.pwd ?? cwd(),
-          env: env,
-          shell: isWindows,
-        });
+        const spawnOptions = { cwd: options?.pwd ?? cwd(), env: env };
+        const npmProcess = isWindows
+          ? spawn(commandLine('npm.cmd', command), { ...spawnOptions, shell: true })
+          : spawn('npm', command, spawnOptions); // NOSONAR: the publisher runs the user's own npm
 
         let stdout = '';
         let stderr = '';
@@ -36,3 +35,7 @@ export const npmExec = async <T>(args: string[], options?: NpmExecContext): Prom
       }),
   );
 };
+
+const commandLine = (bin: string, args: string[]): string => [bin, ...args.map(quoteArg)].join(' ');
+
+const quoteArg = (arg: string): string => (/[\s"]/.test(arg) ? `"${arg.replaceAll('"', '""')}"` : arg);

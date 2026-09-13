@@ -1,4 +1,4 @@
-import { binArtifactPredicate } from './artifacts';
+import { artifactFolder, binArtifactPredicate } from './artifacts';
 
 describe('artifacts', () => {
   const artifacts: Artifact[] = [
@@ -106,5 +106,18 @@ describe('artifacts', () => {
         type: 'Binary',
       } as BinaryArtifact,
     ]);
+  });
+});
+
+describe('artifactFolder', () => {
+  it.each([
+    ['dist/tool_linux_amd64_v1/tool', 'tool_linux_amd64_v1'],
+    ['dist\\tool_windows_amd64_v1\\tool.exe', 'tool_windows_amd64_v1'],
+  ])('should detect the target folder of %s', (path, expected) => {
+    expect(artifactFolder(path)).toBe(expected);
+  });
+
+  it.each(['tool', '', 'dist/'])('should throw when %p has no target folder', path => {
+    expect(() => artifactFolder(path)).toThrow(`Could not detect the target folder of the artifact ${path}`);
   });
 });

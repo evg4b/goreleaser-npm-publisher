@@ -1,5 +1,5 @@
 import '@mocks/commands/build';
-import '@mocks/fs-promises';
+import '@mocks/fs/promises';
 import '@mocks/npm';
 import '@mocks/core/logger';
 import '@mocks/core/gorealiser';
