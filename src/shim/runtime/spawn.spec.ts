@@ -13,20 +13,30 @@ import { fail } from './fail';
 import { runWithSpawn } from './spawn';
 
 const spyOnOn = () => jest.spyOn(process, 'on').mockReturnValue(process);
+const spyOnKill = () => jest.spyOn(process, 'kill').mockReturnValue(true);
+const spyOnRemoveAllListeners = () => jest.spyOn(process, 'removeAllListeners').mockReturnValue(process);
 
 describe('runWithSpawn', () => {
   const env = { PATH: '/usr/bin' };
 
   let child: FakeChildProcess;
   let on: ReturnType<typeof spyOnOn>;
+  let kill: ReturnType<typeof spyOnKill>;
+  let removeAllListeners: ReturnType<typeof spyOnRemoveAllListeners>;
 
   beforeEach(() => {
     child = mockChildProcess();
     mockExit();
     on = spyOnOn();
+    kill = spyOnKill();
+    removeAllListeners = spyOnRemoveAllListeners();
   });
 
-  afterEach(() => on.mockRestore());
+  afterEach(() => {
+    on.mockRestore();
+    kill.mockRestore();
+    removeAllListeners.mockRestore();
+  });
 
   const run = (): void => runWithSpawn('/bin/tool', [], env);
 
@@ -71,18 +81,47 @@ describe('runWithSpawn', () => {
     expect(exitWith(null, null)).toBe(0);
   });
 
-  it('reports a binary killed by a signal as 128 + the signal number', () => {
+  it('re-raises the signal that killed the binary, so the shim dies of it too', () => {
+    run();
+
+    expect(() => child.emit('exit', null, 'SIGINT')).toThrow(ProcessExited);
+
+    expect(removeAllListeners).toHaveBeenCalledWith('SIGINT');
+    expect(kill).toHaveBeenCalledWith(process.pid, 'SIGINT');
+  });
+
+  it('exits with 128 + the signal number when re-raising leaves the shim running', () => {
     run();
 
     expect(exitWith(null, 'SIGINT')).toBe(130);
   });
 
-  it.each<NodeJS.Signals>(['SIGTERM', 'SIGHUP', 'SIGUSR1', 'SIGUSR2'])('relays %s to the binary', signal => {
+  it.each<NodeJS.Signals>(['SIGTERM', 'SIGHUP', 'SIGUSR1', 'SIGUSR2', 'SIGALRM', 'SIGABRT'])(
+    'relays %s to the binary',
+    signal => {
+      run();
+
+      raise(signal);
+
+      expect(child.kill).toHaveBeenCalledWith(signal);
+    },
+  );
+
+  it.each<NodeJS.Signals>(['SIGKILL', 'SIGSTOP', 'SIGCHLD', 'SIGSEGV', 'SIGWINCH', 'SIGTSTP', 'SIGCONT'])(
+    'leaves %s to node',
+    signal => {
+      run();
+
+      expect(on).not.toHaveBeenCalledWith(signal, expect.anything());
+    },
+  );
+
+  it('relays an alias such as SIGIOT only once', () => {
     run();
 
-    raise(signal);
+    const abort = on.mock.calls.filter(([event]) => event === 'SIGABRT' || event === 'SIGIOT');
 
-    expect(child.kill).toHaveBeenCalledWith(signal);
+    expect(abort).toHaveLength(1);
   });
 
   it.each<NodeJS.Signals>(['SIGINT', 'SIGQUIT'])('traps %s without passing it on', signal => {

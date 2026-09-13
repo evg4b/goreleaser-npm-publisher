@@ -1,6 +1,6 @@
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-import { constants, tmpdir } from 'node:os';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { arch, execPath, platform } from 'node:process';
 import { buildShimScript } from './build-shim-script';
@@ -18,16 +18,23 @@ const PACKAGE = 'tool-native';
 const BIN = 'tool';
 
 interface Outcome {
-  /** Exit code as a shell reports it: 128 + the signal number when killed. */
   status: number | null;
+  signal: NodeJS.Signals | null;
   stdout: string;
   stderr: string;
 }
 
 interface Shim {
+  directory: string;
   install: (script: string, options?: { executable?: boolean }) => void;
   run: (args?: string[]) => Outcome;
   start: () => ChildProcess;
+}
+
+interface Scenario {
+  binary?: { body: string; executable?: boolean };
+  packages?: PackageDefinition[];
+  args?: string[];
 }
 
 const packageFor = (overrides: Partial<PackageDefinition> = {}): PackageDefinition => ({
@@ -57,6 +64,7 @@ const createShim = (execve: boolean, packages = [packageFor()], prefix?: string)
   const command = (args: string[]): [string, string[]] => [execPath, [runner, shim, ...args]];
 
   return {
+    directory,
     install: (script, { executable = true } = {}) => {
       const packagePath = join(directory, 'node_modules', ...[prefix, PACKAGE].filter(part => part != null));
       mkdirSync(packagePath, { recursive: true });
@@ -68,11 +76,7 @@ const createShim = (execve: boolean, packages = [packageFor()], prefix?: string)
       const [file, argv] = command(args);
       const result = spawnSync(file, argv, { encoding: 'utf8', env });
 
-      return {
-        status: result.signal ? 128 + constants.signals[result.signal] : result.status,
-        stdout: result.stdout,
-        stderr: result.stderr,
-      };
+      return { status: result.status, signal: result.signal, stdout: result.stdout, stderr: result.stderr };
     },
     start: () => {
       const [file, argv] = command([]);
@@ -101,9 +105,11 @@ posixOnly('generated shim', () => {
       const shim = createShim(execve);
       shim.install(script('echo "args:$*"'));
 
-      expect(shim.run(['--flag', 'value with space'])).toMatchObject({
+      expect(shim.run(['--flag', 'value with space'])).toEqual({
         status: 0,
+        signal: null,
         stdout: 'args:--flag value with space\n',
+        stderr: '',
       });
     });
 
@@ -121,29 +127,34 @@ posixOnly('generated shim', () => {
       expect(shim.run().status).toBe(17);
     });
 
-    it('relays death by a signal as 128 + the signal number', () => {
+    it('dies of the signal the binary died of', () => {
       const shim = createShim(execve);
       shim.install(script('kill -TERM $$'));
 
-      expect(shim.run().status).toBe(128 + constants.signals.SIGTERM);
+      expect(shim.run()).toMatchObject({ status: null, signal: 'SIGTERM' });
     });
 
-    it('delivers a signal sent to the shim to the binary', async () => {
-      const shim = createShim(execve);
-      shim.install(script("trap 'echo caught; exit 42' TERM\necho ready\nwhile true; do sleep 0.05; done"));
+    it.each<NodeJS.Signals>(['SIGTERM', 'SIGHUP', 'SIGUSR1', 'SIGALRM'])(
+      'delivers %s sent to the shim to the binary',
+      async signal => {
+        const shim = createShim(execve);
+        shim.install(
+          script(`trap 'echo caught; exit 42' ${signal.slice(3)}\necho ready\nwhile true; do sleep 0.05; done`),
+        );
 
-      const app = shim.start();
-      let stdout = '';
-      app.stdout?.on('data', (chunk: Buffer) => {
-        stdout += chunk.toString();
-        if (stdout.includes('ready')) {
-          app.kill('SIGTERM');
-        }
-      });
-      const status = await new Promise(resolve => app.on('exit', resolve));
+        const app = shim.start();
+        let stdout = '';
+        app.stdout?.on('data', (chunk: Buffer) => {
+          stdout += chunk.toString();
+          if (stdout.includes('ready')) {
+            app.kill(signal);
+          }
+        });
+        const status = await new Promise(resolve => app.on('exit', resolve));
 
-      expect({ status, stdout }).toEqual({ status: 42, stdout: 'ready\ncaught\n' });
-    });
+        expect({ status, stdout }).toEqual({ status: 42, stdout: 'ready\ncaught\n' });
+      },
+    );
 
     it('reports a platform the tool was not published for', () => {
       const shim = createShim(execve, [packageFor({ os: 'sunos', cpu: 'mips' as CPU })]);
@@ -171,6 +182,32 @@ posixOnly('generated shim', () => {
 
       expect(outcome.status).toBe(1);
       expect(outcome.stderr).toContain('Failed to spawn ');
+    });
+  });
+
+  describe('runs a binary the same way through execve and through the fallback', () => {
+    const scenarios: [name: string, scenario: Scenario][] = [
+      ['output and exit code', { binary: { body: 'echo out; echo err >&2; exit 17' }, args: ['--flag', 'a b'] }],
+      ['the name it was started under', { binary: { body: 'basename "$0"' } }],
+      ['death by a signal', { binary: { body: 'kill -TERM $$' } }],
+      ['a binary that cannot be executed', { binary: { body: 'exit 0', executable: false } }],
+      ['a package that is not installed', {}],
+      ['a platform the tool was not published for', { packages: [packageFor({ os: 'sunos', cpu: 'mips' as CPU })] }],
+    ];
+
+    const outcomeOf = ({ binary, packages, args }: Scenario, execve: boolean): Outcome => {
+      const shim = createShim(execve, packages);
+      if (binary) {
+        shim.install(script(binary.body), binary);
+      }
+
+      const outcome = shim.run(args);
+
+      return { ...outcome, stderr: outcome.stderr.replaceAll(shim.directory, '<shim>') };
+    };
+
+    it.each(scenarios)('%s', (_name, scenario) => {
+      expect(outcomeOf(scenario, false)).toEqual(outcomeOf(scenario, true));
     });
   });
 
