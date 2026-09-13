@@ -1,29 +1,28 @@
-import '@mocks/fs';
+import '@mocks/fs/access';
 import { mockExecve, withoutExecve } from '@mocks/execve';
 
-import { accessSync, constants } from 'node:fs';
+import { access, constants } from 'node:fs/promises';
 import { canExecve, runWithExecve } from './execve';
 
 describe('canExecve', () => {
   beforeEach(() => mockExecve());
 
-  it('is true when node exposes process.execve and the binary is executable', () => {
-    expect(canExecve('/bin/tool')).toBe(true);
-    expect(accessSync).toHaveBeenCalledWith('/bin/tool', constants.X_OK);
+  it('is true when node exposes process.execve and the binary is executable', async () => {
+    await expect(canExecve('/bin/tool')).resolves.toBe(true);
+
+    expect(access).toHaveBeenCalledWith('/bin/tool', constants.X_OK);
   });
 
-  it('is false on node versions and platforms without process.execve', () => {
+  it('is false on node versions and platforms without process.execve', async () => {
     withoutExecve();
 
-    expect(canExecve('/bin/tool')).toBe(false);
+    await expect(canExecve('/bin/tool')).resolves.toBe(false);
   });
 
-  it('is false when the binary is not executable, which would abort the shim', () => {
-    jest.mocked(accessSync).mockImplementation(() => {
-      throw new Error('EACCES');
-    });
+  it('is false when the binary is not executable, which would abort the shim', async () => {
+    jest.mocked(access).mockRejectedValue(new Error('EACCES'));
 
-    expect(canExecve('/bin/tool')).toBe(false);
+    await expect(canExecve('/bin/tool')).resolves.toBe(false);
   });
 });
 

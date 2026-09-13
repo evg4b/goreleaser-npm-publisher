@@ -5,4 +5,4 @@ import { resolveBinary, run } from './runtime';
 // noinspection UnnecessaryLocalVariableJS
 const mapping: Mapping = __INLINE_MAPPING__;
 
-run(resolveBinary(mapping, platform + '_' + arch), argv.slice(2), env);
+void run(resolveBinary(mapping, platform + '_' + arch), argv.slice(2), env);
