@@ -31,7 +31,7 @@ jobs:
       - name: Build code
         run: yarn run build
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with: &build-artifact
           name: package-build
           path: dist/
@@ -61,7 +61,7 @@ jobs:
       - name: Test code
         run: yarn test
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with: &test-coverage-artifact
           name: test-coverage
           path: coverage/
@@ -76,11 +76,11 @@ jobs:
       - *install-dependencies
 
       - name: Download package build
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with: *build-artifact
 
       - name: Download test coverage
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with: *test-coverage-artifact
 
       - name: SonarQube Scan
@@ -109,7 +109,7 @@ jobs:
       - *install-dependencies
 
       - name: Download package build
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with: *build-artifact
 
       - name: Run integration tests
@@ -123,7 +123,7 @@ jobs:
       - *node-setup
 
       - name: Download package build
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with: *build-artifact
 
       - run: npm publish
