@@ -1,4 +1,9 @@
-type Mapping = Record<string, { name: string[]; bin: string }>;
+interface PlatformBinary {
+  name: string[];
+  bin: string;
+}
+
+type Mapping = Record<string, PlatformBinary | undefined>;
 declare const __INLINE_MAPPING__: Mapping;
 declare type InlineMappingPlaceholder = '__INLINE_MAPPING__';
 
