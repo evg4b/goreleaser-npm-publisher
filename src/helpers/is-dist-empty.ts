@@ -3,30 +3,28 @@ import { Context } from '@core/gorealiser';
 
 type IsDistEmptyParams = Pick<ListParams, 'project'> & { clear: boolean };
 
-export const isDistEmptyCheck = async (argv: IsDistEmptyParams) => {
+export const assertDistIsEmpty = async (argv: IsDistEmptyParams): Promise<void> => {
   if (argv.clear) {
-    return true;
+    return;
   }
 
   const context = new Context(argv.project);
   try {
     const folderStats = await stat(context.distPath);
     if (!folderStats.isDirectory()) {
-      return new Error('The dist folder is not a directory, check the path and try again');
+      throw new Error('The dist folder is not a directory, check the path and try again');
     }
 
     const folderContents = await readdir(context.distPath);
-    if (folderContents.length === 0) {
-      return true;
+    if (folderContents.length > 0) {
+      throw new Error('The dist folder is not empty, use --clear to clear it before building the project');
     }
-
-    return new Error('The dist folder is not empty, use --clear to clear it before building the project');
   } catch (error) {
     // @ts-expect-error error in fs/promises is not typed
     if ('code' in error && error.code === 'ENOENT') {
-      return true;
-    } else {
-      throw error;
+      return;
     }
+
+    throw error;
   }
 };

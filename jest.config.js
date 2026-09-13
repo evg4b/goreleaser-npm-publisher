@@ -5,6 +5,7 @@ export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
   resolver: './tools/jest.resolver.cjs',
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/tests/integration/'],
   moduleNameMapper: {
     '^@core/(.*)$': '<rootDir>/src/core/$1',
     '^@helpers/(.*)$': '<rootDir>/src/helpers/$1',

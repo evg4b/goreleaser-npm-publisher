@@ -1,27 +1,23 @@
-import '@mocks/fs-promises';
+import '@mocks/fs/promises';
 import '@mocks/process';
 
 import { readdir, stat } from 'node:fs/promises';
-import { isDistEmptyCheck } from './is-dist-empty';
 import { Stats } from 'node:fs';
+import { assertDistIsEmpty } from './is-dist-empty';
 
-describe('isDistEmpty', () => {
+describe('assertDistIsEmpty', () => {
   describe('passed --clear flag', () => {
-    it('should return true without checking filesystem', async () => {
-      const result = await isDistEmptyCheck({ project: '.', clear: true });
-
-      expect(result).toBe(true);
+    it('should pass without checking filesystem', async () => {
+      await expect(assertDistIsEmpty({ project: '.', clear: true })).resolves.toBeUndefined();
       expect(stat).not.toHaveBeenCalled();
     });
   });
 
   describe('dist folder does not exist (ENOENT)', () => {
-    it('should return true', async () => {
+    it('should pass', async () => {
       jest.mocked(stat).mockRejectedValue(Object.assign(new Error('ENOENT'), { code: 'ENOENT' }));
 
-      const result = await isDistEmptyCheck({ project: '.', clear: false });
-
-      expect(result).toBe(true);
+      await expect(assertDistIsEmpty({ project: '.', clear: false })).resolves.toBeUndefined();
     });
   });
 
@@ -30,32 +26,24 @@ describe('isDistEmpty', () => {
       jest.mocked(stat).mockResolvedValue({ isDirectory: () => true } as unknown as Stats);
     });
 
-    it('should return true when folder is empty', async () => {
+    it('should pass when folder is empty', async () => {
       jest.mocked(readdir).mockResolvedValue([]);
 
-      const result = await isDistEmptyCheck({ project: '.', clear: false });
-
-      expect(result).toBe(true);
+      await expect(assertDistIsEmpty({ project: '.', clear: false })).resolves.toBeUndefined();
     });
 
-    it('should return an error when folder has contents', async () => {
+    it('should throw when folder has contents', async () => {
       jest.mocked(readdir).mockResolvedValue(['some-package'] as unknown as Awaited<ReturnType<typeof readdir>>);
 
-      const result = await isDistEmptyCheck({ project: '.', clear: false });
-
-      expect(result).toBeInstanceOf(Error);
-      expect((result as Error).message).toContain('not empty');
+      await expect(assertDistIsEmpty({ project: '.', clear: false })).rejects.toThrow('not empty');
     });
   });
 
   describe('dist path is not a directory', () => {
-    it('should return an error', async () => {
+    it('should throw', async () => {
       jest.mocked(stat).mockResolvedValue({ isDirectory: () => false } as unknown as Stats);
 
-      const result = await isDistEmptyCheck({ project: '.', clear: false });
-
-      expect(result).toBeInstanceOf(Error);
-      expect((result as Error).message).toContain('not a directory');
+      await expect(assertDistIsEmpty({ project: '.', clear: false })).rejects.toThrow('not a directory');
     });
   });
 
@@ -63,7 +51,7 @@ describe('isDistEmpty', () => {
     it('should rethrow the error', async () => {
       jest.mocked(stat).mockRejectedValue(new Error('Permission denied'));
 
-      await expect(isDistEmptyCheck({ project: '.', clear: false })).rejects.toThrow('Permission denied');
+      await expect(assertDistIsEmpty({ project: '.', clear: false })).rejects.toThrow('Permission denied');
     });
   });
 });

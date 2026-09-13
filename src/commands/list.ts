@@ -17,7 +17,7 @@ const formatPackage = async (context: Context, json: PackageJson, pkg?: PackageD
     logger.info(`os: ${json.os.join(', ')}`);
     logger.info(`cpu: ${json.cpu.join(', ')}`);
     if (pkg) {
-      logger.info(`bin: ${context.packageFolder(pkg.sourceBinary)}`);
+      logger.info(`bin: ${context.project(pkg.sourceBinary)}`);
     }
     if (json.optionalDependencies) {
       logger.debug('  optionalDependencies:');

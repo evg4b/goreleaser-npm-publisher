@@ -13,10 +13,10 @@ export const PREFIX = 'inline-compiled:';
  */
 export const compile = (entryPoint, options = {}) => {
   const result = buildSync({
-    format: 'cjs',
-    platform: 'node',
     target: 'node16',
     ...options,
+    format: 'cjs',
+    platform: 'node',
     entryPoints: [entryPoint],
     bundle: true,
     write: false,

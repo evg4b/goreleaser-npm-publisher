@@ -133,3 +133,5 @@ dist
 !.yarn/sdks
 !.yarn/versions
 .DS_Store
+
+!tests/test-app/dist

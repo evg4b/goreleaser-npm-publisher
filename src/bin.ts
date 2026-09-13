@@ -22,7 +22,7 @@ import {
   tokenOption,
   verboseOption,
 } from './cli';
-import { createDistFolder, isDistEmptyCheck } from '@helpers';
+import { createDistFolder } from '@helpers';
 
 setLogger(new ConsoleLogger());
 
@@ -70,7 +70,7 @@ Promise.resolve(
           .then(verboseOption)
           .then(licenseOption),
       (options: BuildParams) => buildHandler(options),
-      [isDistEmptyCheck as never, createDistFolder as never],
+      [createDistFolder as never],
     )
     .command(
       'publish',
@@ -94,8 +94,9 @@ Promise.resolve(
           .then(verboseOption)
           .then(licenseOption),
       (options: PublishParams) => publishHandler(options),
-      [isDistEmptyCheck as never, createDistFolder as never],
+      [createDistFolder as never],
     )
+    .strictCommands()
     .demandCommand(1, 'You need at least one command before moving on to the next step')
     .fail((msg, err) => handleCliError(msg, err))
     .showHelpOnFail(false, 'Specify --help for available options')
