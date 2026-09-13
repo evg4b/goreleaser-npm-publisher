@@ -24,9 +24,17 @@ const runShim = (packages: PackageDefinition[], prefix?: string): void => {
   eval(script);
 };
 
+const spyOnOn = () => jest.spyOn(process, 'on').mockReturnValue(process);
+
 const binaryIn = (pkg: string, bin: string): string => join(dirname(require.resolve(`${pkg}/package.json`)), bin);
 
 describe('shim', () => {
+  let on: ReturnType<typeof spyOnOn>;
+
+  beforeEach(() => (on = spyOnOn()));
+
+  afterEach(() => on.mockRestore());
+
   it('runs the binary of the package matching the current platform', () => {
     runShim([packageFor('node', 'tool')], '@types');
 
