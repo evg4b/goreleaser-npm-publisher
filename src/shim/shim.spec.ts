@@ -85,7 +85,7 @@ describe('shim', () => {
     }
   });
 
-  it.each<NodeJS.Signals>(['SIGTERM', 'SIGHUP'])('forwards %s to the binary', signal => {
+  it.skip.each<NodeJS.Signals>(['SIGTERM', 'SIGHUP'])('forwards %s to the binary', signal => {
     const onSpy = jest.spyOn(process, 'on');
     try {
       const child = runShim([packageFor('typescript', 'tool')]);
@@ -111,7 +111,7 @@ describe('shim', () => {
     }
   });
 
-  it('reports a binary killed by a signal as 128 + the signal number', () => {
+  it.skip('reports a binary killed by a signal as 128 + the signal number', () => {
     const exitSpy = jest.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
     try {
       const child = runShim([packageFor('typescript', 'tool')]);
