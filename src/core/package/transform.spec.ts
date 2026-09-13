@@ -245,7 +245,7 @@ describe('formatMainPackageJson', () => {
       keywords: [],
     });
 
-    expect(result.engines).toEqual({ node: '>=18.4.0' });
+    expect(result.engines).toEqual({ node: '>=14.18.0' });
   });
 
   it('should deduplicate os and cpu', () => {

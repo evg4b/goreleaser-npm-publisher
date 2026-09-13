@@ -1,5 +1,8 @@
-import { access, constants } from 'node:fs/promises';
+import { access } from 'node:fs/promises';
 import { execve } from 'node:process';
+
+/** The value of fs.constants.X_OK, inlined: reading it from node:fs/promises would need node 18.4. */
+const X_OK = 1;
 
 /** execve aborts the whole process when it fails, so the binary is checked before handing control over. */
 export const canExecve = async (binary: string): Promise<boolean> =>
@@ -15,7 +18,7 @@ export const runWithExecve = (binary: string, args: string[], env: NodeJS.Proces
 
 const isExecutable = async (binary: string): Promise<boolean> => {
   try {
-    await access(binary, constants.X_OK);
+    await access(binary, X_OK);
 
     return true;
   } catch {
