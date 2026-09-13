@@ -7,10 +7,13 @@ import { npmEnvironment } from './environment';
 
 export const isWindows = platform() === 'win32';
 
+const COMMAND_TIMEOUT_MS = 25_000;
+
 export interface ExecOptions {
   cwd: string;
   env?: NodeJS.ProcessEnv;
   shell?: boolean;
+  timeout?: number;
 }
 
 export interface ExecResult {
@@ -33,8 +36,21 @@ export const exec = (command: string, args: string[], options: ExecOptions): Pro
     child.stderr.setEncoding('utf8');
     child.stdout.on('data', (chunk: string) => (stdout += chunk));
     child.stderr.on('data', (chunk: string) => (stderr += chunk));
-    child.on('error', reject);
-    child.on('close', code => resolve({ command: [command, ...args].join(' '), code, stdout, stderr }));
+
+    const timeout = options.timeout ?? COMMAND_TIMEOUT_MS;
+    const deadline = setTimeout(() => {
+      child.kill('SIGKILL');
+      reject(new Error(formatTimeout(commandLine(command, args), timeout, stdout, stderr)));
+    }, timeout);
+
+    child.on('error', error => {
+      clearTimeout(deadline);
+      reject(error);
+    });
+    child.on('close', code => {
+      clearTimeout(deadline);
+      resolve({ command: [command, ...args].join(' '), code, stdout, stderr });
+    });
   });
 
 export const execOrFail = async (command: string, args: string[], options: ExecOptions): Promise<ExecResult> => {
@@ -48,6 +64,11 @@ export const execOrFail = async (command: string, args: string[], options: ExecO
 
 export const output = (result: ExecResult): string => `${result.stdout}${result.stderr}`;
 
+const formatTimeout = (command: string, timeout: number, stdout: string, stderr: string): string =>
+  [`Command timed out after ${timeout}ms: ${command}`, stdout, stderr]
+    .filter(part => part.trim().length > 0)
+    .join('\n');
+
 const formatFailure = (result: ExecResult): string =>
   [`Command failed (exit code ${result.code ?? 'null'}): ${result.command}`, result.stdout, result.stderr]
     .filter(part => part.trim().length > 0)
@@ -60,7 +81,7 @@ const quote = (value: string): string => (/[\s"]/.test(value) ? `"${value.replac
 const cleanEnv = (): NodeJS.ProcessEnv =>
   Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.toLowerCase().startsWith('npm_config_')));
 
-const OUTPUT_TIMEOUT_MS = 30_000;
+const OUTPUT_TIMEOUT_MS = 10_000;
 const POLL_INTERVAL_MS = 25;
 const CLOSE_GRACE_MS = 500;
 
@@ -102,8 +123,10 @@ export const startProcess = (
   let finished = false;
   const exited = new Promise<ProcessExit>(resolve => {
     child.once('exit', (code, signal) => {
-      finished = true;
-      void Promise.race([once(child, 'close'), delay(CLOSE_GRACE_MS)]).then(() => resolve({ code, signal }));
+      void Promise.race([once(child, 'close'), delay(CLOSE_GRACE_MS)]).then(() => {
+        finished = true;
+        resolve({ code, signal });
+      });
     });
   });
 

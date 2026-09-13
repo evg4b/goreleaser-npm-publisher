@@ -120,6 +120,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     needs: [build, lint, unit-test, sonar, integration-test]
     steps:
+      - uses: actions/checkout@v7
       - *node-setup
 
       - name: Download package build

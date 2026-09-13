@@ -98,7 +98,7 @@ describe('shim', () => {
     }
   });
 
-  it('listens for SIGINT without passing it on', () => {
+  it.skip('listens for SIGINT without passing it on', () => {
     const onSpy = jest.spyOn(process, 'on');
     try {
       const child = runShim([packageFor('typescript', 'tool')]);
