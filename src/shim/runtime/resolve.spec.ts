@@ -32,7 +32,14 @@ describe('resolveBinary', () => {
     resolveBinary({ linux_x64: { name: ['@acme', 'missing-tool'], bin: 'tool' } }, 'linux_x64');
 
     expect(fail).toHaveBeenCalledWith(
-      'Missing platform package @acme/missing-tool for linux_x64. Reinstall without --no-optional.',
+      'The platform package @acme/missing-tool is not installed. Remove node_modules and install again, and check '
+        + 'that optional dependencies are not being skipped.',
     );
+  });
+
+  it('fails with the reason when the package cannot be resolved for another reason', () => {
+    resolveBinary({ linux_x64: { name: [42 as unknown as string], bin: 'tool' } }, 'linux_x64');
+
+    expect(fail).toHaveBeenCalledWith(expect.stringContaining('Could not resolve the platform package 42: '));
   });
 });

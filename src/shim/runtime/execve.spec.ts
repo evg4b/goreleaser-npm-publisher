@@ -1,7 +1,9 @@
+import '@mocks/os';
 import '@mocks/fs/access';
 import { mockExecve, withoutExecve } from '@mocks/execve';
 
 import { access, constants } from 'node:fs/promises';
+import { platform } from 'node:os';
 import { canExecve, runWithExecve } from './execve';
 
 describe('canExecve', () => {
@@ -19,6 +21,12 @@ describe('canExecve', () => {
 
   it('is false on node versions and platforms without process.execve', async () => {
     withoutExecve();
+
+    await expect(canExecve('/bin/tool')).resolves.toBe(false);
+  });
+
+  it('is false on windows, which defines process.execve and refuses to perform it', async () => {
+    jest.mocked(platform).mockReturnValue('win32');
 
     await expect(canExecve('/bin/tool')).resolves.toBe(false);
   });
@@ -41,9 +49,17 @@ describe('runWithExecve', () => {
     expect(execve).toHaveBeenCalledWith('/bin/tool', ['/bin/tool', '--flag'], env);
   });
 
-  it('fails when process.execve is not available', () => {
+  it('reports that the handover did not happen when the platform refuses it', () => {
+    mockExecve().mockImplementation(() => {
+      throw new Error('The feature process.execve is unavailable on the current platform');
+    });
+
+    expect(runWithExecve('/bin/tool', [], env)).toBe(false);
+  });
+
+  it('reports that the handover did not happen when process.execve is not available', () => {
     withoutExecve();
 
-    expect(() => runWithExecve('/bin/tool', [], env)).toThrow('process.execve is not available on this platform');
+    expect(runWithExecve('/bin/tool', [], env)).toBe(false);
   });
 });

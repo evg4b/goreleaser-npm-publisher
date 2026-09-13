@@ -3,6 +3,9 @@ import { constants, platform } from 'node:os';
 import process from 'node:process';
 import { fail } from './fail';
 
+/** Not every platform knows every signal: windows has a handful of them. */
+const SIGNALS: Record<string, number | undefined> = constants.signals;
+
 /** Sent to the whole process group by the terminal: the binary has them already, and the shim must outlive it. */
 const TRAPPED: NodeJS.Signals[] = ['SIGINT', 'SIGQUIT'];
 
@@ -48,10 +51,10 @@ const trapSignals = (child: ChildProcess): void => {
 
 /** Every signal the platform knows and the shim may trap, aliases such as SIGABRT and SIGIOT counted once. */
 const relayedSignals = (): NodeJS.Signals[] => {
-  const seen = new Set([...TRAPPED, ...UNTOUCHED].map(signal => constants.signals[signal]));
+  const seen = new Set([...TRAPPED, ...UNTOUCHED].map(signal => SIGNALS[signal]));
 
-  return (Object.keys(constants.signals) as NodeJS.Signals[]).filter(signal => {
-    const number = constants.signals[signal];
+  return (Object.keys(SIGNALS) as NodeJS.Signals[]).filter(signal => {
+    const number = SIGNALS[signal];
     if (seen.has(number)) {
       return false;
     }
@@ -77,5 +80,5 @@ const dieBy = (signal: NodeJS.Signals): never => {
   process.removeAllListeners(signal);
   process.kill(process.pid, signal);
 
-  return process.exit(128 + constants.signals[signal]);
+  return process.exit(128 + (SIGNALS[signal] ?? 0));
 };

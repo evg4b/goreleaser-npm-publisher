@@ -152,7 +152,8 @@ describe('shim', () => {
       await expect(runShim([TOOL], { prefix: '@acme', installed: false })).rejects.toThrow(ProcessExited);
 
       expect(error).toHaveBeenCalledWith(
-        `Missing platform package @acme/tool-native for ${platform}_${arch}. Reinstall without --no-optional.`,
+        'The platform package @acme/tool-native is not installed. Remove node_modules and install again, and check '
+          + 'that optional dependencies are not being skipped.',
       );
       expect(exit).toHaveBeenCalledWith(1);
     });
