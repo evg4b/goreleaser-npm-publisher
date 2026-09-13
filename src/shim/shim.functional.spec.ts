@@ -27,7 +27,7 @@ interface Outcome {
 interface Shim {
   directory: string;
   install: (script: string, options?: { executable?: boolean }) => void;
-  run: (args?: string[]) => Outcome;
+  run: (args?: string[], input?: string) => Outcome;
   start: () => ChildProcess;
 }
 
@@ -35,6 +35,7 @@ interface Scenario {
   binary?: { body: string; executable?: boolean };
   packages?: PackageDefinition[];
   args?: string[];
+  input?: string;
 }
 
 const packageFor = (overrides: Partial<PackageDefinition> = {}): PackageDefinition => ({
@@ -72,9 +73,9 @@ const createShim = (execve: boolean, packages = [packageFor()], prefix?: string)
       writeFileSync(join(packagePath, BIN), script);
       chmodSync(join(packagePath, BIN), executable ? 0o755 : 0o644);
     },
-    run: (args = []) => {
+    run: (args = [], input = '') => {
       const [file, argv] = command(args);
-      const result = spawnSync(file, argv, { encoding: 'utf8', env });
+      const result = spawnSync(file, argv, { encoding: 'utf8', env, input });
 
       return { status: result.status, signal: result.signal, stdout: result.stdout, stderr: result.stderr };
     },
@@ -101,14 +102,14 @@ posixOnly('generated shim', () => {
   });
 
   describe.each(paths)('through %s', (_name, execve) => {
-    it('passes the arguments through to the binary', () => {
+    it('passes the arguments and standard input through to the binary', () => {
       const shim = createShim(execve);
-      shim.install(script('echo "args:$*"'));
+      shim.install(script('read line\necho "args:$* in:$line"'));
 
-      expect(shim.run(['--flag', 'value with space'])).toEqual({
+      expect(shim.run(['--flag', 'value with space'], 'typed\n')).toEqual({
         status: 0,
         signal: null,
-        stdout: 'args:--flag value with space\n',
+        stdout: 'args:--flag value with space in:typed\n',
         stderr: '',
       });
     });
@@ -189,19 +190,20 @@ posixOnly('generated shim', () => {
     const scenarios: [name: string, scenario: Scenario][] = [
       ['output and exit code', { binary: { body: 'echo out; echo err >&2; exit 17' }, args: ['--flag', 'a b'] }],
       ['the name it was started under', { binary: { body: 'basename "$0"' } }],
+      ['standard input', { binary: { body: 'read line; echo "echoed:$line"' }, input: 'typed\n' }],
       ['death by a signal', { binary: { body: 'kill -TERM $$' } }],
       ['a binary that cannot be executed', { binary: { body: 'exit 0', executable: false } }],
       ['a package that is not installed', {}],
       ['a platform the tool was not published for', { packages: [packageFor({ os: 'sunos', cpu: 'mips' as CPU })] }],
     ];
 
-    const outcomeOf = ({ binary, packages, args }: Scenario, execve: boolean): Outcome => {
+    const outcomeOf = ({ binary, packages, args, input }: Scenario, execve: boolean): Outcome => {
       const shim = createShim(execve, packages);
       if (binary) {
         shim.install(script(binary.body), binary);
       }
 
-      const outcome = shim.run(args);
+      const outcome = shim.run(args, input);
 
       return { ...outcome, stderr: outcome.stderr.replaceAll(shim.directory, '<shim>') };
     };
