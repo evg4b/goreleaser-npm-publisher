@@ -1,4 +1,4 @@
-import '@mocks/fs-promises';
+import '@mocks/fs/promises';
 import '@mocks/process';
 
 import { mkdir, rm } from 'node:fs/promises';

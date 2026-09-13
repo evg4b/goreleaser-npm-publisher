@@ -1,4 +1,4 @@
-import '@mocks/fs-promises';
+import '@mocks/fs/promises';
 import '@mocks/core/logger';
 
 import * as nodeFs from 'node:fs/promises';

@@ -1,4 +1,4 @@
-import '@mocks/fs-promises';
+import '@mocks/fs/promises';
 import '@mocks/process';
 
 import { readdir, stat } from 'node:fs/promises';
