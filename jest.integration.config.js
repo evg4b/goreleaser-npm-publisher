@@ -9,8 +9,8 @@ export default {
   },
   globalSetup: '<rootDir>/tests/integration/setup/global-setup.ts',
   globalTeardown: '<rootDir>/tests/integration/setup/global-teardown.ts',
-  testTimeout: 180_000,
-  maxWorkers: 1,
+  testTimeout: 30_000,
+  maxWorkers: 5,
   verbose: true,
   transform: {
     '^.+\\.tsx?$': [
