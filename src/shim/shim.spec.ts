@@ -1,132 +1,161 @@
-import '@mocks/child_process';
+import '@mocks/fs/access';
+import { mockChildProcess } from '@mocks/child_process';
+import { mockExecve, withoutExecve } from '@mocks/execve';
+import { mockExit, ProcessExited } from '@mocks/exit';
 
 import { spawn } from 'node:child_process';
-import { dirname, join } from 'node:path';
-import { arch, platform } from 'node:process';
+import { access, mkdir, mkdtemp, realpath, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { arch, execPath, platform } from 'node:process';
+import { setImmediate as flushMicrotasks } from 'node:timers/promises';
 import { buildShimScript } from './build-shim-script';
 
-class FakeChildProcess {
-  public readonly kill = jest.fn();
-
-  private readonly handlers = new Map<string, (...args: unknown[]) => void>();
-
-  public on(event: string, callback: (...args: unknown[]) => void): this {
-    this.handlers.set(event, callback);
-    return this;
-  }
-
-  public emit(event: string, ...args: unknown[]): void {
-    this.handlers.get(event)?.(...args);
-  }
+interface Invocation {
+  prefix?: string;
+  args?: string[];
+  installed?: boolean;
 }
 
-const packageFor = (name: string, bin: string): PackageDefinition => ({
+const packageFor = (name: string, os: OS = platform): PackageDefinition => ({
   name,
   version: '1.0.0',
   sourceBinary: 'srcbin',
   destinationBinary: 'destbin',
-  bin,
-  os: platform,
+  bin: 'bin/tool',
+  os,
   cpu: arch,
   files: [],
   keywords: [],
 });
 
-const runShim = (packages: PackageDefinition[], prefix?: string): FakeChildProcess => {
-  const child = new FakeChildProcess();
-  jest.mocked(spawn).mockReturnValue(child as unknown as ReturnType<typeof spawn>);
-  const script = buildShimScript(packages, prefix).replace('#!/usr/bin/env node', '');
+const TOOL = packageFor('tool-native');
 
-  eval(script);
-
-  return child;
-};
-
-const binaryIn = (pkg: string, bin: string): string => join(dirname(require.resolve(`${pkg}/package.json`)), bin);
+const spyOnOn = () => jest.spyOn(process, 'on').mockReturnValue(process);
 
 describe('shim', () => {
-  it('spawns the binary of the package matching the current platform', () => {
-    runShim([packageFor('node', 'tool')], '@types');
+  let directory: string;
+  let exit: ReturnType<typeof mockExit>;
+  let on: ReturnType<typeof spyOnOn>;
+  let error: jest.SpyInstance;
 
-    expect(spawn).toHaveBeenCalledWith(binaryIn('@types/node', 'tool'), expect.anything(), expect.anything());
+  beforeEach(async () => {
+    directory = await realpath(await mkdtemp(join(tmpdir(), 'shim-')));
+    mockChildProcess();
+    exit = mockExit();
+    on = spyOnOn();
+    error = jest.spyOn(console, 'error').mockImplementation(() => undefined);
   });
 
-  it('resolves an unprefixed package name', () => {
-    runShim([packageFor('typescript', 'bin/tsc')]);
-
-    expect(spawn).toHaveBeenCalledWith(binaryIn('typescript', 'bin/tsc'), expect.anything(), expect.anything());
+  afterEach(async () => {
+    await rm(directory, { recursive: true, force: true });
+    on.mockRestore();
+    error.mockRestore();
   });
 
-  it('forwards the cli arguments to the binary', () => {
-    runShim([packageFor('typescript', 'tool')]);
+  const binaryOf = (...name: string[]): string => join(directory, 'node_modules', ...name, TOOL.bin);
 
-    expect(spawn).toHaveBeenCalledWith(expect.any(String), process.argv.slice(2), expect.anything());
-  });
+  const install = (packages: PackageDefinition[], prefix?: string): Promise<unknown[]> =>
+    Promise.all(
+      packages.map(async ({ name }) => {
+        const path = join(directory, 'node_modules', ...[prefix, name].filter(part => part != null));
+        await mkdir(path, { recursive: true });
 
-  it('inherits stdio and the current environment', () => {
-    runShim([packageFor('typescript', 'tool')]);
+        return writeFile(join(path, 'package.json'), JSON.stringify({ name, version: '1.0.0' }));
+      }),
+    );
 
-    expect(spawn).toHaveBeenCalledWith(expect.any(String), expect.anything(), {
-      stdio: 'inherit',
-      env: process.env,
+  /** Loads the generated shim the way node would, with the mocks of this suite in place. */
+  const runShim = async (
+    packages: PackageDefinition[],
+    { prefix, args = [], installed = true }: Invocation = {},
+  ): Promise<void> => {
+    if (installed) {
+      await install(packages, prefix);
+    }
+
+    const file = join(directory, 'shim.cjs');
+    await writeFile(file, buildShimScript(packages, prefix));
+    const argv = process.argv;
+    process.argv = [execPath, file, ...args];
+
+    try {
+      jest.isolateModules(() => {
+        jest.requireActual(file);
+      });
+    } finally {
+      process.argv = argv;
+    }
+
+    await flushMicrotasks();
+  };
+
+  describe('where execve can run the binary', () => {
+    it('replaces itself with the binary of the package matching the current platform', async () => {
+      const execve = mockExecve();
+
+      await runShim([TOOL]);
+
+      expect(execve).toHaveBeenCalledWith(binaryOf('tool-native'), [binaryOf('tool-native')], process.env);
+      expect(access).toHaveBeenCalledWith(binaryOf('tool-native'), expect.any(Number));
+    });
+
+    it('resolves a prefixed package name', async () => {
+      const execve = mockExecve();
+
+      await runShim([TOOL], { prefix: '@acme' });
+
+      expect(execve).toHaveBeenCalledWith(binaryOf('@acme', 'tool-native'), expect.anything(), expect.anything());
+    });
+
+    it('forwards the command line arguments, with the binary as argv[0]', async () => {
+      const execve = mockExecve();
+
+      await runShim([TOOL], { args: ['--flag', 'value with space'] });
+
+      const binary = binaryOf('tool-native');
+      expect(execve).toHaveBeenCalledWith(binary, [binary, '--flag', 'value with space'], process.env);
+    });
+
+    it('starts a binary it cannot execute as a child process instead', async () => {
+      mockExecve();
+      jest.mocked(access).mockRejectedValue(new Error('EACCES'));
+
+      await runShim([TOOL]);
+
+      expect(spawn).toHaveBeenCalledWith(binaryOf('tool-native'), [], expect.anything());
     });
   });
 
-  it('propagates the exit code of the spawned binary', () => {
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
-    try {
-      const child = runShim([packageFor('typescript', 'tool')]);
+  describe('where execve is not available', () => {
+    beforeEach(withoutExecve);
 
-      child.emit('exit', 42);
+    it('runs the binary as a child process, with its arguments and the current environment', async () => {
+      await runShim([TOOL], { args: ['--flag'] });
 
-      expect(exitSpy).toHaveBeenCalledWith(42);
-    } finally {
-      exitSpy.mockRestore();
-    }
+      expect(spawn).toHaveBeenCalledWith(binaryOf('tool-native'), ['--flag'], {
+        stdio: 'inherit',
+        env: process.env,
+      });
+    });
   });
 
-  it.skip.each<NodeJS.Signals>(['SIGTERM', 'SIGHUP'])('forwards %s to the binary', signal => {
-    const onSpy = jest.spyOn(process, 'on');
-    try {
-      const child = runShim([packageFor('typescript', 'tool')]);
-      const handler = onSpy.mock.calls.find(([event]) => event === signal)?.[1];
-      handler?.(signal);
+  describe('reports what it cannot run', () => {
+    it('a platform the tool was not published for', async () => {
+      await expect(runShim([packageFor('tool-native', 'sunos')])).rejects.toThrow(ProcessExited);
 
-      expect(child.kill).toHaveBeenCalledWith(signal);
-    } finally {
-      onSpy.mockRestore();
-    }
-  });
+      expect(error).toHaveBeenCalledWith(`Unsupported platform: ${platform}_${arch}. Supported: sunos_${arch}`);
+      expect(exit).toHaveBeenCalledWith(1);
+    });
 
-  it.skip('listens for SIGINT without passing it on', () => {
-    const onSpy = jest.spyOn(process, 'on');
-    try {
-      const child = runShim([packageFor('typescript', 'tool')]);
-      const handler = onSpy.mock.calls.find(([event]) => event === 'SIGINT')?.[1];
-      handler?.('SIGINT');
+    it('a platform package that is not installed', async () => {
+      await expect(runShim([TOOL], { prefix: '@acme', installed: false })).rejects.toThrow(ProcessExited);
 
-      expect(child.kill).not.toHaveBeenCalled();
-    } finally {
-      onSpy.mockRestore();
-    }
-  });
-
-  it.skip('reports a binary killed by a signal as 128 + the signal number', () => {
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
-    try {
-      const child = runShim([packageFor('typescript', 'tool')]);
-
-      child.emit('exit', null, 'SIGINT');
-
-      expect(exitSpy).toHaveBeenCalledWith(130);
-    } finally {
-      exitSpy.mockRestore();
-    }
-  });
-
-  it('fails when no package matches the current platform', () => {
-    const foreign = { ...packageFor('typescript', 'tool'), os: 'sunos' as OS };
-
-    expect(() => runShim([foreign])).toThrow();
+      expect(error).toHaveBeenCalledWith(
+        'The platform package @acme/tool-native is not installed. Remove node_modules and install again, and check '
+          + 'that optional dependencies are not being skipped.',
+      );
+      expect(exit).toHaveBeenCalledWith(1);
+    });
   });
 });

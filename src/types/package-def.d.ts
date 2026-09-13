@@ -30,6 +30,7 @@ interface PackageJson {
   keywords: string[];
   license?: string;
   repository?: PackageRepository;
+  engines?: Record<string, string>;
 }
 
 interface PackageRepository {

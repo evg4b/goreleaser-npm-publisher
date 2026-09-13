@@ -1,4 +1,10 @@
-import { formatMainPackageJson, formatPackageJson, formatPackageName, transformPackage } from './transform';
+import {
+  formatMainPackageJson,
+  formatPackageJson,
+  formatPackageName,
+  SHIM_ENGINES,
+  transformPackage,
+} from './transform';
 
 const artifact: BinaryArtifact = {
   name: 'myapp',
@@ -225,7 +231,21 @@ describe('formatMainPackageJson', () => {
       files: ['index.js'],
       keywords: ['cli'],
       license: 'MIT',
+      engines: SHIM_ENGINES,
     });
+  });
+
+  it('should declare the node versions the shim it ships supports', () => {
+    const result = formatMainPackageJson({
+      packages,
+      metadata,
+      description: undefined,
+      prefix: undefined,
+      files: [],
+      keywords: [],
+    });
+
+    expect(result.engines).toEqual({ node: '>=14.18.0' });
   });
 
   it('should deduplicate os and cpu', () => {

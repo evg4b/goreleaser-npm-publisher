@@ -1,0 +1,43 @@
+jest.mock('./execve', () => ({
+  canExecve: jest.fn().mockName('canExecve'),
+  runWithExecve: jest.fn().mockName('runWithExecve').mockReturnValue(true),
+}));
+
+jest.mock('./spawn', () => ({
+  runWithSpawn: jest.fn().mockName('runWithSpawn'),
+}));
+
+import { canExecve, runWithExecve } from './execve';
+import { run } from './run';
+import { runWithSpawn } from './spawn';
+
+describe('run', () => {
+  const env = { PATH: '/usr/bin' };
+
+  it('replaces the shim with the binary when execve can run it', async () => {
+    jest.mocked(canExecve).mockResolvedValue(true);
+
+    await run('/bin/tool', ['--flag'], env);
+
+    expect(runWithExecve).toHaveBeenCalledWith('/bin/tool', ['--flag'], env);
+    expect(runWithSpawn).not.toHaveBeenCalled();
+  });
+
+  it('falls back to a child process when the platform refuses the handover', async () => {
+    jest.mocked(canExecve).mockResolvedValue(true);
+    jest.mocked(runWithExecve).mockReturnValue(false);
+
+    await run('/bin/tool', ['--flag'], env);
+
+    expect(runWithSpawn).toHaveBeenCalledWith('/bin/tool', ['--flag'], env);
+  });
+
+  it('falls back to a child process when execve cannot', async () => {
+    jest.mocked(canExecve).mockResolvedValue(false);
+
+    await run('/bin/tool', ['--flag'], env);
+
+    expect(runWithSpawn).toHaveBeenCalledWith('/bin/tool', ['--flag'], env);
+    expect(runWithExecve).not.toHaveBeenCalled();
+  });
+});
