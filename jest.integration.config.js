@@ -1,3 +1,5 @@
+const isWindows = process.platform === 'win32';
+
 export default {
   clearMocks: true,
   preset: 'ts-jest',
@@ -9,8 +11,9 @@ export default {
   },
   globalSetup: '<rootDir>/tests/integration/setup/global-setup.ts',
   globalTeardown: '<rootDir>/tests/integration/setup/global-teardown.ts',
-  testTimeout: 30_000,
-  maxWorkers: 5,
+  testTimeout: isWindows ? 240_000 : 60_000,
+  // Every publishing suite spawns npm once per package; on windows they are slower than they are parallel.
+  maxWorkers: isWindows ? 2 : 5,
   verbose: true,
   transform: {
     '^.+\\.tsx?$': [

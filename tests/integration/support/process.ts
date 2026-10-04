@@ -7,7 +7,8 @@ import { npmEnvironment } from './environment';
 
 export const isWindows = platform() === 'win32';
 
-const COMMAND_TIMEOUT_MS = 25_000;
+/** npm runs through a shell on windows, and publishing the fixture spawns it once per package, so commands get longer. */
+const COMMAND_TIMEOUT_MS = isWindows ? 120_000 : 30_000;
 
 export interface ExecOptions {
   cwd: string;
@@ -81,7 +82,7 @@ const quote = (value: string): string => (/[\s"]/.test(value) ? `"${value.replac
 const cleanEnv = (): NodeJS.ProcessEnv =>
   Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.toLowerCase().startsWith('npm_config_')));
 
-const OUTPUT_TIMEOUT_MS = 10_000;
+const OUTPUT_TIMEOUT_MS = isWindows ? 30_000 : 10_000;
 const POLL_INTERVAL_MS = 25;
 const CLOSE_GRACE_MS = 500;
 
