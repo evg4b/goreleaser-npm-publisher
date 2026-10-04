@@ -9,6 +9,10 @@ import {
   targetPackageName,
 } from '@integration/support';
 
+// Node 22.12 loads the ESM-only yargs through require(), but still reports that as experimental.
+const REQUIRE_ESM_WARNING =
+  /^\(node:\d+\) ExperimentalWarning: CommonJS module .+ using require\(\)\.\r?\n.+\r?\n\(Use `node --trace-warnings \.\.\.`.+\)\r?\n/m;
+
 describe('publish command', () => {
   const packageName = 'test-app-publish';
 
@@ -22,7 +26,9 @@ describe('publish command', () => {
   });
 
   it('exits successfully', () => {
-    expect({ code: result.code, output: result.stderr }).toEqual({ code: 0, output: '' });
+    const output = result.stderr.replace(REQUIRE_ESM_WARNING, '');
+
+    expect({ code: result.code, output }).toEqual({ code: 0, output: '' });
   });
 
   it('reports the published main package', () => {
