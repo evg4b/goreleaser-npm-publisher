@@ -33,6 +33,7 @@
       "@npm/*": ["src/npm/*"],
       "@commands/*": ["src/commands/*"],
       "@shim": ["src/shim"],
+      "@shim/*": ["src/shim/*"],
       "@mocks/*": ["tests/mocks/*"],
       "@integration/*": ["tests/integration/*"]
     }

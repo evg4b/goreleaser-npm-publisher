@@ -40,6 +40,11 @@ describe('build command', () => {
       expect(await project.file(mainPackage, 'index.js')).toContain('#!/usr/bin/env node');
     });
 
+    it('states the node the shim needs on the main package only', async () => {
+      expect((await project.manifest(mainPackage)).engines).toEqual({ node: '>=14.18.0' });
+      expect((await project.manifest(platformPackage)).engines).toBeUndefined();
+    });
+
     it('depends on every platform package', async () => {
       const manifest = await project.manifest(mainPackage);
 

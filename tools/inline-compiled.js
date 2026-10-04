@@ -4,17 +4,19 @@ import { resolve } from 'node:path';
 /** Import prefix that marks a module to be inlined as its compiled source. */
 export const PREFIX = 'inline-compiled:';
 
+export const TARGET = 'node14.18';
+
 /**
  * Bundles `entryPoint` into a standalone CJS script and returns its source
  * together with every file that went into it (for watch mode invalidation).
  *
- * `options` may override the defaults below, but never the ones that make the
+ * `options` may not override the node target, nor the settings that make the
  * result inlineable: a single in-memory output with no sourcemap alongside it.
  */
 export const compile = (entryPoint, options = {}) => {
   const result = buildSync({
-    target: 'node16',
     ...options,
+    target: TARGET,
     format: 'cjs',
     platform: 'node',
     entryPoints: [entryPoint],

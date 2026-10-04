@@ -177,7 +177,11 @@ Main package:
 go-package@0.0.17
   os: linux, win32, darwin
   cpu: ia32, x64, arm64
+  engines: node >=14.18.0
 ```
+
+The main package asks for the node its executable script needs. The publisher itself needs a newer one, see the
+`engines` of [its own package.json](package.json).
 
 Platform packages:
 

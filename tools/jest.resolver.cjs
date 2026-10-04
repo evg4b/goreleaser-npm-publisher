@@ -21,6 +21,7 @@ const ALIASES = [
   [/^@npm\/(.*)$/, 'src/npm/$1'],
   [/^@commands\/(.*)$/, 'src/commands/$1'],
   [/^@shim$/, 'src/shim'],
+  [/^@shim\/(.*)$/, 'src/shim/$1'],
   [/^@mocks\/(.*)$/, 'tests/mocks/$1'],
 ];
 
