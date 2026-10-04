@@ -96,8 +96,6 @@ const STOP_TIMEOUT_MS = 10_000;
 
 const verdaccioBinPath = join(dirname(require.resolve('verdaccio/package.json')), 'bin', 'verdaccio');
 
-// Verdaccio needs a newer node than the oldest one the publisher supports, so
-// the registry can run on its own node while everything under test runs on this one.
 const REGISTRY_NODE = 'INTEGRATION_REGISTRY_NODE';
 
 export interface VerdaccioServer {

@@ -29,7 +29,6 @@ export default defineConfig(options => ({
   minifyWhitespace: isProd,
   external: ['./mapping.json'],
   noExternal: ['es-toolkit', 'picocolors', 'glob', 'yargs'],
-  // yargs is ESM-only; its import.meta.url needs a shim once bundled into CJS.
   shims: true,
   define: {
     __DEV__: JSON.stringify(!isProd),

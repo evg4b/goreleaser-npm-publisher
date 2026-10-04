@@ -4,12 +4,6 @@ import { resolve } from 'node:path';
 /** Import prefix that marks a module to be inlined as its compiled source. */
 export const PREFIX = 'inline-compiled:';
 
-/**
- * The oldest node the publisher and the packages it generates run on: 20.0.0,
- * below which yargs-parser refuses to start. Both are compiled for it, and both
- * ask for it in `engines` (package.json, and SHIM_ENGINES for the generated main
- * package).
- */
 export const TARGET = 'node20.0';
 
 /**
