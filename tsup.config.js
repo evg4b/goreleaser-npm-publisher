@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsup';
+import { TARGET } from './tools/inline-compiled.js';
 import { inlineCompiledPlugin } from './tools/inline-compiled-plugin.js';
 import pkg from './package.json' with { type: 'json' };
 
@@ -12,7 +13,7 @@ export default defineConfig(options => ({
   },
   splitting: false,
   sourcemap: !isProd,
-  target: 'node20.19',
+  target: TARGET,
   minify: isProd,
   outDir: 'dist',
   format: 'cjs',
@@ -31,6 +32,7 @@ export default defineConfig(options => ({
   define: {
     __DEV__: JSON.stringify(!isProd),
     __VERSION__: JSON.stringify(pkg.version),
+    __ENGINES__: JSON.stringify(pkg.engines),
   },
   esbuildPlugins: [inlineCompiledPlugin],
 }));

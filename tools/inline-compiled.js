@@ -4,7 +4,12 @@ import { resolve } from 'node:path';
 /** Import prefix that marks a module to be inlined as its compiled source. */
 export const PREFIX = 'inline-compiled:';
 
-export const TARGET = 'node14.18';
+/**
+ * The oldest node in the `engines` of package.json. The publisher and the shim
+ * it generates are both compiled for it, and the generated main package asks
+ * for the same `engines`.
+ */
+export const TARGET = 'node20.19';
 
 /**
  * Bundles `entryPoint` into a standalone CJS script and returns its source
