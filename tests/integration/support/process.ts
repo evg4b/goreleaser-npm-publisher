@@ -7,7 +7,6 @@ import { npmEnvironment } from './environment';
 
 export const isWindows = platform() === 'win32';
 
-/** npm runs through a shell on windows, and publishing the fixture spawns it once per package, so commands get longer. */
 const COMMAND_TIMEOUT_MS = isWindows ? 120_000 : 30_000;
 
 export interface ExecOptions {

@@ -1,10 +1,10 @@
-jest.mock('./fail', () => ({
+jest.mock('./helpers', () => ({
   fail: jest.fn().mockName('fail'),
 }));
 
 import { dirname, join } from 'node:path';
-import { fail } from './fail';
-import { resolveBinary } from './resolve';
+import { fail } from './helpers';
+import { resolveBinary } from './resolve-binary';
 
 describe('resolveBinary', () => {
   const mapping: Mapping = {

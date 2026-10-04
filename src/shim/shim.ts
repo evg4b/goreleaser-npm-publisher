@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { arch, argv, env, platform } from 'node:process';
-import { resolveBinary, run } from './runtime';
+import { resolveBinary } from './resolve-binary';
+import { run } from './run';
 
 // noinspection UnnecessaryLocalVariableJS
 const mapping: Mapping = __INLINE_MAPPING__;

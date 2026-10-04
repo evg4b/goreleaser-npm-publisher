@@ -65,7 +65,6 @@ describe('shim', () => {
       }),
     );
 
-  /** Loads the generated shim the way node would, with the mocks of this suite in place. */
   const runShim = async (
     packages: PackageDefinition[],
     { prefix, args = [], installed = true }: Invocation = {},
@@ -119,7 +118,7 @@ describe('shim', () => {
 
     it('starts a binary it cannot execute as a child process instead', async () => {
       mockExecve();
-      jest.mocked(access).mockRejectedValue(new Error('EACCES'));
+      jest.mocked(access).mockRejectedValueOnce(new Error('EACCES'));
 
       await runShim([TOOL]);
 

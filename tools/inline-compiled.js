@@ -4,10 +4,6 @@ import { resolve } from 'node:path';
 /** Import prefix that marks a module to be inlined as its compiled source. */
 export const PREFIX = 'inline-compiled:';
 
-/**
- * The inlined module runs on the machines the published packages are installed on, not on the one that builds them,
- * so it is compiled for the node the generated package.json asks for rather than for the node this build targets.
- */
 export const TARGET = 'node14.18';
 
 /**
