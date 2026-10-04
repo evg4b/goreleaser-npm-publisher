@@ -28,11 +28,12 @@ export default defineConfig(options => ({
   minifyIdentifiers: isProd,
   minifyWhitespace: isProd,
   external: ['./mapping.json'],
-  noExternal: ['es-toolkit', 'picocolors', 'glob'],
+  noExternal: ['es-toolkit', 'picocolors', 'glob', 'yargs'],
+  // yargs is ESM-only; its import.meta.url needs a shim once bundled into CJS.
+  shims: true,
   define: {
     __DEV__: JSON.stringify(!isProd),
     __VERSION__: JSON.stringify(pkg.version),
-    __ENGINES__: JSON.stringify(pkg.engines),
   },
   esbuildPlugins: [inlineCompiledPlugin],
 }));

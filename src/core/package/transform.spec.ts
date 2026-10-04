@@ -235,7 +235,7 @@ describe('formatMainPackageJson', () => {
     });
   });
 
-  it('should declare the node versions the publisher itself supports', () => {
+  it('should declare the oldest node the publisher itself supports', () => {
     const result = formatMainPackageJson({
       packages,
       metadata,
@@ -245,7 +245,7 @@ describe('formatMainPackageJson', () => {
       keywords: [],
     });
 
-    expect(result.engines).toEqual({ node: '^20.19.0 || ^22.12.0 || >=23' });
+    expect(result.engines).toEqual({ node: '>=20.0.0' });
   });
 
   it('should deduplicate os and cpu', () => {

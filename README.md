@@ -177,11 +177,10 @@ Main package:
 go-package@0.0.17
   os: linux, win32, darwin
   cpu: ia32, x64, arm64
-  engines: node ^20.19.0 || ^22.12.0 || >=23
+  engines: node >=20.0.0
 ```
 
-The main package asks for the same node versions as the publisher itself, see the `engines` of
-[its own package.json](package.json).
+The main package asks for the same node as the publisher itself: 20.0.0 or newer.
 
 Platform packages:
 

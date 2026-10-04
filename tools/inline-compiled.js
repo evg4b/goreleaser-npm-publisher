@@ -5,11 +5,12 @@ import { resolve } from 'node:path';
 export const PREFIX = 'inline-compiled:';
 
 /**
- * The oldest node in the `engines` of package.json. The publisher and the shim
- * it generates are both compiled for it, and the generated main package asks
- * for the same `engines`.
+ * The oldest node the publisher and the packages it generates run on: 20.0.0,
+ * below which yargs-parser refuses to start. Both are compiled for it, and both
+ * ask for it in `engines` (package.json, and SHIM_ENGINES for the generated main
+ * package).
  */
-export const TARGET = 'node20.19';
+export const TARGET = 'node20.0';
 
 /**
  * Bundles `entryPoint` into a standalone CJS script and returns its source

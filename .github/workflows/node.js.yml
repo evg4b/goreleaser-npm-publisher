@@ -96,7 +96,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node: ['latest', '22.12.0', '20.19.0']
+        node: ['latest', '20.0.0']
     steps:
       - uses: actions/checkout@v7
 

@@ -1,10 +1,5 @@
-import pkg from './package.json' with { type: 'json' };
-
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
-  globals: {
-    __ENGINES__: pkg.engines,
-  },
   clearMocks: true,
   cache: true,
   preset: 'ts-jest',

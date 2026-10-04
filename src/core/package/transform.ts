@@ -4,7 +4,7 @@ import { FormatMainPackageJsonParams, FormatPackageJsonParams, TransformPackageP
 import { normalizeOS } from './os';
 import { formatRepository } from './repository';
 
-export const SHIM_ENGINES: Record<string, string> = __ENGINES__;
+export const SHIM_ENGINES: Record<string, string> = { node: '>=20.0.0' };
 
 export const transformPackage = (params: TransformPackageParams): PackageDefinition => {
   const { artifact, metadata, name, files, keywords, license } = params;
