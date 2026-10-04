@@ -1,6 +1,4 @@
-jest.mock('./helpers', () => ({
-  fail: jest.fn().mockName('fail'),
-}));
+import '@mocks/shim/helpers';
 
 import { dirname, join } from 'node:path';
 import { fail } from './helpers';

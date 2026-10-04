@@ -1,7 +1,7 @@
 import '@mocks/os';
 import '@mocks/fs/access';
-import { mockExit, ProcessExited } from '@mocks/exit';
 
+import { mockExit, ProcessExited } from '@mocks/exit';
 import { constants } from 'node:fs';
 import { access } from 'node:fs/promises';
 import { platform } from 'node:os';

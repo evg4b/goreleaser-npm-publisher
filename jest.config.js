@@ -14,6 +14,7 @@ export default {
     '^@npm/(.*)$': '<rootDir>/src/npm/$1',
     '^@commands/(.*)$': '<rootDir>/src/commands/$1',
     '^@shim$': '<rootDir>/src/shim',
+    '^@shim/(.*)$': '<rootDir>/src/shim/$1',
     '^@mocks/(.*)$': '<rootDir>/tests/mocks/$1',
   },
   collectCoverage: true,

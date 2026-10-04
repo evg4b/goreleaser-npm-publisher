@@ -1,8 +1,9 @@
 import '@mocks/fs/access';
+
 import { mockChildProcess } from '@mocks/child_process';
 import { mockExecve, withoutExecve } from '@mocks/execve';
 import { mockExit, ProcessExited } from '@mocks/exit';
-
+import { mockSignals } from '@mocks/signals';
 import { spawn } from 'node:child_process';
 import { access, mkdir, mkdtemp, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -31,25 +32,21 @@ const packageFor = (name: string, os: OS = platform): PackageDefinition => ({
 
 const TOOL = packageFor('tool-native');
 
-const spyOnOn = () => jest.spyOn(process, 'on').mockReturnValue(process);
-
 describe('shim', () => {
   let directory: string;
   let exit: ReturnType<typeof mockExit>;
-  let on: ReturnType<typeof spyOnOn>;
   let error: jest.SpyInstance;
 
   beforeEach(async () => {
     directory = await realpath(await mkdtemp(join(tmpdir(), 'shim-')));
     mockChildProcess();
     exit = mockExit();
-    on = spyOnOn();
+    mockSignals();
     error = jest.spyOn(console, 'error').mockImplementation(() => undefined);
   });
 
   afterEach(async () => {
     await rm(directory, { recursive: true, force: true });
-    on.mockRestore();
     error.mockRestore();
   });
 
