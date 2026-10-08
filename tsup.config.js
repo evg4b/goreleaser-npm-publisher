@@ -1,5 +1,4 @@
 import { defineConfig } from 'tsup';
-import { TARGET } from './tools/inline-compiled.js';
 import { inlineCompiledPlugin } from './tools/inline-compiled-plugin.js';
 import pkg from './package.json' with { type: 'json' };
 
@@ -13,7 +12,7 @@ export default defineConfig(options => ({
   },
   splitting: false,
   sourcemap: !isProd,
-  target: TARGET,
+  target: 'node20.0',
   minify: isProd,
   outDir: 'dist',
   format: 'cjs',

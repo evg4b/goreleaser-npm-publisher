@@ -4,8 +4,6 @@ import { resolve } from 'node:path';
 /** Import prefix that marks a module to be inlined as its compiled source. */
 export const PREFIX = 'inline-compiled:';
 
-export const TARGET = 'node20.0';
-
 /**
  * Bundles `entryPoint` into a standalone CJS script and returns its source
  * together with every file that went into it (for watch mode invalidation).
@@ -16,9 +14,7 @@ export const TARGET = 'node20.0';
 export const compile = (entryPoint, options = {}) => {
   const result = buildSync({
     ...options,
-    target: TARGET,
     format: 'cjs',
-    platform: 'node',
     entryPoints: [entryPoint],
     bundle: true,
     write: false,
