@@ -8,11 +8,12 @@ export const PREFIX = 'inline-compiled:';
  * Bundles `entryPoint` into a standalone CJS script and returns its source
  * together with every file that went into it (for watch mode invalidation).
  *
- * `options` may not override the node target, nor the settings that make the
- * result inlineable: a single in-memory output with no sourcemap alongside it.
+ * `options` may not override the settings that make the result inlineable: a
+ * single in-memory node script with no sourcemap alongside it.
  */
 export const compile = (entryPoint, options = {}) => {
   const result = buildSync({
+    platform: 'node',
     ...options,
     format: 'cjs',
     entryPoints: [entryPoint],
