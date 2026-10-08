@@ -51,7 +51,8 @@ First, create a release of your package using [goreleaser](https://goreleaser.co
 goreleaser build --clean
 ```
 
-Then, run `goreleaser-npm-publisher` in the same directory. Make sure you're logged into the registry.
+Then, run `goreleaser-npm-publisher` in the same directory. Make sure you're logged into the registry. The publisher
+needs Node.js `^20.19.0 || ^22.12.0 || >=23`.
 
 ```shell
 npx -y goreleaser-npm-publisher publish --clean
@@ -180,8 +181,8 @@ go-package@0.0.17
   engines: node >=14.18.0
 ```
 
-The main package asks for the node its executable script needs. The publisher itself needs a newer one, see the
-`engines` of [its own package.json](package.json).
+The main package only asks for the Node.js its launcher script needs (`>=14.18.0`), so the published packages can be
+installed on much older Node.js than the publisher itself runs on (`^20.19.0 || ^22.12.0 || >=23`).
 
 Platform packages:
 
