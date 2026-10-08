@@ -4,6 +4,7 @@ import { FormatMainPackageJsonParams, FormatPackageJsonParams, TransformPackageP
 import { normalizeOS } from './os';
 import { formatRepository } from './repository';
 
+// What the generated main package needs to run its shim. Keep in sync with TARGET in tools/inline-compiled.js.
 export const SHIM_ENGINES: Record<string, string> = { node: '>=14.18.0' };
 
 export const transformPackage = (params: TransformPackageParams): PackageDefinition => {

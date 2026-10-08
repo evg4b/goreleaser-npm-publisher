@@ -4,6 +4,10 @@
   "description": "Build and publish npm packages based on goreleaser output folder",
   "bin": "dist/bin.cjs",
   "main": "dist/index.cjs",
+  "types": "dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "author": {
     "email": "evg.abramovitch@gmail.com",
@@ -33,8 +37,8 @@
   "scripts": {
     "build": "NODE_ENV=production tsup",
     "build:dev": "NODE_ENV=development tsup",
-    "start": "node dist/cli.cjs",
-    "run": "tsup && node dist/cli.cjs",
+    "start": "node dist/bin.cjs",
+    "run": "tsup && node dist/bin.cjs",
     "format": "prettier --write .",
     "lint": "eslint .",
     "watch": "tsup --watch",
@@ -50,7 +54,6 @@
     "eslint": "^10.12.0",
     "glob": "^13.0.6",
     "globals": "^17.13.0",
-    "install": "^0.13.0",
     "jest": "^30.5.2",
     "jest-esbuild": "^0.4.0",
     "picocolors": "^1.1.1",

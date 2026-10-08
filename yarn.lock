@@ -4848,7 +4848,6 @@ __metadata:
     eslint: "npm:^10.12.0"
     glob: "npm:^13.0.6"
     globals: "npm:^17.13.0"
-    install: "npm:^0.13.0"
     jest: "npm:^30.5.2"
     jest-esbuild: "npm:^0.4.0"
     picocolors: "npm:^1.1.1"
@@ -5149,13 +5148,6 @@ __metadata:
   version: 2.0.4
   resolution: "inherits@npm:2.0.4"
   checksum: 10c0/4e531f648b29039fb7426fb94075e6545faa1eb9fe83c29f0b6d9e7263aceb4289d2d4557db0d428188eeb449cc7c5e77b0a0b2c4e248ff2a65933a0dee49ef2
-  languageName: node
-  linkType: hard
-
-"install@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "install@npm:0.13.0"
-  checksum: 10c0/364d7d1e9404ff7ae3015dee7266b4ffb0e2aae348474b7ffd3e42fcbb78b37e29848e18ca94f93166f6ddb248be0f775fbed87cc92dafb018c289a86d010cf1
   languageName: node
   linkType: hard
 

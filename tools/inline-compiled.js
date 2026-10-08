@@ -4,6 +4,8 @@ import { resolve } from 'node:path';
 /** Import prefix that marks a module to be inlined as its compiled source. */
 export const PREFIX = 'inline-compiled:';
 
+// The lowest Node.js the inlined shim runs on (`node:` specifiers in `require` need 14.18).
+// Keep in sync with SHIM_ENGINES in src/core/package/transform.ts.
 export const TARGET = 'node14.18';
 
 /**
