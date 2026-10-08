@@ -96,9 +96,18 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node: ['latest', '22.14.0']
+        node: ['latest', '20.0.0']
     steps:
       - uses: actions/checkout@v7
+
+      - name: Use Node.js from .nvmrc for the registry
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Run the registry on it
+        shell: bash
+        run: echo "INTEGRATION_REGISTRY_NODE=$(node -p process.execPath)" >> "$GITHUB_ENV"
 
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v7

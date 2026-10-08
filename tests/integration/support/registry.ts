@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { EOL } from 'node:os';
 import { dirname, join } from 'node:path';
-import { execPath } from 'node:process';
+import { env, execPath } from 'node:process';
 import { setTimeout as delay } from 'node:timers/promises';
 
 export interface HttpResponse {
@@ -96,6 +96,8 @@ const STOP_TIMEOUT_MS = 10_000;
 
 const verdaccioBinPath = join(dirname(require.resolve('verdaccio/package.json')), 'bin', 'verdaccio');
 
+const REGISTRY_NODE = 'INTEGRATION_REGISTRY_NODE';
+
 export interface VerdaccioServer {
   readonly url: string;
   readonly stop: () => Promise<void>;
@@ -105,7 +107,7 @@ export const startVerdaccio = async (root: string): Promise<VerdaccioServer> => 
   const configPath = await writeConfig(root);
   const url = `http://127.0.0.1:${await freePort()}`;
 
-  const server = spawn(execPath, [verdaccioBinPath, '--config', configPath, '--listen', url], {
+  const server = spawn(env[REGISTRY_NODE] ?? execPath, [verdaccioBinPath, '--config', configPath, '--listen', url], {
     cwd: root,
     stdio: ['ignore', 'pipe', 'pipe'],
   });

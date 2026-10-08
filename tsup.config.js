@@ -12,7 +12,7 @@ export default defineConfig(options => ({
   },
   splitting: false,
   sourcemap: !isProd,
-  target: 'node20.19',
+  target: 'node20.0',
   minify: isProd,
   outDir: 'dist',
   format: 'cjs',
@@ -27,7 +27,8 @@ export default defineConfig(options => ({
   minifyIdentifiers: isProd,
   minifyWhitespace: isProd,
   external: ['./mapping.json'],
-  noExternal: ['es-toolkit', 'picocolors', 'glob'],
+  noExternal: ['es-toolkit', 'picocolors', 'glob', 'yargs'],
+  shims: true,
   define: {
     __DEV__: JSON.stringify(!isProd),
     __VERSION__: JSON.stringify(pkg.version),
